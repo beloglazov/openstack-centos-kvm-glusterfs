@@ -1,3 +1,3 @@
 #!/bin/sh
 
-yum -y install kvm libvirt libvirt-python python-virtinst qemu-kvm qemu-kvm-tools virt-viewer
+yum -y install kvm libvirt libvirt-python python-virtinst qemu-kvm qemu-kvm-tools
