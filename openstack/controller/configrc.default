@@ -1,2 +1,10 @@
 export MYSQL_ROOT_PASSWORD=
 export MYSQL_KEYSTONE_PASSWORD=
+
+export OS_SERVICE_PASSWORD=
+
+export OS_USERNAME=admin
+export OS_PASSWORD=
+export OS_TENANT_NAME=admin
+
+export OS_AUTH_URL=http://localhost:5000/v2.0/
