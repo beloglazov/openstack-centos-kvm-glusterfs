@@ -1,0 +1,35 @@
+Keystone allows two types of authentication for administration action like creating users, tenants, etc: 
+
+1. Using an admin token and admin_port (35357). Example: 
+keystone --token=3ab103bf9aaef6b336bf --endpoint=http://controller:35357/v2.0 user-list
+
+2. Using an admin user and public_port (5000). Example:
+keystone --os_username=admin --os_tenant_name=admin --os_password=oisjdfoisaehf --os_auth_url=http://controller:5000/v2.0 user-list
+
+Services can also authenticate using one of two ways. One way is to share the admin token between services and authenticate with keystone using the token. 
+
+However, it is also possible to use special users created in keystone for each service. These users are by default: nova, glance, etc. The service users are assigned to the service tenant and admin role in that tenant.
+
+Here is an example of the password-based authenication for nova:
+
+nova --os_username=nova --os_password=knvbsoinrvrv --os_tenant_name=service --os_auth_url=http://controller:5000/v2.0 image-list
+
+One of two sets of authentication parameters are required to be specified in /etc/nova/api-paste.ini. The first option is to set up the token-based authentication, like the following:
+
+auth_host = controller
+auth_protocol = http
+admin_token = 3ab103bf9aaef6b336bf
+
+The second option is to set up the password-based authentication, as follows:
+
+auth_host = controller
+auth_protocol = http
+admin_tenant_name = service
+admin_user = nova
+admin_password = knvbsoinrvrv
+
+In my opinion, the password-based authentication is preferable, since it uses keystone's database backend, and is probably more advanced. Even though, the user name and password are specified in the config file, it is still necessary to provide these data when using the command line client. Probably this is done to provide extra security against unauthorized access from the command line.
+
+
+
+
