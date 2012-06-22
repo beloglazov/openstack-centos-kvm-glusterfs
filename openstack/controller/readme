@@ -1,3 +1,15 @@
+## Nova Configuration
+
+/etc/nova/nova.conf is copied to all compute nodes, as well as to the controller, which runs the other nova services. In other words, there is a single configuration file for the controller and compute nodes. nova.conf should have its owner set to root:nova, for example as follows:
+
+addgroup nova
+usermod -g nova nova
+chown -R root:nova /etc/nova
+chmod 640 /etc/nova/nova.conf
+
+
+## Authentication
+
 Keystone allows two types of authentication for administration action like creating users, tenants, etc: 
 
 1. Using an admin token and admin_port (35357). Example: 
@@ -29,7 +41,4 @@ admin_user = nova
 admin_password = knvbsoinrvrv
 
 In my opinion, the password-based authentication is preferable, since it uses keystone's database backend, and is probably more advanced. Even though, the user name and password are specified in the config file, it is still necessary to provide these data when using the command line client. Probably this is done to provide extra security against unauthorized access from the command line.
-
-
-
 
