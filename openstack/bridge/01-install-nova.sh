@@ -1,3 +1,3 @@
 #!/bin/sh
 
-yum install -y openstack-nova* openstack-utils
+yum install -y openstack-nova* openstack-utils mysql
