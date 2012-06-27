@@ -1,2 +1,3 @@
+openstack/bridge/configrc
 openstack/controller/configrc
 openstack/controller/keystone-admin-token
