@@ -1,0 +1,5 @@
+export MYSQL_NOVA_PASSWORD=novapassword
+export OS_USERNAME=nova
+export OS_PASSWORD=knvbsoinrvrv
+export OS_TENANT_NAME=service
+export OS_AUTH_URL=http://192.168.0.5:5000/v2.0/
