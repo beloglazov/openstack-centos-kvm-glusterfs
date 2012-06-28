@@ -1,3 +1,3 @@
 #!/bin/sh
 
-yum install mysql mysql-server
+yum install -y mysql mysql-server
