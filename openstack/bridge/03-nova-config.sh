@@ -7,4 +7,4 @@ openstack-config --set /etc/nova/nova.conf DEFAULT fixed_range 192.168.0.0/24
 openstack-config --set /etc/nova/nova.conf DEFAULT flat_network_dhcp_start 192.168.0.20
 openstack-config --set /etc/nova/nova.conf DEFAULT flat_interface eth1
 openstack-config --set /etc/nova/nova.conf DEFAULT public_interface eth0
-
+openstack-config --set /etc/nova/nova.conf DEFAULT qpid_hostname controller
