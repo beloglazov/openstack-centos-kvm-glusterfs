@@ -1,4 +1,4 @@
 #!/bin/sh
 
-service ntpd restart
-chkconfig ntpd on
+service ntpdate restart
+chkconfig ntpdate on
