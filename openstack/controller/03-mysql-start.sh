@@ -3,5 +3,6 @@
 service mysqld start
 chkconfig mysqld on
 
-# need to set the root password using:
-# mysqladmin -u root password <new password>
+mysqladmin -u root password $MYSQL_ROOT_PASSWORD
+
+echo "The MySQL root password has been set to the value of $MYSQL_ROOT_PASSWORD"

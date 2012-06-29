@@ -1,19 +1,28 @@
+# MySQL root password
 export MYSQL_ROOT_PASSWORD=mysqlrootpassword
 
-export KEYSTONE_MYSQL_PASSWORD=keystonemysqlpassword
-
-export GLANCE_MYSQL_PASSWORD=glancemysqlpassword
-export GLANCE_SERVICE_USERNAME=glance
-export GLANCE_SERVICE_PASSWORD=glancepassword
-export GLANCE_SERVICE_TENANT=service
-
-export NOVA_MYSQL_PASSWORD=novamysqlpassword
-export NOVA_SERVICE_USERNAME=nova
-export NOVA_SERVICE_PASSWORD=novapassword
-export NOVA_SERVICE_TENANT=service
-
+# The OpenStack admin user account
 export OS_USERNAME=admin
 export OS_PASSWORD=adminpassword
 export OS_TENANT_NAME=admin
 export OS_REGION_NAME=RegionOne
+
+# Keystone settings
+export KEYSTONE_MYSQL_PASSWORD=keystonemysqlpassword
+
+# Glance settings
+export GLANCE_MYSQL_PASSWORD=glancemysqlpassword
+export GLANCE_SERVICE_USERNAME=glance
+export GLANCE_SERVICE_PASSWORD=glancepassword
+
+# Nova settings
+export NOVA_MYSQL_PASSWORD=novamysqlpassword
+export NOVA_SERVICE_USERNAME=nova
+export NOVA_SERVICE_PASSWORD=novapassword
+
+
+# Do NOT change the variables below
+
+export GLANCE_SERVICE_TENANT=service
+export NOVA_SERVICE_TENANT=service
 export OS_AUTH_URL=http://controller:5000/v2.0/
