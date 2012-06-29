@@ -1,0 +1,7 @@
+## nova-network problems
+
+When after starting nova-network, it gets stuck on "Attempting to grab file lock "iptables" for method "apply"", the solution is:
+
+rm /var/lib/nova/tmp/nova-iptables.lock
+
+Source: https://answers.launchpad.net/nova/+question/200985
