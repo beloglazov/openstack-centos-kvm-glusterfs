@@ -21,3 +21,7 @@ openstack-config --set /etc/nova/nova.conf DEFAULT flat_network_dhcp_start 192.1
 openstack-config --set /etc/nova/nova.conf DEFAULT flat_interface eth1
 openstack-config --set /etc/nova/nova.conf DEFAULT flat_network_bridge br100
 openstack-config --set /etc/nova/nova.conf DEFAULT public_interface eth0
+
+
+# Glance setup
+openstack-config --set /etc/nova/nova.conf DEFAULT glance_host controller
