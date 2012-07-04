@@ -77,8 +77,8 @@ Nova runs a metadata service on http://169.254.169.254 that VM instances query t
 
 To enable SSH and ping to VMs, the following commands must be run:
 
-nova secgroup-add-rule default icmp -1 -1 -s 0.0.0.0/0
-nova secgroup-add-rule default tcp 22 22 -s 0.0.0.0/0
+nova secgroup-add-rule default icmp -1 -1 0.0.0.0/0
+nova secgroup-add-rule default tcp 22 22 0.0.0.0/0
 
 I plan to run nova-network in the flat DHCP mode on compute1 and try to assign IP addresses from the same subnet that the other compute nodes are in. The available IP addresses for the VM will be restricted by the flat_network_dhcp_start option, where several starting IP addresses will be used by the physical machines. I'll try to reuse the same bridges that are already created. What I need to do is uninstall the DHCP server and let it be run by nova-network.
 
