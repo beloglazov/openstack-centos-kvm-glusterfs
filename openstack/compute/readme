@@ -1,0 +1,20 @@
+There was a problem when libvirtd could not open char device with the following error message:
+
+15391: error : qemuProcessReadLogOutput:1005 : internal error Process exited while reading console log output: chardev: opening backend "file" failed
+
+And then the following error:
+
+error : qemuProcessReadLogOutput:1005 : internal error Process exited while reading console log output: char device redirected to /dev/pts/3
+qemu-kvm: -drive file=/var/lib/nova/instances/instance-00000015/disk,if=none,id=drive-virtio-disk0,format=qcow2,cache=none: could not open disk image /var/lib/nova/instances/instance-00000015/disk: Permission denied
+
+
+Both the problems have been solved, by setting the user and group in /etc/libvirt/libvirtd.conf as follows:
+
+user = "nova"
+group = "nova"
+
+And also changing the ownership as follows:
+
+chown -R nova:nova /var/cache/libvirt
+chown -R nova:nova /var/run/libvirt
+chown -R nova:nova /var/lib/libvirt
