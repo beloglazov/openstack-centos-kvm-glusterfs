@@ -17,7 +17,6 @@ openstack-config --set /etc/nova/api-paste.ini filter:authtoken auth_uri $NOVA_O
 # Network setup
 openstack-config --set /etc/nova/nova.conf DEFAULT network_host compute1
 openstack-config --set /etc/nova/nova.conf DEFAULT fixed_range 10.0.0.0/24
-#openstack-config --set /etc/nova/nova.conf DEFAULT flat_network_dhcp_start 192.168.0.20
 openstack-config --set /etc/nova/nova.conf DEFAULT flat_interface eth0
 openstack-config --set /etc/nova/nova.conf DEFAULT flat_network_bridge br100
 openstack-config --set /etc/nova/nova.conf DEFAULT public_interface eth0
@@ -25,3 +24,16 @@ openstack-config --set /etc/nova/nova.conf DEFAULT public_interface eth0
 
 # Glance setup
 openstack-config --set /etc/nova/nova.conf DEFAULT glance_host controller
+
+
+# VNC setup
+openstack-config --set /etc/nova/nova.conf DEFAULT vncserver_listen 0.0.0.0
+openstack-config --set /etc/nova/nova.conf DEFAULT vncserver_proxyclient_address controller
+# This is the public IP accessible from outside, where novncproxy is running on
+openstack-config --set /etc/nova/nova.conf DEFAULT novncproxy_host 128.250.26.161
+# This is the public IP accessible from outside, where novncproxy is running on
+openstack-config --set /etc/nova/nova.conf DEFAULT xvpvncproxy_host 128.250.26.161
+
+
+# Metadata service
+openstack-config --set /etc/nova/nova.conf DEFAULT metadata_host 192.168.0.5

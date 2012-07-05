@@ -33,3 +33,7 @@ openstack-config --set /etc/nova/nova.conf DEFAULT vncserver_proxyclient_address
 openstack-config --set /etc/nova/nova.conf DEFAULT novncproxy_host 128.250.26.161
 # This is the public IP accessible from outside, where novncproxy is running on
 openstack-config --set /etc/nova/nova.conf DEFAULT xvpvncproxy_host 128.250.26.161
+
+
+# Metadata service
+openstack-config --set /etc/nova/nova.conf DEFAULT metadata_host 192.168.0.5
