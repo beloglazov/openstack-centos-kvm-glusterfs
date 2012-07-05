@@ -25,3 +25,6 @@ openstack-config --set /etc/nova/nova.conf DEFAULT public_interface eth0
 
 # Glance setup
 openstack-config --set /etc/nova/nova.conf DEFAULT glance_host controller
+
+# VNC setup
+openstack-config --set /etc/nova/nova.conf DEFAULT vncserver_listen 0.0.0.0
