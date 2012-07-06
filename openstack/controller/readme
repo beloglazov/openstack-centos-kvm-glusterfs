@@ -104,3 +104,5 @@ Compute nodes communication with the volume server through iSCSI. The server mus
 The usage of GlusterFS depends on the instances_path option configured in OpenStack. This option specifies the path where VM instances are stored. The default value is /var/lib/nova/instances
 
 The setup consists of mounting a GlusterFS volume into /var/lib/nova/instances. Another option is to mount the GlusterFS volume to another directory and change the instances_path to point to that directory. 
+
+!!! The shared storage must be mounted on the controller as well to pass the test.
