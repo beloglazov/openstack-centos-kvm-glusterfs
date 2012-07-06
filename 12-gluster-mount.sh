@@ -1,5 +1,5 @@
 #!/bin/sh
 
-mkdir /kvm-storage
-echo "localhost:/kvm-storage /kvm-storage glusterfs defaults 0 0" >> /etc/fstab
+mkdir -p /var/lib/nova/instances
+echo "localhost:/kvm-storage /var/lib/nova/instances glusterfs defaults 0 0" >> /etc/fstab
 mount -a
