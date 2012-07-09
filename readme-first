@@ -1,0 +1,3 @@
+yum update
+yum install man nano emacs git
+
