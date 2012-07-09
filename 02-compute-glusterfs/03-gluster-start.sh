@@ -1,4 +1,4 @@
 #!/bin/sh
 
-service glusterd start
+service glusterd restart
 chkconfig glusterd on
