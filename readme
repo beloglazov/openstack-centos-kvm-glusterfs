@@ -1,0 +1,12 @@
+Partitioning for compute nodes:
+
+sda1
+	boot 500M
+sda2
+	vg_computeX
+		lv_root 10000 ext4
+		lv_swap 6000
+		lv_home 4996 ext4
+sda3
+	vg_gluster 216972
+		lv_gluster 215972 xfs
