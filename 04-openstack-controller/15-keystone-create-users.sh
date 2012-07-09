@@ -1,5 +1,7 @@
 #!/bin/sh
 
+yum install -y PyYAML
+
 git clone https://github.com/nimbis/keystone-init.git
 
 sed -i "s/192.168.206.130/controller/g" keystone-init/config.yaml
