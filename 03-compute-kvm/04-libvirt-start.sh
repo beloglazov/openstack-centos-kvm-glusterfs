@@ -1,4 +1,4 @@
 #!/bin/sh
 
-service libvirtd start
+service libvirtd restart
 chkconfig libvirtd on
