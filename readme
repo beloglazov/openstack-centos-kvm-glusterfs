@@ -12,6 +12,8 @@ sda3
 		lv_gluster 215972 xfs
 
 
+During the partitioning for the controller node, the VM image partition must be mounted into: /var/lib/glance/images
+
 
 The following are the initial steps that need to be followed prior to running the installation scripts:
 
