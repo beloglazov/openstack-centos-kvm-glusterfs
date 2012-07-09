@@ -1,0 +1,6 @@
+The following are the initial steps that need to be followed prior to running the installation scripts:
+
+yum update -y
+yum install -y man nano emacs git
+git clone git@github.com:beloglazov/openstack-centos-kvm-glusterfs.git
+
