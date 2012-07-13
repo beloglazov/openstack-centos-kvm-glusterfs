@@ -29,16 +29,11 @@ openstack-config --set /etc/nova/nova.conf DEFAULT glance_host controller
 # VNC setup
 openstack-config --set /etc/nova/nova.conf DEFAULT vncserver_listen 0.0.0.0
 openstack-config --set /etc/nova/nova.conf DEFAULT vncserver_proxyclient_address controller
-# This is the public IP accessible from outside, where novncproxy is running on
-#openstack-config --set /etc/nova/nova.conf DEFAULT novncproxy_host 128.250.26.161
-openstack-config --set /etc/nova/nova.conf DEFAULT novncproxy_base_url http://128.250.26.161:6080/vnc_auto.html
-# This is the public IP accessible from outside, where novncproxy is running on
-#openstack-config --set /etc/nova/nova.conf DEFAULT xvpvncproxy_host 128.250.26.161
-openstack-config --set /etc/nova/nova.conf DEFAULT xvpvncproxy_base_url http://128.250.26.161:6081/console
+# This is the host accessible from outside, where novncproxy is running on
+openstack-config --set /etc/nova/nova.conf DEFAULT novncproxy_base_url http://$PUBLIC_IP_ADDRESS:6080/vnc_auto.html
+# This is the host accessible from outside, where xvpvncproxy is running on
+openstack-config --set /etc/nova/nova.conf DEFAULT xvpvncproxy_base_url http://$PUBLIC_IP_ADDRESS:6081/console
 
 
 # Metadata service
-openstack-config --set /etc/nova/nova.conf DEFAULT metadata_host 192.168.0.5
-
-
-
+openstack-config --set /etc/nova/nova.conf DEFAULT metadata_host $METADATA_HOST

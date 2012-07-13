@@ -20,6 +20,13 @@ export NOVA_MYSQL_PASSWORD=novamysqlpassword
 export NOVA_SERVICE_USERNAME=nova
 export NOVA_SERVICE_PASSWORD=novapassword
 
+# Public IP address of the network gateway
+export PUBLIC_IP_ADDRESS=128.250.26.161
+
+# IP address of the metadata host
+# (in our setup the metadata service is running
+# on the controller)
+export METADATA_HOST=192.168.0.5
 
 # Do NOT change the variables below
 
