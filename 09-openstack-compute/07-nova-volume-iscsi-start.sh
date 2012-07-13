@@ -1,4 +1,4 @@
 #!/bin/sh
 
-service iscsi restart
-chkconfig iscsi on
+#service iscsi restart
+#chkconfig iscsi on
