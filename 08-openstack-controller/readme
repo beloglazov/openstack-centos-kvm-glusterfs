@@ -106,3 +106,8 @@ The usage of GlusterFS depends on the instances_path option configured in OpenSt
 The setup consists of mounting a GlusterFS volume into /var/lib/nova/instances. Another option is to mount the GlusterFS volume to another directory and change the instances_path to point to that directory. 
 
 !!! The shared storage must be mounted on the controller as well to pass the test.
+
+
+## Glance troubleshooting
+
+Sometimes the glance service fails to start on OS boot. The reason might be that it requires some services that are not yet available. The solution is just to restart the glance service.
