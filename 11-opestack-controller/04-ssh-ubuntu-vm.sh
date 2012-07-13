@@ -1,4 +1,5 @@
 #!/bin/sh
 
-# this script accepts an ip address of the instance as a parameter
-ssh -i test.pem -l ubuntu $1
+# This script accepts the IP address of the instance as a parameter
+
+ssh -i ../config/test.pem -l ubuntu $1
