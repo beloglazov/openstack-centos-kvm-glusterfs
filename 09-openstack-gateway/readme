@@ -1,4 +1,4 @@
-We are running nova-network on the gateway instead of the controller, since our controller is not running nova-compute.
+We are running nova-network on the gateway instead of the controller, since our controller is not running nova-compute. This hasn't worked probably because the network configuration of the controller differs from the one of the compute hosts (different network interfaces are used).
 
 ## nova-network problems
 
