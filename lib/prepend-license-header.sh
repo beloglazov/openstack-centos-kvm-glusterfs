@@ -1,7 +1,12 @@
 #!/bin/sh
 
-# This scripts prepends the license header provided in the
+# This script prepends the license header provided in the
 # license-header file to the file specified as an argument
 
+sed -i 's/#!\/bin\/sh//g' $1
+
 DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cat ${DIR}/license-header | cat - $1 > /tmp/out && mv /tmp/out $1
+cp $1 /tmp/out
+cat ${DIR}/license-header > $1
+cat /tmp/out >> $1
+rm -f /tmp/out
