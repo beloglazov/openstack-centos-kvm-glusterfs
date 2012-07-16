@@ -11,8 +11,6 @@ openstack-config --set /etc/nova/api-paste.ini filter:authtoken admin_user $NOVA
 openstack-config --set /etc/nova/api-paste.ini filter:authtoken admin_password $NOVA_SERVICE_PASSWORD
 openstack-config --set /etc/nova/api-paste.ini filter:authtoken auth_uri $NOVA_OS_AUTH_URL
 
-# may also need to set service_host and auth_host to controller
-
 
 # Network setup
 openstack-config --set /etc/nova/nova.conf DEFAULT network_host compute1
