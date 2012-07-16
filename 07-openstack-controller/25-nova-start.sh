@@ -7,7 +7,6 @@ service openstack-nova-consoleauth restart
 service openstack-nova-direct-api restart
 service openstack-nova-metadata-api restart
 service openstack-nova-scheduler restart
-service openstack-nova-network restart
 
 # iSCSI target daemon for nova-volume
 service tgtd restart
@@ -21,6 +20,5 @@ chkconfig openstack-nova-consoleauth on
 chkconfig openstack-nova-direct-api on
 chkconfig openstack-nova-metadata-api on
 chkconfig openstack-nova-scheduler on
-chkconfig openstack-nova-network on
 chkconfig tgtd on
 chkconfig openstack-nova-volume on
