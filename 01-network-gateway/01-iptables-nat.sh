@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Flush the iptables rules. For production it is recommented to open
-# the specifc required ports.
+# the specific required ports.
 iptables -F
 iptables -t nat -F
 iptables -t mangle -F
