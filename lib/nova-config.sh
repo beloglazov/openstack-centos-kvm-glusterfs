@@ -36,4 +36,4 @@ openstack-config --set /etc/nova/nova.conf DEFAULT xvpvncproxy_base_url http://$
 
 
 # Metadata service
-openstack-config --set /etc/nova/nova.conf DEFAULT metadata_host $METADATA_HOST
+#openstack-config --set /etc/nova/nova.conf DEFAULT metadata_host $METADATA_HOST
