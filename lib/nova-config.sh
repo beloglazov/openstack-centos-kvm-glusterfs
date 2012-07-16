@@ -15,7 +15,7 @@ openstack-config --set /etc/nova/api-paste.ini filter:authtoken auth_uri $NOVA_O
 
 
 # Network setup
-openstack-config --set /etc/nova/nova.conf DEFAULT network_host compute1
+openstack-config --set /etc/nova/nova.conf DEFAULT network_host controller
 openstack-config --set /etc/nova/nova.conf DEFAULT fixed_range 10.0.0.0/24
 openstack-config --set /etc/nova/nova.conf DEFAULT flat_interface eth1
 openstack-config --set /etc/nova/nova.conf DEFAULT flat_network_bridge br100
