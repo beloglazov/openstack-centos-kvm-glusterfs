@@ -1,5 +1,13 @@
 #!/bin/sh
 
-# Attach the created volume to an Ubuntu VM instance as /dev/vdc. This
-# script accepts a volume ID as a parameter.
-nova volume-attach ubuntu $1 /dev/vdc
+# Attach the created volume to a VM instance as /dev/vdc.
+
+if [ $# -ne 2 ]
+then
+    echo "You must specify two arguments:"
+    echo "(1) the name of the VM instance"
+    echo "(2) the ID of the volume to attach"
+    exit 1
+fi
+
+nova volume-attach $1 $2 /dev/vdc
