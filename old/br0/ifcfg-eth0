@@ -1,6 +1,0 @@
-DEVICE="eth0"
-NM_CONTROLLED="no"
-ONBOOT="yes"
-BOOTPROTO="dhcp"
-TYPE="Ethernet"
-BRIDGE="br0"
