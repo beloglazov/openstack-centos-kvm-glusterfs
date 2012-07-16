@@ -1,9 +1,13 @@
 #!/bin/sh
 
+# Install PyYAML, a YAML Python library
 yum install -y PyYAML
 
+# Clone a repository with Keystone initialization scripts
 git clone https://github.com/nimbis/keystone-init.git
 
+# Replace the default configuration with the values defined be the
+# environmental variables in configrc
 sed -i "s/192.168.206.130/controller/g" keystone-init/config.yaml
 sed -i "s/012345SECRET99TOKEN012345/`cat keystone-admin-token`/g" keystone-init/config.yaml
 sed -i "s/name:        openstackDemo/name:        $OS_TENANT_NAME/g" keystone-init/config.yaml
@@ -15,6 +19,7 @@ sed -i "s/name:     nova/name:     $NOVA_SERVICE_USERNAME/g" keystone-init/confi
 sed -i "s/password: nova/password: $NOVA_SERVICE_PASSWORD/g" keystone-init/config.yaml
 sed -i "s/RegionOne/$OS_REGION_NAME/g" keystone-init/config.yaml
 
+# Run the Keystone initialization script
 ./keystone-init/keystone-init.py ./keystone-init/config.yaml
 
 echo ""
