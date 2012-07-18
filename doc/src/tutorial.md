@@ -58,12 +58,12 @@ OpenStack services. The management host is referred to as the *controller* furth
 IBM System x3200 M3 servers have been used as *compute hosts*, i.e. for hosting VM instances.
 
 Due to specifics of our setup, the only one machine connected to public network and the Internet is
-one of the IBM System x3200 M3 servers. This server is refereed to as the *bridge*. The bridge is
+one of the IBM System x3200 M3 servers. This server is refereed to as the *gateway*. The gateway is
 connected to the public network via the eth0 network interface.
 
 All the machines are connected into a local network through the Netgear FS116 network switch. The
 compute hosts are connected to the local network via their eth1 network interfaces. The controller
-is connected to the local network through its eth0 interface. The bridge performs Network Address
+is connected to the local network through its eth0 interface. The gateway performs Network Address
 Translation (NAT) for the hosts in the local network to provide the access to the public network and
 the Internet.
 
@@ -76,7 +76,29 @@ the Internet.
 - Script ordering
 
 The project contains a number of directories, whose organization is explained in this section. The
-*config* directory
+`config` directory includes configuration files, which are used by the installation scripts and can
+be modified prior to the installation. The `lib` directory contains utility scripts that are shared
+by the other installation scripts. The `doc` directory comprises the source and compiled versions of
+the documentation.
+
+The remaining directories directly include the step-by-step installation scripts. The names of these
+directories have a specific format. The prefix (before the first dash) is the number denoting the
+order of execution. For example, the scripts from the directory with the prefix *01* must be
+executed first, followed by the scripts from the directory with the prefix *02*, etc. The middle
+part of a directory name denotes the purpose of the scripts in this directory. The suffix (after the
+last dash) specifies the host, on which the scripts from this directory should be executed on. There
+are 4 possible values of the target host prefix:
+
+- *all* -- execute the scripts on all the hosts;
+- *compute* -- execute the scripts on all the compute hosts;
+- *controller* -- execute the scripts on the controller;
+- *gateway* -- execute the scripts on the gateway.
+
+For example, the first directory is named `01-network-gateway`, which means that (1) the scripts from this
+directory must be executed in the first place; (2) the scripts are supposed to do a network set up;
+and (3) the scripts must be executed only on the gateway. The name `02-glusterfs-all` means: (1) the
+scripts from this directory must be executed after the scripts from `01-network-gateway`; (2) the
+scripts set up GlusterFS; and (3) the scripts must be executed on all the hosts.
 
 
 ## Configuration Files
