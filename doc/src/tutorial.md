@@ -100,6 +100,10 @@ and (3) the scripts must be executed only on the gateway. The name `02-glusterfs
 scripts from this directory must be executed after the scripts from `01-network-gateway`; (2) the
 scripts set up GlusterFS; and (3) the scripts must be executed on all the hosts.
 
+The names of the installation scripts themselves follow a similar convention. The prefix denotes the
+order, in which the scripts should be run, while the remaining part of the name describes the
+purpose of the script.
+
 
 ## Configuration Files
 
