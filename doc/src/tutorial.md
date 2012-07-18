@@ -12,6 +12,9 @@
 - OpenStack / Eucalyptus / CloudStack / OpenNebula
 - Complexity of Installing OpenStack
 - Our Step-by-Step Scripted Installation Approach
+- The purpose is not just having an up and running OpenStack installation, but also learning the steps
+  required to perform the installation from the ground up and understanding the responsibilities and
+  interaction of the OpenStack components.
 
 # Comparison of Open Source Cloud Platforms
 
@@ -32,6 +35,7 @@
 - DevStack^[http://devstack.org/]
 - Puppet / Chef^[http://docs.openstack.org/trunk/openstack-compute/admin/content/openstack-compute-deployment-tool-with-puppet.html]
 - Difference From our Approach
+
 
 # Step-by-Step OpenStack Installation
 
@@ -69,11 +73,6 @@ the Internet.
 
 
 ## Organization of the Installation Package
-
-- Config Directory
-- Lib Directory
-- Ordered Script Directories
-- Script ordering
 
 The project contains a number of directories, whose organization is explained in this section. The
 `config` directory includes configuration files, which are used by the installation scripts and can
@@ -113,6 +112,8 @@ purpose of the script.
 
 
 ## Installation Procedure
+
+### CentOS Installation
 
 ### Network Gateway
 
