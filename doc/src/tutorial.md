@@ -36,14 +36,7 @@
 
 ## Hardware Setup
 
-- Servers
-- Network setup
-
-- 4 x IBM System x3200 M3
-	- Intel(R) Xeon(R) CPU (4 cores, 8 threads), X3460 @ 2.80GHz
-	- 4GB DDR3-1333
-	- Western Digital 250 GB, 7200 RPM SATA II (WD2502ABYS-23B7A)
-	- Dual Gigabit Ethernet (2 x Intel 82574L Ethernet Controller)
+The testbed used for testing the installation scripts consists of the following hardware:
 
 - 1 x Dell Optiplex 745
 	- Intel(R) Core(TM)2 CPU (2 cores, 2 threads) 6600 @ 2.40GHz
@@ -51,7 +44,28 @@
 	- Seagate Barracuda 80GB, 7200 RPM SATA II (ST3808110AS)
 	- Broadcom 5751 NetXtreme Gigabit Controller
 
-- NetGear ProSafe 16-Port 10/100 Desktop Switch FS116
+- 4 x IBM System x3200 M3
+	- Intel(R) Xeon(R) CPU (4 cores, 8 threads), X3460 @ 2.80GHz
+	- 4GB DDR3-1333
+	- Western Digital 250 GB, 7200 RPM SATA II (WD2502ABYS-23B7A)
+	- Dual Gigabit Ethernet (2 x Intel 82574L Ethernet Controller)
+
+- 1 x NetGear ProSafe 16-Port 10/100 Desktop Switch FS116
+
+The Dell Optiplex 745 machine has been chosen to serve as a management host running all the major
+OpenStack services. The management host is refered to as the *controller* further in the text. The 4
+IBM System x3200 M3 servers have been used as *compute hosts*, i.e. for hosting VM instances.
+
+Due to specifics of our setup, the only one machine connected to public network and the Internet is
+one of the IBM System x3200 M3 servers. This server is refered to as the *bridge*. The bridge is
+connected to the public network via the eth0 network interface.
+
+All the machines are connected into a local network through the NetGear FS116 network switch. The
+compute hosts are connected to the local network via their eth1 network interfaces. The controller
+is connected to the local network through its eth0 interface. The bridge performs Network Address
+Translation (NAT) for the hosts in the local network to provide the access to the public network and
+the Internet.
+
 
 
 
