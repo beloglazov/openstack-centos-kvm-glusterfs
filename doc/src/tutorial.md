@@ -61,26 +61,26 @@ The testbed used for testing the installation scripts consists of the following 
 
 The Dell Optiplex 745 machine has been chosen to serve as a management host running all the major
 OpenStack services. The management host is referred to as the *controller* further in the text. The 4
-IBM System x3200 M3 servers have been used as *compute hosts*, i.e. for hosting VM instances.
+IBM System x3200 M3 servers are used as *compute hosts*, i.e. for hosting VM instances.
 
 Due to specifics of our setup, the only one machine connected to public network and the Internet is
 one of the IBM System x3200 M3 servers. This server is refereed to as the *gateway*. The gateway is
 connected to the public network via the eth0 network interface.
 
-All the machines are connected into a local network through the Netgear FS116 network switch. The
+All the machines form a local network connected through the Netgear FS116 network switch. The
 compute hosts are connected to the local network via their eth1 network interfaces. The controller
-is connected to the local network through its eth0 interface. The gateway performs Network Address
-Translation (NAT) for the hosts in the local network to provide the access to the public network and
-the Internet.
+is connected to the local network through its eth0 interface. To provide the access to the public
+network and the Internet, the gateway performs Network Address Translation (NAT) for the hosts from
+the local network.
 
 
 ## Organization of the Installation Package
 
 The project contains a number of directories, whose organization is explained in this section. The
-`config` directory includes configuration files, which are used by the installation scripts and can
-be modified prior to the installation. The `lib` directory contains utility scripts that are shared
-by the other installation scripts. The `doc` directory comprises the source and compiled versions of
-the documentation.
+`config` directory includes configuration files, which are used by the installation scripts and
+should be modified prior to the installation. The `lib` directory contains utility scripts that are
+shared by the other installation scripts. The `doc` directory comprises the source and compiled
+versions of the documentation.
 
 The remaining directories directly include the step-by-step installation scripts. The names of these
 directories have a specific format. The prefix (before the first dash) is the number denoting the
@@ -108,9 +108,43 @@ purpose of the script.
 
 ## Configuration Files
 
-- configrc
-- hosts
-- ntp.conf
+The `lib` directory contains configuration files used by the installation scripts. These
+configuration files should be modified prior to running the installation scripts. The configuration
+files are described below.
+
+
+  `configrc:`
+
+  :    This files contains a number of environmental variables defining various aspects of OpenStack's
+       configuration, such as administration and service account credentials, as well as access
+       points. The file must be 'sourced' to export the variables into the current shell session.
+       The file can be sourced directly by running: `. configrc`, or using the scripts described
+       later. A simple test to check whether the variables have been correctly exported is to `echo`
+       any of the variables. For example, `echo \$OS_USERNAME` must output `admin` for the
+       default configuration.
+
+  `hosts:`
+
+  :    This files contains a mapping between the IP addresses of the hosts in the local network and
+       their host names. We apply the following host name convention: the compute hosts are named
+       *computeX*, where *X* is replaced by the number of the host. According the described hardware
+       setup, the default configuration defines 1 `controller` (192.168.0.1), and 4 compute hosts:
+       `compute1` (192.168.0.1), `compute2` (192.168.0.2), `compute3` (192.168.0.3), `compute4`
+       (192.168.0.4). As mentioned above, in our setup one of the compute hosts is connected to the
+       public network and acts as a gateway. We assign to this host the host name `compute1`, and
+       also alias it as `gateway`.
+
+
+  `ntp.conf:`
+
+  :    This files contains a list of Network Time Protocol (NTP) servers to use by all the hosts. It
+       is important to set accessible servers, since time synchronization is important for OpenStack
+       services to interact correctly. By default, this file defines servers used within the
+       University of Melbourne. It is advised to replace the default configuration with a list of
+       preferred servers.
+
+It is important to replaced the default configuration defined in the described configuration files,
+since the default configuration is tailored to the specific setup of our testbed.
 
 
 ## Installation Procedure
