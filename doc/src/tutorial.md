@@ -400,6 +400,46 @@ service iptables restart
 ```
 
 
+(@) `02-selinux-permissive.sh`
+
+This script switches SELinux^[http://en.wikipedia.org/wiki/Security-Enhanced_Linux] into the
+permissive mode. By default, SELinux blocks certain operations, such as VM migrations. Switching
+SELinux into the permissive mode is not recommended for production environments, but is acceptable
+for testing purposes.
+
+```Bash
+# Set SELinux into the permissive mode
+sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
+echo 0 > /selinux/enforce
+```
+
+
+(@) `03-glusterfs-install.sh`
+
+This script installs GlusterFS services and their dependencies.
+
+```Bash
+# Install GlusterFS and its dependencies
+yum -y install \
+    openssh-server wget fuse fuse-libs openib libibverbs \
+	http://download.gluster.org/pub/gluster/glusterfs/LATEST/CentOS/glusterfs-3.3.0-1.el6.x86_64.rpm \
+	http://download.gluster.org/pub/gluster/glusterfs/LATEST/CentOS/glusterfs-fuse-3.3.0-1.el6.x86_64.rpm \
+	http://download.gluster.org/pub/gluster/glusterfs/LATEST/CentOS/glusterfs-server-3.3.0-1.el6.x86_64.rpm
+```
+
+
+(@) `04-glusterfs-start.sh`
+
+This script starts the GlusterFS service, and sets the service to start on the system start up.
+
+```Bash
+# Start the GlusterFS service
+service glusterd restart
+chkconfig glusterd on
+```
+
+
+
 
 #### Controller
 #### All nodes
