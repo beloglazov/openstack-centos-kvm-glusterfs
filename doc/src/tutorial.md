@@ -1226,61 +1226,107 @@ chkconfig openstack-nova-volume on
 
 The scripts described in this section should be run on the compute hosts.
 
-(@) ``
+(@) `01-source-configrc.sh`
 
-
+This scripts is mainly used to remind of the necessity to "source" the `configrc` file prior to
+continuing, since some scripts in this directory use the environmental variable defined in
+`configrc`. To source the file, it is necessary to run the following command `. 01-source-configrc.sh`.
 
 ```Bash
+echo "To make the environmental variables available \
+    in the current session, run: "
+echo ". 01-source-configrc.sh"
 
+# Export the variables defined in ../config/configrc
+. ../config/configrc
 ```
 
 
-(@) ``
+(@) `02-install-nova.sh`
 
-
+This script installs OpenStack Nova and OpenStack utilities.
 
 ```Bash
-
+# Install OpenStack Nova and utils
+yum install -y openstack-nova* openstack-utils
 ```
 
 
-(@) ``
+(@) `03-nova-permissions.sh`
 
-
+This script sets restrictive permissions (640) on the Nova configuration file, since it contains
+sensitive information, such as user credentials. Then, the script sets the ownership on the Nova and
+Libvirt related directories to the `nova` user and `nova` group. The script also sets the user and
+group used by the Quick EMUlator^[http://en.wikipedia.org/wiki/QEMU] (QEMU) service to `nova`. This
+is required since a number of directories need to accessed by both Nova using the `nova` user and
+`nova` group, and QEMU.
 
 ```Bash
+# Set restrictive permissions for the Nova config file
+chmod 640 /etc/nova/nova.conf
 
+# Set the ownership for the Nova related directories
+chown -R root:nova /etc/nova
+chown -R nova:nova /var/lib/nova
+chown -R nova:nova /var/cache/libvirt
+chown -R nova:nova /var/run/libvirt
+chown -R nova:nova /var/lib/libvirt
+
+# Make Qemu run under the nova user and group
+sed -i 's/#user = "root"/user = "nova"/g' /etc/libvirt/qemu.conf
+sed -i 's/#group = "root"/group = "nova"/g' /etc/libvirt/qemu.conf
 ```
 
 
-(@) ``
+(@) `04-nova-config.sh`
 
-
+This scripts invokes the Nova configuration script provided in the `lib` directory, which has been
+detailed above.
 
 ```Bash
-
+# Run the Nova configuration script
+# defined in ../lib/nova-config.sh
+../lib/nova-config.sh
 ```
 
 
-(@) ``
+(@) `05-nova-compute-start.sh`
 
-
-
-```Bash
-
-```
-
-
-(@) ``
-
-
+First, this script restarts the Libvirt service since its configuration has been modified. Then, the
+script starts Nova compute service and sets it to automatically start during the system start up.
 
 ```Bash
-
+# Start the libvirt and Nova services
+service libvirtd restart
+service openstack-nova-compute restart
+chkconfig openstack-nova-compute on
 ```
 
 
 #### 09-openstack-gateway (network gateway)
+
+This scripts described in this section need to be run only on the gateway.
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+
 #### 10-openstack-controller (controller)
 
 
