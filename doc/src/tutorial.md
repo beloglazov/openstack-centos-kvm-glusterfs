@@ -990,57 +990,176 @@ chkconfig openstack-glance-api on
 ```
 
 
-(@) ``
+(@) `18-add-cirros.sh`
 
-
+This script downloads the Cirros VM image^[https://launchpad.net/cirros/] and imports it into
+Glance. This image is very simplistic: its size is just 9.4 MB; however, it is sufficient for
+testing OpenStack.
 
 ```Bash
+# Download the Cirros VM image
+mkdir /tmp/images
+cd /tmp/images
+wget https://launchpad.net/cirros/trunk/0.3.0/+download/cirros-0.3.0-x86_64-disk.img
 
+# Add the downloaded image to Glance
+glance add name="cirros-0.3.0-x86_64" is_public=true \
+    disk_format=qcow2 container_format=bare < cirros-0.3.0-x86_64-disk.img
+
+# Remove the temporary directory
+rm -rf /tmp/images
 ```
 
 
-(@) ``
+(@) `19-add-ubuntu.sh`
 
-
+This script download the Ubuntu Cloud Image^[http://uec-images.ubuntu.com/] and imports it into
+Glance. This is a VM image with a pre-installed version of Ubuntu that is customized by Ubuntu
+engineering to run on cloud-platforms such as Openstack, Amazon EC2, and LXC.
 
 ```Bash
+# Download an Ubuntu Cloud image
+mkdir /tmp/images
+cd /tmp/images
+wget http://uec-images.ubuntu.com/precise/current/precise-server-cloudimg-amd64-disk1.img
 
+# Add the downloaded image to Glance
+glance add name="ubuntu" is_public=true disk_format=qcow2 \
+    container_format=bare < precise-server-cloudimg-amd64-disk1.img
+
+# Remove the temporary directory
+rm -rf /tmp/images
 ```
 
 
-(@) ``
+(@) `20-nova-install.sh`
 
-
+This script install Nova -- the OpenStack compute service, as well as the Qpid AMQP message broker.
+The message broker is required by the OpenStack services to communicate with each other.
 
 ```Bash
-
+# Install OpenStack Nova (compute service)
+# and the Qpid AMQP message broker
+yum install -y openstack-nova* qpid-cpp-server
 ```
 
 
-(@) ``
+(@) `21-nova-create-db.sh`
 
-
+This script creates a MySQL database for Nova called `nova`, which is used to store VM instance
+metadata. The script also creates a `nova` user and grants full permissions to the `nova` database
+to this user. The script also enables the access to the database from hosts other than controller.
 
 ```Bash
+# Create a database for Nova
+../lib/mysqlq.sh "CREATE DATABASE nova;"
 
+# Create a nova user and grant all privileges
+# to the nova database
+../lib/mysqlq.sh "GRANT ALL ON nova.* TO 'nova'@'controller' \
+    IDENTIFIED BY '$NOVA_MYSQL_PASSWORD';"
+
+# The following is need to allow access
+# from Nova services running on other hosts
+../lib/mysqlq.sh "GRANT ALL ON nova.* TO 'nova'@'%' \
+    IDENTIFIED BY '$NOVA_MYSQL_PASSWORD';"
 ```
 
 
-(@) ``
+(@) `22-nova-permissions.sh`
 
-
+This script sets restrictive permissions on the Nova configuration file, since it contains sensitive
+information, such as user credentials. The script also sets the ownership of the Nova related
+directories to the `nova` group.
 
 ```Bash
+# Set restrictive permissions for the Nova config file
+chmod 640 /etc/nova/nova.conf
 
+# Set the ownership for the Nova related directories
+chown -R root:nova /etc/nova
+chown -R nova:nova /var/lib/nova
 ```
 
 
-(@) ``
+(@) `23-nova-config.sh`
 
-
+This scripts invokes the Nova configuration script provided in the `lib` directory, since it is
+shared by the scripts setting up Nova on all the controller, and the compute hosts.
 
 ```Bash
+# Run the Nova configuration script
+# defined in ../lib/nova-config.sh
+../lib/nova-config.sh
+```
 
+The content of the `nova-config.sh` script is given below:
+
+```Bash
+# This is a Nova configuration shared
+# by the compute hosts, gateway and controller
+
+# Enable verbose output
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+    verbose True
+
+# Set the connection to the MySQL server
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+    sql_connection mysql://nova:$NOVA_MYSQL_PASSWORD@controller/nova
+
+# Make Nova use Keystone as the identity management service
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+    auth_strategy keystone
+
+# Set the host name of the Qpid AMQP message broker
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+    qpid_hostname controller
+
+# Set Nova user credentials
+openstack-config --set /etc/nova/api-paste.ini filter:authtoken \
+    admin_tenant_name $NOVA_SERVICE_TENANT
+openstack-config --set /etc/nova/api-paste.ini filter:authtoken \
+    admin_user $NOVA_SERVICE_USERNAME
+openstack-config --set /etc/nova/api-paste.ini filter:authtoken \
+    admin_password $NOVA_SERVICE_PASSWORD
+openstack-config --set /etc/nova/api-paste.ini filter:authtoken \
+    auth_uri $NOVA_OS_AUTH_URL
+
+# Set the network configuration
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+    network_host compute1
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+    fixed_range 10.0.0.0/24
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+    flat_interface eth1
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+    flat_network_bridge br100
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+    public_interface eth1
+
+# Set the Glance host name
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+    glance_host controller
+
+# Set the VNC configuration
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+    vncserver_listen 0.0.0.0
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+    vncserver_proxyclient_address controller
+
+# This is the host accessible from outside,
+# where novncproxy is running on
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+    novncproxy_base_url http://$PUBLIC_IP_ADDRESS:6080/vnc_auto.html
+
+# This is the host accessible from outside,
+# where xvpvncproxy is running on
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+    xvpvncproxy_base_url http://$PUBLIC_IP_ADDRESS:6081/console
+
+# Set the host name of the metadata service
+openstack-config --set /etc/nova/nova.conf DEFAULT \
+    metadata_host $METADATA_HOST
 ```
 
 
