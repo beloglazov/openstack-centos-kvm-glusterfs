@@ -1162,71 +1162,124 @@ openstack-config --set /etc/nova/nova.conf DEFAULT \
     metadata_host $METADATA_HOST
 ```
 
+Apart from user credentials, the script configures a few other important options:
 
-(@) ``
+- the identity management service -- Keystone;
+- the Qpid server host name -- controller;
+- the host running the Nova network service -- compute1 (i.e. gateway);
+- the network used for VMs -- 10.0.0.0/24;
+- the network interface used to bridge VMs to -- eth1;
+- the Linux bridge used by VMs -- br100;
+- the public network interface -- eth1;
+- the Glance service host name -- controller;
+- the VNC server host name -- controller;
+- the IP address of the host running VNC proxies (they must be run on the host that can be accessed
+  from outside; in our setup it is gateway) -- `$PUBLIC_IP_ADDRESS`;
+- the Nova metadata service host name -- controller.
 
 
+(@) `24-nova-init-db.sh`
+
+This scripts initializes the `nova` database using the `nova-manage` command line tool.
 
 ```Bash
-
+# Initialize the database for Nova
+nova-manage db sync
 ```
 
 
-(@) ``
+(@) `25-nova-start.sh`
 
-
-
-```Bash
-
-```
-
-
-(@) ``
-
-
+This script starts various Nova services, as well as their dependencies: the Qpid AMQP message
+broker, and iSCSI target daemon used by the `nova-volume` service.
 
 ```Bash
+# Start the Qpid AMQP message broker
+service qpidd restart
 
-```
+# iSCSI target daemon for nova-volume
+service tgtd restart
 
+# Start OpenStack Nova services
+service openstack-nova-api restart
+service openstack-nova-cert restart
+service openstack-nova-consoleauth restart
+service openstack-nova-direct-api restart
+service openstack-nova-metadata-api restart
+service openstack-nova-scheduler restart
+service openstack-nova-volume restart
 
-(@) ``
-
-
-
-```Bash
-
-```
-
-
-(@) ``
-
-
-
-```Bash
-
-```
-
-
-(@) ``
-
-
-
-```Bash
-
-```
-
-
-(@) ``
-
-
-
-```Bash
-
+# Make the service start on the system startup
+chkconfig qpidd on
+chkconfig tgtd on
+chkconfig openstack-nova-api on
+chkconfig openstack-nova-cert on
+chkconfig openstack-nova-consoleauth on
+chkconfig openstack-nova-direct-api on
+chkconfig openstack-nova-metadata-api on
+chkconfig openstack-nova-scheduler on
+chkconfig openstack-nova-volume on
 ```
 
 
 #### 08-openstack-compute (compute nodes)
+
+The scripts described in this section should be run on the compute hosts.
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
 #### 09-openstack-gateway (network gateway)
 #### 10-openstack-controller (controller)
 
