@@ -224,7 +224,7 @@ group since the controller is not going to be a part of the GlusterFS volume. Ho
 includes two new important volume groups: `nova-volumes` and `vg_images`. The `nova-volumes` volume
 group is used by OpenStack Nova to allocated volumes for VM instances. This volume group is managed
 by Nova; therefore, there is not need to create logical volumes manually. The `vg_images` volume
-group and its `lv_images` logical volume are dedicated for storing VM images by OpenStack Glance.
+group and its `lv_images` logical volume are devoted for storing VM images by OpenStack Glance.
 The mount point for `lv_images` is `/var/lib/glance/images`, which is the default directory used by
 Glance to store image files.
 
@@ -494,12 +494,51 @@ modified.
 ```Bash
 # Mount the GlusterFS volume
 mkdir -p /var/lib/nova/instances
-echo "localhost:/vm-instances /var/lib/nova/instances glusterfs defaults 0 0" >> /etc/fstab
+echo "localhost:/vm-instances /var/lib/nova/instances glusterfs defaults 0 0" \
+    >> /etc/fstab
 mount -a
 ```
 
 
 ### KVM
+
+The scripts included in the `05-kvm-compute` directory need to be run on the compute hosts. KVM is
+not required on the controller, since it is not going to be used to host VM instances.
+
+
+(@) `01-kvm-install.sh`
+
+This script installs KVM and the related tools.
+
+```Bash
+# Install KVM and the related tools
+yum -y install kvm qemu-kvm qemu-kvm-tools
+```
+
+
+(@) `02-kvm-modprobe.sh`
+
+Prior to enabling KVM on a machine, it is important to make sure that the machine supports hardware
+virtualization. To enable KVM on a machine
+
+```Bash
+# Create a script for enabling the KVM kernel module
+echo "
+modprobe kvm
+
+# Uncomment this line if the host has an AMD CPU
+#modprobe kvm-amd
+
+# Uncomment this line if the host has an Intel CPU
+modprobe kvm-intel
+" > /etc/sysconfig/modules/kvm.modules
+
+chmod +x /etc/sysconfig/modules/kvm.modules
+
+# Enable KVM
+/etc/sysconfig/modules/kvm.modules
+```
+
 
 ### OpenStack
 
