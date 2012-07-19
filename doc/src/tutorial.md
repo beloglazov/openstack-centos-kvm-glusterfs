@@ -1308,29 +1308,236 @@ chkconfig openstack-nova-compute on
 This scripts described in this section need to be run only on the gateway.
 
 
-(@) ``
+(@) `01-source-configrc.sh`
 
-
+This scripts is mainly used to remind of the necessity to "source" the `configrc` file prior to
+continuing, since some scripts in this directory use the environmental variable defined in
+`configrc`. To source the file, it is necessary to run the following command `. 01-source-configrc.sh`.
 
 ```Bash
+echo "To make the environmental variables available \
+    in the current session, run: "
+echo ". 01-source-configrc.sh"
 
+# Export the variables defined in ../config/configrc
+. ../config/configrc
 ```
 
 
-(@) ``
+(@) `02-nova-start.sh`
 
-
+It is assumed that the gateway host is one of the compute hosts; therefore, the OpenStack compute
+service has already been configured and is running. This scripts starts 3 additional Nova services
+that are specific to the gateway host: `openstack-nova-network`, `openstack-nova-novncproxy`, and
+`openstack-nova-xvpvncproxy`. The `openstack-nova-network` service is responsible for bridging VM
+instances into the physical network, and configuring the
+Dnsmasq^[http://en.wikipedia.org/wiki/Dnsmasq] service for assigning IP addresses to the VMs. The
+VNC proxy services enable VNC connections to VM instances from the outside network; therefore, they
+must be run on a machine that has access to the public network, which is the gateway in our case.
 
 ```Bash
+# Start the libvirt and Nova services
+# (network, compute and VNC proxies)
+service libvirtd restart
+service openstack-nova-network restart
+service openstack-nova-compute restart
+service openstack-nova-novncproxy restart
+service openstack-nova-xvpvncproxy restart
 
+# Make the service start on the system start up
+chkconfig openstack-nova-network on
+chkconfig openstack-nova-compute on
+chkconfig openstack-nova-novncproxy on
+chkconfig openstack-nova-xvpvncproxy on
 ```
 
+
+(@) `03-nova-network-create.sh`
+
+This service creates a Nova network 10.0.0.0/24, which is used to allocate IP addresses from by
+Dnsmasq to VM instances. The created network is configured to use the `br100` Linux bridge to
+connect VM instances to the physical network.
+
+```Bash
+# Create a Nova network for VM instances: 10.0.0.0/24
+nova-manage network create --label=public --fixed_range_v4=10.0.0.0/24 \
+    --num_networks=1 --network_size=256 --bridge=br100
+```
+
+
+(@) `04-nova-secgroup-add.sh`
+
+This script adds two rules to the default OpenStack security group. The first rule enables the
+Internet Control Message Protocol (ICMP) for VM instances (the ping command). The second rule
+enables TCP connection via the 22 port, which is used by SSH.
+
+```Bash
+# Enable ping for VMs
+nova secgroup-add-rule default icmp -1 -1 0.0.0.0/0
+
+# Enable SSH for VMs
+nova secgroup-add-rule default tcp 22 22 0.0.0.0/0
+```
+
+
+(@) `05-dashboard-install.sh`
+
+This script installs the OpenStack dashboard. The OpenStack dashboard provides a web-interface to
+managing an OpenStack environment. Since the dashboard is supposed to be accessed from outside, this
+service must be installed on a host that has access to the public network, which is the gateway in
+our setup.
+
+```Bash
+# Install OpenStack Dashboard
+yum install -y openstack-dashboard
+```
+
+
+(@) `06-dashboard-config.sh`
+
+This script configures the OpenStack dashboard. Particularly, the script sets the
+`OPENSTACK_HOST` configuration option denoting the host name of the management host to `controller`.
+The script also sets the default Keystone role to the value of the `$OS_TENANT_NAME` environmental
+variable.
+
+```Bash
+# Set the OpenStack management host
+sed -i 's/OPENSTACK_HOST = "127.0.0.1"/OPENSTACK_HOST = "controller"/g' \
+    /etc/openstack-dashboard/local_settings
+
+# Set the Keystone default role
+sed -i "s/OPENSTACK_KEYSTONE_DEFAULT_ROLE = \"Member\"/OPENSTACK_KEYSTONE_DEFAULT_ROLE = \"$OS_TENANT_NAME\"/g" \
+    /etc/openstack-dashboard/local_settings
+```
+
+
+(@) `07-dashboard-start.sh`
+
+This script starts the httpd service, which is a web server configured to serve the OpenStack
+dashboard. The script also sets the httpd service to start automatically during the system start up.
+Once the service is started, the dashboard will be available at `http://localhost/dashboard`, where
+'localhost' should be replaced by the public IP address of the gateway host for accessing the
+dashboard from the outside network.
+
+```Bash
+# Start the httpd service.
+service httpd restart
+chkconfig httpd on
+```
+
+At this point the installation of OpenStack can be considered completed. The next steps are only for
+testing the environment.
 
 
 #### 10-openstack-controller (controller)
 
+The scripts described in this section need to be run only on the controller. These scripts are not a
+part of the installation process and are only used for testing the correctness of the performed
+OpenStack installation.
 
-### Testing of the OpenStack Installation
+
+(@) `01-source-configrc.sh`
+
+This scripts is mainly used to remind of the necessity to "source" the `configrc` file prior to
+continuing, since some scripts in this directory use the environmental variable defined in
+`configrc`. To source the file, it is necessary to run the following command `. 01-source-configrc.sh`.
+
+```Bash
+echo "To make the environmental variables available \
+    in the current session, run: "
+echo ". 01-source-configrc.sh"
+
+# Export the variables defined in ../config/configrc
+. ../config/configrc
+```
+
+
+(@) `02-boot-cirros.sh`
+
+This script creates a VM instance using the Cirros image added to Glance previously.
+
+```Bash
+# Create a VM instance from the Cirros image
+nova boot --image cirros-0.3.0-x86_64 --flavor m1.small cirros
+```
+
+
+(@) `03-keypair-add.sh`
+
+This script creates a key pair, which is injected by OpenStack into VMs to allow password-less SSH
+connections. The generated private key is save into the `../config/test.pem` file.
+
+```Bash
+# Create a key pair
+nova keypair-add test > ../config/test.pem
+chmod 600 ../config/test.pem
+```
+
+
+(@) `04-boot-ubuntu.sh`
+
+This script creates a VM instance using the Ubuntu Cloud image added to Glance previously. The
+executed command instructs OpenStack to inject the previously generated public key called `test` to
+allow password-less SSH connections.
+
+```Bash
+# Create a VM instance from the Ubuntu Cloud image
+nova boot --image ubuntu --flavor m1.small --key_name test ubuntu
+```
+
+
+(@) `05-ssh-into-vm.sh`
+
+This script shows how to SSH into a VM instance, which has been injected with the previously
+generated `test` key. The script accepts one argument: the IP address of the VM instance.
+
+```Bash
+# SSH into a VM instance using the generated test.pem key.
+
+if [ $# -ne 1 ]
+then
+    echo "You must specify one arguments - \
+	    the IP address of the VM instance"
+    exit 1
+fi
+
+ssh -i ../config/test.pem -l test $1
+```
+
+
+(@) `06-nova-volume-create.sh`
+
+This script shows how to create a 2 GB Nova volume called `myvolume`. Once created, the volume can
+be dynamically attached to a VM instance, as shown in the next script.
+
+```Bash
+# Create a 2GB volume called myvolume
+nova volume-create --display_name myvolume 2
+```
+
+
+(@) `07-nova-volume-attach.sh`
+
+This script shows how to attached a volume to a VM instance. The script accepts two arguments: (1)
+the name of the VM instance to attach the volume to; and (2) the ID of the volume to attach to the
+VM instance. Once attached, the volume will be available inside the VM instance as the `/dev/vdc/
+device. The volume is provided as a block storage, which means it has be formatted before it can be
+used.
+
+```Bash
+# Attach the created volume to a VM instance as /dev/vdc.
+
+if [ $# -ne 2 ]
+then
+    echo "You must specify two arguments:"
+    echo "(1) the name of the VM instance"
+    echo "(2) the ID of the volume to attach"
+    exit 1
+fi
+
+nova volume-attach $1 $2 /dev/vdc
+```
+
 
 ## OpenStack Troubleshooting
 
