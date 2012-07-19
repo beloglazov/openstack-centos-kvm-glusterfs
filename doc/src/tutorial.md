@@ -461,7 +461,7 @@ gluster peer probe compute4
 This scripts creates a GlusterFS volume out of bricks exported by the compute hosts mounted to
 `/export/gluster` for storing VM instances. The created GlusterFS volume is replicated across all
 the 4 compute hosts. Such replication provides fault tolerance, as if any of the compute hosts fail,
-the VM instance data will be available from the remaining replicas. Compared to Network File System
+the VM instance data will be available from the remaining replicas. Compared to a Network File System
 (NFS) exported by a single server, the complete replication provided by GlusterFS improves the read
 performance, since all the read operations are local. This is important to enable efficient live
 migration of VMs.
@@ -477,7 +477,27 @@ gluster volume start vm-instances
 ```
 
 
-#### All nodes
+#### 04-glusterfs-all (all nodes)
+
+The script described in this section needs to be run on all the hosts.
+
+
+(@) `01-glusterfs-mount.sh`
+
+This scripts adds a line to the `/etc/fstab` configuration file to automatically mount the GlusterFS
+volume on the system start up to the `/var/lib/nova/instances` directory. The
+`/var/lib/nova/instances` directory is the default location where OpenStack Nova stores the VM
+instances related data. This directory must be shared be all the compute hosts to enable live
+migration of VMs. The `mount -a` command re-mounts everything from the config file after it has been
+modified.
+
+```Bash
+# Mount the GlusterFS volume
+mkdir -p /var/lib/nova/instances
+echo "localhost:/vm-instances /var/lib/nova/instances glusterfs defaults 0 0" >> /etc/fstab
+mount -a
+```
+
 
 ### KVM
 
