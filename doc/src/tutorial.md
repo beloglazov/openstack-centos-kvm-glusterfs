@@ -269,7 +269,108 @@ Table: Partitioning scheme for the controller
 
 ### Network Gateway
 
+Once CentOS is installed on all the machines, the next step is to configure NAT on the gateway to
+enable the Internet access on all the hosts. First, it is necessary to check whether the Internet
+is available on the gateway itself. If the Internet is not available, the problem might be in the
+configuration of eth0, the network interface connected to the public network in our setup.
 
+If the Internet is available on the gateway, it is necessary to install
+Git^[http://en.wikipedia.org/wiki/Git_(software)] to be able to clone the repository containing the
+installation scripts. This can be done using yum, the default package manager in CentOS, as follows:
+
+```Bash
+yum install -y git
+```
+
+Next, the repository can be clone using the following command:
+
+```Bash
+git clone https://github.com/beloglazov/openstack-centos-kvm-glusterfs.git
+```
+
+Then, we can proceed to continue the configuration using the scripts contained in the cloned Git
+repository. As described above, the starting point is the directory called `01-network-gateway`.
+
+```Bash
+cd openstack-centos-kvm-glusterfs/01-network-gateway
+```
+
+All the scripts described below can be run by executing `./<script name>.sh` on the command line.
+
+
+(@) `01-iptables-nat.sh`
+
+This script flushes all the default `iptables` rules to open all ports. This is acceptable for
+testing; however, it is not recommended for production environments due to security concerns. Then,
+the script sets up NAT using `iptables` by forwarding packets from eth1 (the local network
+interface) through eth0. The last stage is saving the defined `iptables` rules restarting the service.
+
+```Bash
+# Flush the iptables rules.
+iptables -F
+iptables -t nat -F
+iptables -t mangle -F
+
+# Set up packet forwarding for NAT
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+iptables -A FORWARD -i eth1 -j ACCEPT
+iptables -A FORWARD -o eth1 -j ACCEPT
+
+# Save the iptables configuration into a file and restart iptables
+service iptables save
+service iptables restart
+```
+
+(@) `02-ip-forward.sh`
+
+By default, IP packet forwarding is disabled in CentOS; therefore, it is necessary to enable it by
+modifying the `/etc/sysctl.conf` configuration file. This is done by the `02-ip-forward.sh` script
+as follows:
+
+```Bash
+# Enable IP packet forwarding
+sed -i 's/net.ipv4.ip_forward = 0/net.ipv4.ip_forward = 1/g' \
+    /etc/sysctl.conf
+
+# Restart the network service
+service network restart
+```
+
+(@) `03-copy-hosts.sh`
+
+This script copies the `hosts` file from the `config` directory to `/etc` locally, as well to all
+the other hosts: the remaining compute hosts and the controller. The `hosts` files defines a mapping
+between the IP addresses of the hosts and host names. For convenience, prior to copying you may use
+the `ssh-copy-id` command to copy the public key to the other hosts for password-less SSH access.
+Once the `hosts` file is copied to all the hosts, they can be accessed by using their respective
+host name instead of the IP addresses.
+
+```Bash
+# Copy the hosts file into the local configuration
+cp ../config/hosts /etc/
+
+# Copy the hosts file to the other nodes.
+scp ../config/hosts root@compute2:/etc/
+scp ../config/hosts root@compute3:/etc/
+scp ../config/hosts root@compute4:/etc/
+scp ../config/hosts root@controller:/etc/
+
+```
+
+
+
+it is necessary to perform a few steps prior to being
+able to start using the installation script. First of all, it important to check if the Internet is
+working on all the machines. If it does not, the problem might be in either the configuration of the
+network interfaces on that machine, or wrong
+
+
+The following are the initial steps that need to be followed prior to
+running the installation scripts:
+
+yum update -y
+yum install -y man nano emacs git
+git clone git@github.com:beloglazov/openstack-centos-kvm-glusterfs.git
 
 
 ### GlusterFS Distributed Replicated Storage
