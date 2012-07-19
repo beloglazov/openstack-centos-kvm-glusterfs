@@ -738,7 +738,7 @@ yum install -y openstack-utils openstack-keystone
 (@) `05-keystone-create-db.sh`
 
 This script creates a MySQL database for Keystone called `keystone`, which is used to store various
-identity data. The script also create a `keystone` user and grants full permissions to the
+identity data. The script also creates a `keystone` user and grants full permissions to the
 `keystone` database to this user.
 
 ```Bash
@@ -765,105 +765,228 @@ openssl rand -hex 10 > keystone-admin-token
 
 (@) `07-keystone-config.sh`
 
-
+This script modifies the configuration file of Keystone, `/etc/keystone/keystone.conf`. It sets the
+generated admin token and the MySQL connection configuration using the variables defined in `configrc`.
 
 ```Bash
 # Set the generated admin token in the Keystone configuration
-openstack-config --set /etc/keystone/keystone.conf DEFAULT admin_token `cat keystone-admin-token`
+openstack-config --set /etc/keystone/keystone.conf DEFAULT \
+    admin_token `cat keystone-admin-token`
 
 # Set the connection to the MySQL server
-openstack-config --set /etc/keystone/keystone.conf sql connection mysql://keystone:$KEYSTONE_MYSQL_PASSWORD@controller/keystone
+openstack-config --set /etc/keystone/keystone.conf sql \
+    connection mysql://keystone:$KEYSTONE_MYSQL_PASSWORD@controller/keystone
 
 ```
 
 
-(@) ``
+(@) `08-keystone-init-db.sh`
 
-
+This script initializes the `keystone` database using the `keystone-manage` command line tool. The
+executed command creates tables in the database.
 
 ```Bash
-
+# Initialize the database for Keystone
+keystone-manage db_sync
 ```
 
 
-(@) ``
+(@) `09-keystone-permissions.sh`
 
-
+This script sets restrictive permissions (640) on the Keystone configuration file, since it contains
+the MySQL account credentials and the admin token. Then, the scripts sets the ownership of the
+Keystone related directories to the `keystone` user and `keystone` group.
 
 ```Bash
+# Set restrictive permissions on the Keystone config file
+chmod 640 /etc/keystone/keystone.conf
 
+# Set the ownership for the Keystone related directories
+chown -R keystone:keystone /var/log/keystone
+chown -R keystone:keystone /var/lib/keystone
 ```
 
 
-(@) ``
+(@) `10-keystone-start.sh`
 
-
+This script starts the Keystone service and sets it to automatically start during the system start up.
 
 ```Bash
-
+# Start the Keystone service
+service openstack-keystone restart
+chkconfig openstack-keystone on
 ```
 
 
-(@) ``
+(@) `11-keystone-create-users.sh`
 
+The purpose of this script is to create user accounts, roles and tenants in Keystone for the admin
+user and service accounts for each OpenStack service: Keystone, Glance, and Nova. Since the process
+is complicated when done manually (it is necessary to define relations between database records), we
+use the *keystone-init* project^[https://github.com/nimbis/keystone-init] to automate the process.
+The *keystone-init* project allows one to create a configuration file in the "YAML Ain't Markup
+Language"^[http://en.wikipedia.org/wiki/YAML] (YAML) data format defining the required OpenStack
+user accounts. Then, according the defined configuration, the required database are automatically
+created.
 
+Our script first installs a dependency of *keystone-init* and clones the project's repository. Then,
+the script modifies the default configuration file provided with the *keystone-init* project by
+populating it with the values defined by the environmental variables defined in `configrc`. The last
+step of the script is to invoke *keystone-init*. The script does not remove the *keystone-init*
+repository to allow one to browse the generated configuration file, e.g. to check the correctness.
+When the repository is not required anymore, it can be removed by executing `rm -rf keystone-init`.
 
 ```Bash
+# Install PyYAML, a YAML Python library
+yum install -y PyYAML
 
+# Clone a repository with Keystone initialization scripts
+git clone https://github.com/nimbis/keystone-init.git
+
+# Replace the default configuration with the values defined be the
+# environmental variables in configrc
+sed -i "s/192.168.206.130/controller/g" \
+    keystone-init/config.yaml
+sed -i "s/012345SECRET99TOKEN012345/`cat keystone-admin-token`/g" \
+    keystone-init/config.yaml
+sed -i "s/name:        openstackDemo/name:        $OS_TENANT_NAME/g" \
+    keystone-init/config.yaml
+sed -i "s/name:     adminUser/name:     $OS_USERNAME/g" \
+    keystone-init/config.yaml
+sed -i "s/password: secretword/password: $OS_PASSWORD/g" \
+    keystone-init/config.yaml
+sed -i "s/name:     glance/name:     $GLANCE_SERVICE_USERNAME/g" \
+    keystone-init/config.yaml
+sed -i "s/password: glance/password: $GLANCE_SERVICE_PASSWORD/g" \
+    keystone-init/config.yaml
+sed -i "s/name:     nova/name:     $NOVA_SERVICE_USERNAME/g" \
+    keystone-init/config.yaml
+sed -i "s/password: nova/password: $NOVA_SERVICE_PASSWORD/g" \
+    keystone-init/config.yaml
+sed -i "s/RegionOne/$OS_REGION_NAME/g" \
+    keystone-init/config.yaml
+
+# Run the Keystone initialization script
+./keystone-init/keystone-init.py ./keystone-init/config.yaml
+
+echo ""
+echo "The applied config file is keystone-init/config.yaml"
+echo "You may do 'rm -rf keystone-init' to remove \
+    the no more needed keystone-init directory"
 ```
 
 
-(@) ``
+(@) `12-glance-install.sh`
 
-
+This script install Glance -- the OpenStack VM image management service.
 
 ```Bash
-
+# Install OpenStack Glance -- an image management service
+yum install -y openstack-glance
 ```
 
 
-(@) ``
+(@) `13-glance-create-db.sh`
 
-
+This script creates a MySQL database for Glance called `glance`, which is used to store VM image
+metadata. The script also creates a `glance` user and grants full permissions to the `glance`
+database to this user.
 
 ```Bash
+# Create a database for Glance
+../lib/mysqlq.sh "CREATE DATABASE glance;"
 
+# Create a glance user and grant all privileges
+# to the glance database
+../lib/mysqlq.sh "GRANT ALL ON glance.* TO 'glance'@'controller' \
+    IDENTIFIED BY '$GLANCE_MYSQL_PASSWORD';"
 ```
 
 
-(@) ``
+(@) `14-glance-config.sh`
 
-
+This scripts modifies the configuration files of the Glance services, which include the API and
+Registry services. Apart from various credentials, the script also sets Keystone as the identity
+management service used by Glance.
 
 ```Bash
+# Make Glance API use Keystone as the identity management service
+openstack-config --set /etc/glance/glance-api.conf paste_deploy \
+    flavor keystone
 
+# Set Glance API user credentials
+openstack-config --set /etc/glance/glance-api-paste.ini filter:authtoken \
+    admin_tenant_name $GLANCE_SERVICE_TENANT
+openstack-config --set /etc/glance/glance-api-paste.ini filter:authtoken \
+    admin_user $GLANCE_SERVICE_USERNAME
+openstack-config --set /etc/glance/glance-api-paste.ini filter:authtoken \
+    admin_password $GLANCE_SERVICE_PASSWORD
+
+# Set Glance Cache user credentials
+openstack-config --set /etc/glance/glance-cache.conf DEFAULT \
+    admin_tenant_name $GLANCE_SERVICE_TENANT
+openstack-config --set /etc/glance/glance-cache.conf DEFAULT \
+    admin_user $GLANCE_SERVICE_USERNAME
+openstack-config --set /etc/glance/glance-cache.conf DEFAULT \
+    admin_password $GLANCE_SERVICE_PASSWORD
+
+# Make Glance Registry use Keystone as the identity management service
+openstack-config --set /etc/glance/glance-registry.conf paste_deploy \
+    flavor keystone
+
+# Set the connection to the MySQL server
+openstack-config --set /etc/glance/glance-registry.conf DEFAULT \
+    sql_connection mysql://glance:$GLANCE_MYSQL_PASSWORD@controller/glance
+
+# Set Glance Registry user credentials
+openstack-config --set /etc/glance/glance-registry-paste.ini filter:authtoken \
+    admin_tenant_name $GLANCE_SERVICE_TENANT
+openstack-config --set /etc/glance/glance-registry-paste.ini filter:authtoken \
+    admin_user $GLANCE_SERVICE_USERNAME
+openstack-config --set /etc/glance/glance-registry-paste.ini filter:authtoken \
+    admin_password $GLANCE_SERVICE_PASSWORD
 ```
 
 
-(@) ``
+(@) `15-glance-init-db.sh`
 
-
+This scripts initializes the `glance` database using the `glance-manage` command line tool.
 
 ```Bash
-
+# Initialize the database for Glance
+glance-manage db_sync
 ```
 
 
-(@) ``
+(@) `16-glance-permissions.sh`
 
-
+This scripts sets restrictive permissions (640) on the Glance configuration files, since they
+contain sensitive information. The script also set the ownership of the Glance related directories
+to the `glance` user and `glance` group.
 
 ```Bash
+# Set restrictive permissions for the Glance config files
+chmod 640 /etc/glance/*.conf
+chmod 640 /etc/glance/*.ini
 
+# Set the ownership for the Glance related directories
+chown -R glance:glance /var/log/glance
+chown -R glance:glance /var/lib/glance
 ```
 
 
-(@) ``
+(@) `17-glance-start.sh`
 
-
+This script starts the Glance services: both API and Registry. The script sets the services to
+automatically start during the system start up.
 
 ```Bash
+# Start the Glance Registry and API services
+service openstack-glance-registry restart
+service openstack-glance-api restart
 
+chkconfig openstack-glance-registry on
+chkconfig openstack-glance-api on
 ```
 
 
