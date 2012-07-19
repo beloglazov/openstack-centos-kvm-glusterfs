@@ -274,7 +274,8 @@ enable the Internet access on all the hosts. First, it is necessary to check whe
 is available on the gateway itself. If the Internet is not available, the problem might be in the
 configuration of eth0, the network interface connected to the public network in our setup.
 
-If the Internet is available on the gateway, it is necessary to install
+In all the following steps, it is assumed that the user logged in is `root`. If the Internet is
+available on the gateway, it is necessary to install
 Git^[http://en.wikipedia.org/wiki/Git_(software)] to be able to clone the repository containing the
 installation scripts. This can be done using yum, the default package manager in CentOS, as follows:
 
@@ -341,9 +342,9 @@ service network restart
 This script copies the `hosts` file from the `config` directory to `/etc` locally, as well to all
 the other hosts: the remaining compute hosts and the controller. The `hosts` files defines a mapping
 between the IP addresses of the hosts and host names. For convenience, prior to copying you may use
-the `ssh-copy-id` command to copy the public key to the other hosts for password-less SSH access.
+the `ssh-copy-id` program to copy the public key to the other hosts for password-less SSH access.
 Once the `hosts` file is copied to all the hosts, they can be accessed by using their respective
-host name instead of the IP addresses.
+host names instead of the IP addresses.
 
 ```Bash
 # Copy the hosts file into the local configuration
@@ -357,25 +358,49 @@ scp ../config/hosts root@controller:/etc/
 
 ```
 
-
-
-it is necessary to perform a few steps prior to being
-able to start using the installation script. First of all, it important to check if the Internet is
-working on all the machines. If it does not, the problem might be in either the configuration of the
-network interfaces on that machine, or wrong
-
-
-The following are the initial steps that need to be followed prior to
-running the installation scripts:
-
-yum update -y
-yum install -y man nano emacs git
-git clone git@github.com:beloglazov/openstack-centos-kvm-glusterfs.git
+From this point, all the installation steps on any host can be performed remotely over SSH.
 
 
 ### GlusterFS Distributed Replicated Storage
 
+In this section, we describe how to set up distributed replicated storage using GlusterFS.
+
 #### All nodes
+
+The steps discussed in this section need to be run on all the hosts. The easiest way to manage
+multi-node installation is to SSH into all the hosts from another machine using separate terminals.
+This way the hosts can be conveniently managed from a single machine. Before applying further
+installation, it is necessary to run the following commands:
+
+```Bash
+yum update -y
+yum install -y git
+git clone https://github.com/beloglazov/openstack-centos-kvm-glusterfs.git
+
+```
+
+It is optional but might be useful to install other programs on all the hosts, such as `man`,
+`nano`, or `emacs` for reading manuals and editing files.
+
+
+(@) `01-iptables-flush.sh`
+
+This script flushes all the default `iptables` rules to allow connections through all the ports. As
+mentioned above, this is insecure and not recommended for production environments. For production it
+is recommended to open the specific required ports.
+
+```Bash
+# Flush the iptables rules.
+iptables -F
+
+# Save the configuration and restart iptables
+service iptables save
+service iptables restart
+
+```
+
+
+
 #### Controller
 #### All nodes
 
