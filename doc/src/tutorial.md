@@ -365,7 +365,7 @@ From this point, all the installation steps on any host can be performed remotel
 
 In this section, we describe how to set up distributed replicated storage using GlusterFS.
 
-#### All nodes
+#### 02-glusterfs-all (all nodes)
 
 The steps discussed in this section need to be run on all the hosts. The easiest way to manage
 multi-node installation is to SSH into all the hosts from another machine using separate terminals.
@@ -438,10 +438,45 @@ service glusterd restart
 chkconfig glusterd on
 ```
 
+#### 03-glusterfs-controller (controller)
+
+The scripts described in this section need to be run only on the controller.
 
 
+(@) `01-glusterfs-probe.sh`
 
-#### Controller
+This script probes the compute hosts to add them to a GlusterFS cluster.
+
+```Bash
+# Probe GlusterFS peer hosts
+gluster peer probe compute1
+gluster peer probe compute2
+gluster peer probe compute3
+gluster peer probe compute4
+```
+
+
+(@) `02-glusterfs-create-volume.sh`
+
+This scripts creates a GlusterFS volume out of bricks exported by the compute hosts mounted to
+`/export/gluster` for storing VM instances. The created GlusterFS volume is replicated across all
+the 4 compute hosts. Such replication provides fault tolerance, as if any of the compute hosts fail,
+the VM instance data will be available from the remaining replicas. Compared to Network File System
+(NFS) exported by a single server, the complete replication provided by GlusterFS improves the read
+performance, since all the read operations are local. This is important to enable efficient live
+migration of VMs.
+
+```Bash
+# Create a GlusterFS volume replicated over 4 gluster hosts
+gluster volume create vm-instances replica 4 \
+    compute1:/export/gluster compute2:/export/gluster \
+	compute3:/export/gluster compute4:/export/gluster
+
+# Start the created volume
+gluster volume start vm-instances
+```
+
+
 #### All nodes
 
 ### KVM
