@@ -673,9 +673,317 @@ chkconfig ntpdate on
 ```
 
 
-
-
 #### 07-openstack-controller (controller)
+
+The scripts described in this section need to be run only on the controller host.
+
+
+(@) `01-source-configrc.sh`
+
+This scripts is mainly used to remind of the necessity to "source" the `configrc` file prior to
+continuing, since some scripts in this directory use the environmental variable defined in
+`configrc`. To source the file, it is necessary to run the following command `. 01-source-configrc.sh`.
+
+```Bash
+echo "To make the environmental variables available \
+    in the current session, run: "
+echo ". 01-source-configrc.sh"
+
+# Export the variables defined in ../config/configrc
+. ../config/configrc
+```
+
+
+(@) `02-mysql-install.sh`
+
+This script installs the MySQL server, which is required to host the databases used by the OpenStack
+services.
+
+```Bash
+# Install the MySQL server
+yum install -y mysql mysql-server
+```
+
+
+(@) `03-mysql-start.sh`
+
+This script start the MySQL service and initializes the password of the `root` MySQL user using the
+variable from the `configrc` file called `$MYSQL_ROOT_PASSWORD`.
+
+```Bash
+# Start the MySQL service
+service mysqld start
+chkconfig mysqld on
+
+# Initialize the MySQL root password
+mysqladmin -u root password $MYSQL_ROOT_PASSWORD
+
+echo ""
+echo "The MySQL root password has been set \
+    to the value of $MYSQL_ROOT_PASSWORD: \"$MYSQL_ROOT_PASSWORD\""
+```
+
+
+(@) `04-keystone-install.sh`
+
+This script installs Keystone - the OpenStack identity management service, and other OpenStack
+command line utilities.
+
+```Bash
+# Install OpenStack utils and Keystone - the identity management service
+yum install -y openstack-utils openstack-keystone
+```
+
+
+(@) `05-keystone-create-db.sh`
+
+This script creates a MySQL database for Keystone called `keystone`, which is used to store various
+identity data. The script also create a `keystone` user and grants full permissions to the
+`keystone` database to this user.
+
+```Bash
+# Create a database for Keystone
+../lib/mysqlq.sh "CREATE DATABASE keystone;"
+
+# Create a keystone user and grant all privileges to the keystone database
+../lib/mysqlq.sh "GRANT ALL ON keystone.* TO 'keystone'@'controller' \
+    IDENTIFIED BY '$KEYSTONE_MYSQL_PASSWORD';"
+```
+
+
+(@) `06-keystone-generate-admin-token.sh`
+
+This script generates a random token used to authorize the Keystone admin account. The generated
+token is stored in the `./keystone-admin-token` file.
+
+```Bash
+# Generate an admin token for Keystone and save it into
+# ./keystone-admin-token
+openssl rand -hex 10 > keystone-admin-token
+```
+
+
+(@) `07-keystone-config.sh`
+
+
+
+```Bash
+# Set the generated admin token in the Keystone configuration
+openstack-config --set /etc/keystone/keystone.conf DEFAULT admin_token `cat keystone-admin-token`
+
+# Set the connection to the MySQL server
+openstack-config --set /etc/keystone/keystone.conf sql connection mysql://keystone:$KEYSTONE_MYSQL_PASSWORD@controller/keystone
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
+(@) ``
+
+
+
+```Bash
+
+```
+
+
 #### 08-openstack-compute (compute nodes)
 #### 09-openstack-gateway (network gateway)
 #### 10-openstack-controller (controller)
