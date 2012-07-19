@@ -611,11 +611,74 @@ chkconfig libvirtd on
 
 ### OpenStack
 
-#### All nodes
-#### Controller
-#### Compute nodes
-#### Network Gateway
-#### Controller
+This section contains a few subsection describing different phases of OpenStack installation.
+
+#### 06-openstack-all (all nodes)
+
+The scripts described in this section need to be executed on all the hosts.
+
+
+(@) `01-epel-add-repo.sh`
+
+This scripts adds the Extra Packages for Enterprise Linux^[http://fedoraproject.org/wiki/EPEL]
+(EPEL) repository, which contains the OpenStack related packages.
+
+```Bash
+# Add the EPEL repo: http://fedoraproject.org/wiki/EPEL
+yum install -y \
+    http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-7.noarch.rpm
+```
+
+
+(@) `02-ntp-install.sh`
+
+This script install the NTP service, which is required to automatically synchronize the time with
+external NTP servers.
+
+```Bash
+# Install NTP
+yum install -y ntp
+```
+
+
+(@) `03-ntp-config.sh`
+
+This script replaces the default servers specified in the `/etc/ntp.conf` configuration file with
+the servers specified in the `config/ntp.conf` file described above. If the default set of servers
+is satisfactory, then the execution of this script is not required.
+
+```Bash
+# Fetch the NTP servers specified in ../config/ntp.conf
+SERVER1=`cat ../config/ntp.conf | sed '1!d;q'`
+SERVER2=`cat ../config/ntp.conf | sed '2!d;q'`
+SERVER3=`cat ../config/ntp.conf | sed '3!d;q'`
+
+# Replace the default NTP servers with the above
+sed -i "s/server 0.*pool.ntp.org/$SERVER1/g" /etc/ntp.conf
+sed -i "s/server 1.*pool.ntp.org/$SERVER2/g" /etc/ntp.conf
+sed -i "s/server 2.*pool.ntp.org/$SERVER3/g" /etc/ntp.conf
+```
+
+
+(@) `04-ntp-start.sh`
+
+This script starts the `ntpdate` service and sets it to start during the system start up. Upon the
+start, the `ntpdate` service synchronizes the time with the servers specified in the `/etc/ntp.conf`
+configuration file.
+
+```Bash
+# Start the NTP service
+service ntpdate restart
+chkconfig ntpdate on
+```
+
+
+
+
+#### 07-openstack-controller (controller)
+#### 08-openstack-compute (compute nodes)
+#### 09-openstack-gateway (network gateway)
+#### 10-openstack-controller (controller)
 
 
 ### Testing of the OpenStack Installation
