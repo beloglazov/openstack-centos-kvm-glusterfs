@@ -3,9 +3,6 @@
 % Anton Beloglazov; Sareh Fotuhi Piraghaj; Mohammed Alrokayan; Rajkumar Buyya
 
 
-\newpage
-
-
 # Introduction
 
 - Cloud Computing [@armbrust2010view; @buyya2009cloud]
