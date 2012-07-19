@@ -183,7 +183,7 @@ network interface.
 
 The hard drive partitioning scheme is the same for all the compute hosts, but differs for the
 controller. Table 1 shows the partitioning scheme for the compute hosts. `vg_base` is a volume group
-comprising the standard operating system partitions: `lv_root`, `lv_home` and `lv_swap`.
+comprising the standard Operating System (OS) partitions: `lv_root`, `lv_home` and `lv_swap`.
 `vg_gluster` is a special volume group containing a single `lv_gluster` partition, which is
 dedicated to serve as a GlusterFS brick. The `lv_gluster` logical volume is formatted using the
 XFS^[http://en.wikipedia.org/wiki/XFS] file system, as recommended for GlusterFS bricks.
@@ -430,7 +430,7 @@ yum -y install \
 
 (@) `04-glusterfs-start.sh`
 
-This script starts the GlusterFS service, and sets the service to start on the system start up.
+This script starts the GlusterFS service, and sets the service to start during the system start up.
 
 ```Bash
 # Start the GlusterFS service
@@ -485,7 +485,7 @@ The script described in this section needs to be run on all the hosts.
 (@) `01-glusterfs-mount.sh`
 
 This scripts adds a line to the `/etc/fstab` configuration file to automatically mount the GlusterFS
-volume on the system start up to the `/var/lib/nova/instances` directory. The
+volume during the system start up to the `/var/lib/nova/instances` directory. The
 `/var/lib/nova/instances` directory is the default location where OpenStack Nova stores the VM
 instances related data. This directory must be shared be all the compute hosts to enable live
 migration of VMs. The `mount -a` command re-mounts everything from the config file after it has been
@@ -505,6 +505,20 @@ mount -a
 The scripts included in the `05-kvm-compute` directory need to be run on the compute hosts. KVM is
 not required on the controller, since it is not going to be used to host VM instances.
 
+Prior to enabling KVM on a machine, it is important to make sure that the machine uses either Intel
+VT or AMD-V chipsets that support hardware-assisted virtualization. This feature might be disabled
+in the Basic Input Output System (BIOS); therefore, it is necessary to verify that it is enabled. To
+check whether hardware-assisted virtualization is supported by the hardware, the following Linux
+command can be used:
+
+```Bash
+grep -E 'vmx|svm' /proc/cpuinfo
+```
+
+If the command returns any output, it means that the supports hardware-assisted virtualization. The
+`vmx` processor feature flag represents an Intel VT chipset, whereas the `svm` flag represents
+AMD-V. Depending on the flag returned, you need to modify the `02-kvm-modprobe.sh` script.
+
 
 (@) `01-kvm-install.sh`
 
@@ -518,8 +532,10 @@ yum -y install kvm qemu-kvm qemu-kvm-tools
 
 (@) `02-kvm-modprobe.sh`
 
-Prior to enabling KVM on a machine, it is important to make sure that the machine supports hardware
-virtualization. To enable KVM on a machine
+This script enables KVM in the OS. If the `grep -E 'vmx|svm' /proc/cpuinfo` command described above
+returned `vmx`, there is no need to modify this script, as it enables the Intel KVM module by
+default. If the command returned `svm`, it is necessary to comment the `modprobe kvm-intel` line and
+uncomment the `modprobe kvm-amd` line.
 
 ```Bash
 # Create a script for enabling the KVM kernel module
@@ -537,6 +553,59 @@ chmod +x /etc/sysconfig/modules/kvm.modules
 
 # Enable KVM
 /etc/sysconfig/modules/kvm.modules
+```
+
+
+(@) `03-libvirt-install.sh`
+
+This script installs Libvirt^[http://en.wikipedia.org/wiki/Libvirt], its dependencies and the
+related tools. Libvirt provides an abstraction and a common Application Programming Interface (API)
+over various hypervisors. It is used by OpenStack to provide support for multiple hypervisors. After
+the installation, the script starts the `messagebus` and `avahi-daemon` services, which are
+prerequisites of Libvirt.
+
+```Bash
+# Install libvirt and its dependecies
+yum -y install libvirt libvirt-python python-virtinst avahi dmidecode
+
+# Start the services required by livirt
+service messagebus restart
+service avahi-daemon restart
+
+# Start the service during the system start up
+chkconfig messagebus on
+chkconfig avahi-daemon on
+```
+
+
+(@) `04-libvirt-config.sh`
+
+This script modifies the Libvirt configuration to enable communication over TCP. This is required by
+OpenStack to enable live migration of VM instances.
+
+```Bash
+# Enable the communication with libvirt over TCP without
+# authentication. This configuration is required to enable live
+# migration through OpenStack.
+sed -i 's/#listen_tls = 0/listen_tls = 0/g' \
+    /etc/libvirt/libvirtd.conf
+sed -i 's/#listen_tcp = 1/listen_tcp = 1/g' \
+    /etc/libvirt/libvirtd.conf
+sed -i 's/#auth_tcp = "sasl"/auth_tcp = "none"/g' \
+    /etc/libvirt/libvirtd.conf
+sed -i 's/#LIBVIRTD_ARGS="--listen"/LIBVIRTD_ARGS="--listen"/g' \
+    /etc/sysconfig/libvirtd
+```
+
+
+(@) `05-libvirt-start.sh`
+
+This script starts the `libvirtd` service and sets it to automatically start during the system start up.
+
+```Bash
+# Start the libvirt service
+service libvirtd restart
+chkconfig libvirtd on
 ```
 
 
