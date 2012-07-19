@@ -185,7 +185,8 @@ The hard drive partitioning scheme is the same for all the compute hosts, but di
 controller. Table 1 shows the partitioning scheme for the compute hosts. `vg_base` is a volume group
 comprising the standard operating system partitions: `lv_root`, `lv_home` and `lv_swap`.
 `vg_gluster` is a special volume group containing a single `lv_gluster` partition, which is
-dedicated to serve as a GlusterFS brick.
+dedicated to serve as a GlusterFS brick. The `lv_gluster` logical volume is formatted using the
+XFS^[http://en.wikipedia.org/wiki/XFS] file system, as recommended for GlusterFS bricks.
 
 Table: Partitioning scheme for the compute hosts
 
@@ -219,7 +220,13 @@ Table: Partitioning scheme for the compute hosts
 
 
 Table 2 shows the partitioning scheme for the controller. It does not include a `vg_gluster` volume
-group since the controller is not going to be a part of the GlusterFS volume. However,
+group since the controller is not going to be a part of the GlusterFS volume. However, the scheme
+includes two new important volume groups: `nova-volumes` and `vg_images`. The `nova-volumes` volume
+group is used by OpenStack Nova to allocated volumes for VM instances. This volume group is managed
+by Nova; therefore, there is not need to create logical volumes manually. The `vg_images` volume
+group and its `lv_images` logical volume are dedicated for storing VM images by OpenStack Glance.
+The mount point for `lv_images` is `/var/lib/glance/images`, which is the default directory used by
+Glance to store image files.
 
 Table: Partitioning scheme for the controller
 
@@ -261,6 +268,9 @@ Table: Partitioning scheme for the controller
 
 
 ### Network Gateway
+
+
+
 
 ### GlusterFS Distributed Replicated Storage
 
