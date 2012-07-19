@@ -184,6 +184,8 @@ network interface.
 The hard drive partitioning scheme is the same for all the compute hosts, but differs for the
 controller.
 
+Table: Partitioning scheme for the compute hosts
+
 +-----------------+----------+--------------------+---------+
 |Device           |Size\ (MB)|Mount Point / Volume|Type     |
 +=================+==========+====================+=========+
@@ -213,7 +215,7 @@ controller.
 +-----------------+----------+--------------------+---------+
 
 
-
+Table: Partitioning scheme for the controller
 
 +-----------------+----------+----------------------+---------+
 |Device           |Size\ (MB)|Mount Point / Volume  |Type     |
