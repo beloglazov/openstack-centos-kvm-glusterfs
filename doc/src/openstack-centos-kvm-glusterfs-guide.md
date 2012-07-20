@@ -1461,27 +1461,27 @@ The command should output approximately the following table:
 
 Table: The expected output of the `nova-manage service list` command
 
-+----------------+----------+-----+-------+-----+----------+
-|Binary          |Host      |Zone |Status |State|Updated_At|
-+================+==========+=====+=======+=====+==========+
-|nova-consoleauth|controller|nova |enabled|:-)  |\<date\>  |
-+----------------+----------+-----+-------+-----+----------+
-|nova-cert       |controller|nova |enabled|:-)  |\<date\>  |
-+----------------+----------+-----+-------+-----+----------+
-|nova-scheduler  |controller|nova |enabled|:-)  |\<date\>  |
-+----------------+----------+-----+-------+-----+----------+
-|nova-volume     |controller|nova |enabled|:-)  |\<date\>  |
-+----------------+----------+-----+-------+-----+----------+
-|nova-compute    |compute1  |nova |enabled|:-)  |\<date\>  |
-+----------------+----------+-----+-------+-----+----------+
-|nova-compute    |compute2  |nova |enabled|:-)  |\<date\>  |
-+----------------+----------+-----+-------+-----+----------+
-|nova-compute    |compute3  |nova |enabled|:-)  |\<date\>  |
-+----------------+----------+-----+-------+-----+----------+
-|nova-compute    |compute4  |nova |enabled|:-)  |\<date\>  |
-+----------------+----------+-----+-------+-----+----------+
-|nova-network    |controller|nova |enabled|:-)  |\<date\>  |
-+----------------+----------+-----+-------+-----+----------+
++----------------+----------+----+-------+-----+--------+
+|Binary          |Host      |Zone|Status |State|Updated |
++================+==========+====+=======+=====+========+
+|nova-consoleauth|controller|nova|enabled|:-)  |\<date\>|
++----------------+----------+----+-------+-----+--------+
+|nova-cert       |controller|nova|enabled|:-)  |\<date\>|
++----------------+----------+----+-------+-----+--------+
+|nova-scheduler  |controller|nova|enabled|:-)  |\<date\>|
++----------------+----------+----+-------+-----+--------+
+|nova-volume     |controller|nova|enabled|:-)  |\<date\>|
++----------------+----------+----+-------+-----+--------+
+|nova-compute    |compute1  |nova|enabled|:-)  |\<date\>|
++----------------+----------+----+-------+-----+--------+
+|nova-compute    |compute2  |nova|enabled|:-)  |\<date\>|
++----------------+----------+----+-------+-----+--------+
+|nova-compute    |compute3  |nova|enabled|:-)  |\<date\>|
++----------------+----------+----+-------+-----+--------+
+|nova-compute    |compute4  |nova|enabled|:-)  |\<date\>|
++----------------+----------+----+-------+-----+--------+
+|nova-network    |controller|nova|enabled|:-)  |\<date\>|
++----------------+----------+----+-------+-----+--------+
 
 If the value of any cell in the `State` column is `XXX` instead of `:-)`, it means that the
 corresponding service for failed to start. The first place to start troubleshooting is
