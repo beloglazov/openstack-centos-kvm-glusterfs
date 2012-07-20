@@ -78,7 +78,7 @@ of the following software:
   virtialization for Linux leveraging hardware-assisted virtualization features of the Intel VT and
   AMD-V chipsets. The kernel component of KVM is included in the Linux kernel since the 2.6.20
   version.
-- OpenStack: a free open source IaaS Cloud computing software originally released by Rackspace and
+- OpenStack: free open source IaaS Cloud computing software originally released by Rackspace and
   NASA under the Apache 2.0 License in July 2010. The OpenStack project is currently lead and
   managed by the OpenStack Foundation, which is "an independent body providing shared resources to
   help achieve the OpenStack Mission by Protecting, Empowering, and Promoting OpenStack software and
@@ -92,7 +92,7 @@ Eucalyptus, CloudStack, and OpenNebula. In Section 3, we give an overview of the
 its features, main components, and their interaction. In Section 4, we discuss the existing tools
 for automated installation of OpenStack and differences from our approach. In Section 5 we provide a
 detailed description and discussion of the steps required install the OpenStack Cloud on top of
-CentOS using KVM and GlusterFS. In Section 6, we present our concluding remarks and a discussion of
+CentOS using KVM and GlusterFS. In Section 6, we conclude the paper with a summary and discussion of
 future directions.
 
 
@@ -1804,5 +1804,8 @@ rm /var/lib/nova/tmp/nova-iptables.lock
 
 
 # Conclusion
+
+
+
 
 # References
