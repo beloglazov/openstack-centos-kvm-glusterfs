@@ -679,7 +679,7 @@ The scripts described in this section need to be run only on the controller host
 
 This scripts is mainly used to remind of the necessity to "source" the `configrc` file prior to
 continuing, since some scripts in this directory use the environmental variable defined in
-`configrc`. To source the file, it is necessary to run the following command `. 01-source-configrc.sh`.
+`configrc`. To source the file, it is necessary to run the following command: `. 01-source-configrc.sh`.
 
 ```Bash
 echo "To make the environmental variables available \
@@ -1227,7 +1227,7 @@ The scripts described in this section should be run on the compute hosts.
 
 This scripts is mainly used to remind of the necessity to "source" the `configrc` file prior to
 continuing, since some scripts in this directory use the environmental variable defined in
-`configrc`. To source the file, it is necessary to run the following command `. 01-source-configrc.sh`.
+`configrc`. To source the file, it is necessary to run the following command: `. 01-source-configrc.sh`.
 
 ```Bash
 echo "To make the environmental variables available \
@@ -1309,7 +1309,7 @@ This scripts described in this section need to be run only on the gateway.
 
 This scripts is mainly used to remind of the necessity to "source" the `configrc` file prior to
 continuing, since some scripts in this directory use the environmental variable defined in
-`configrc`. To source the file, it is necessary to run the following command `. 01-source-configrc.sh`.
+`configrc`. To source the file, it is necessary to run the following command: `. 01-source-configrc.sh`.
 
 ```Bash
 echo "To make the environmental variables available \
@@ -1428,16 +1428,83 @@ testing the environment.
 
 #### 10-openstack-controller (controller)
 
-The scripts described in this section need to be run only on the controller. These scripts are not a
-part of the installation process and are only used for testing the correctness of the performed
-OpenStack installation.
+This section describes commands and scripts that can be used to test the OpenStack installation
+obtained by following the steps above. The testing should start from the identity management
+service, Keystone, since it coordinates all the other OpenStack services. To use the command line
+programs provided by OpenStack, it is necessary to "source" the `configrc`. This can be done by
+executing the following command: `. config/configrc`. The check whether Keystone is properly
+initialized and the authorization works, the following command can be used:
+
+```Bash
+keystone user-list
+```
+
+If everything is configured correctly, the command should output a table with a list of user
+accounts, such as `admin`, `nova`, `glance`, etc.
+
+The next service to test is Glance. In the previous steps, we have already imported VM images into
+Glance; therefore, it is possible to output a list of them:
+
+```Bash
+glance index
+```
+
+The command should output a list of two VM images: `cirros-0.3.0-x86_64` and `ubuntu`.
+
+A list of active OpenStack service spanning all the hosts can be output using the following command:
+
+```Bash
+nova-manage service list
+```
+
+The command should output approximately the following table:
+
+Table: The expected output of the `nova-manage service list` command
+
++----------------+----------+-----+-------+-----+----------+
+|Binary          |Host      |Zone |Status |State|Updated_At|
++================+==========+=====+=======+=====+==========+
+|nova-consoleauth|controller|nova |enabled|:-)  |\<date\>  |
++----------------+----------+-----+-------+-----+----------+
+|nova-cert       |controller|nova |enabled|:-)  |\<date\>  |
++----------------+----------+-----+-------+-----+----------+
+|nova-scheduler  |controller|nova |enabled|:-)  |\<date\>  |
++----------------+----------+-----+-------+-----+----------+
+|nova-volume     |controller|nova |enabled|:-)  |\<date\>  |
++----------------+----------+-----+-------+-----+----------+
+|nova-compute    |compute1  |nova |enabled|:-)  |\<date\>  |
++----------------+----------+-----+-------+-----+----------+
+|nova-compute    |compute2  |nova |enabled|:-)  |\<date\>  |
++----------------+----------+-----+-------+-----+----------+
+|nova-compute    |compute3  |nova |enabled|:-)  |\<date\>  |
++----------------+----------+-----+-------+-----+----------+
+|nova-compute    |compute4  |nova |enabled|:-)  |\<date\>  |
++----------------+----------+-----+-------+-----+----------+
+|nova-network    |controller|nova |enabled|:-)  |\<date\>  |
++----------------+----------+-----+-------+-----+----------+
+
+If the value of any cell in the `State` column is `XXX` instead of `:-)`, it means that the
+corresponding service for failed to start. The first place to start troubleshooting is
+the log files of the failed service. The log files are located in the `/var/log/<service>`
+directory, where `<service>` is replaced with the name of the service.
+
+Another service to test is the OpenStack dashboard, which should be available at
+`http://$PUBLIC_IP_ADDRESS/dashboard`. This URL should open a login page prompting the user to enter
+a user name and password. The values of the `$OS_USERNAME` and `$OS_PASSWORD` variables defined in
+`configrc` can be used to log in as the admin user. The dashboard provides a web interface to all
+the main functionality of OpenStack, such as managing VM instances, VM images, security rules, key
+pairs, etc.
+
+Once the initial testing steps are successfully passed, we can go on to test the actual
+instantiation of VMs using the OpenStack command line tools, as shown by the scripts from the
+`10-openstack-controller` directory.
 
 
 (@) `01-source-configrc.sh`
 
 This scripts is mainly used to remind of the necessity to "source" the `configrc` file prior to
 continuing, since some scripts in this directory use the environmental variable defined in
-`configrc`. To source the file, it is necessary to run the following command `. 01-source-configrc.sh`.
+`configrc`. To source the file, it is necessary to run the following command: `. 01-source-configrc.sh`.
 
 ```Bash
 echo "To make the environmental variables available \
@@ -1456,6 +1523,31 @@ This script creates a VM instance using the Cirros image added to Glance previou
 ```Bash
 # Create a VM instance from the Cirros image
 nova boot --image cirros-0.3.0-x86_64 --flavor m1.small cirros
+```
+
+Depending on the hardwate the instantiation process may take from a few seconds to a few minutes.
+The status of a VM instance can be checked using the following command:
+
+```Bash
+nova show cirros
+```
+
+This command shows detailed information about the VM instances, such as the host name, where the VM
+has been allocated to, instance name, current state, flavor, image name, IP address of the VM, etc.
+Once the state of the VM turns into `ACTIVE`, it means that the VM has started booting. It may take
+some more time before the VM is ready to accept SSH connections. The Cirros VM image has a default
+user `cirros` with the `cubswin:)` password. The following command can be used to SSH into the VM
+instance once it is booted:
+
+```Bash
+ssh curros@<ip address>
+```
+
+Where `<ip address>` is replaced with the actual IP address of the VM instance. The following
+command can be used to delete the VM instance:
+
+```Bash
+nova delete cirros
 ```
 
 
@@ -1537,6 +1629,23 @@ nova volume-attach $1 $2 /dev/vdc
 
 
 ## OpenStack Troubleshooting
+
+This section a list of some problem encountered by the authors during the installation process and
+their solutions.
+
+
+### Glance
+
+Sometimes the Glance Registry service fails to start during the OS start up. This results failing of
+various requests of the OpenStack service to Glance. The problem can be identified by running the
+`glance index` commands, which should not fail in a normal case. The reason might be the fact that
+the Glance Registry service starts before the MySQL server. The solution to this problem is to
+restart the Glance services as follows:
+
+```Bash
+service openstack-glance-registry restart
+service openstack-glance-api restart
+```
 
 # Conclusion
 
