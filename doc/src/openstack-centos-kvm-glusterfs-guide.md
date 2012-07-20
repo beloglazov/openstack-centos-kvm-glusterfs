@@ -1631,7 +1631,16 @@ nova volume-attach $1 $2 /dev/vdc
 ## OpenStack Troubleshooting
 
 This section a list of some problem encountered by the authors during the installation process and
-their solutions.
+their solutions. The following general procedure can be used to resolve problems with OpenStack:
+
+1. Run the `nova-manage service list` command to find out if any of the services failed. A service
+failed if in the corresponding row of the table the `State` column contains `XXX` instead of `:-)`.
+2. From the same service status table, the host running the failed service can be identified by
+looking at the `Host` column.
+3. Once the problematic service and host are determined, the respective log files. To do this, it is
+necessary to open an SSH connection with the host and find the log file that corresponds to the
+failed service. The default location of the log files is `/var/log/<service name>`, where `<service
+name>` is one of: `keystone`, `glance`, `nova`, etc.
 
 
 ### Glance
@@ -1646,6 +1655,56 @@ restart the Glance services as follows:
 service openstack-glance-registry restart
 service openstack-glance-api restart
 ```
+
+
+### Nova Compute
+
+The libvirtd service may fail with errors, such the following:
+
+
+```Bash
+15391: error : qemuProcessReadLogOutput:1005 : \
+    internal error Process exited while reading console \
+	log output: chardev: opening backend "file" failed
+```
+
+And such as:
+
+```Bash
+error : qemuProcessReadLogOutput:1005 : internal error \
+    Process exited while reading console log output: \
+	char device redirected to /dev/pts/3
+qemu-kvm: -drive file=/var/lib/nova/instances/instance-00000015/ \
+    disk,if=none,id=drive-virtio-disk0,format=qcow2,cache=none: \
+	could not open disk image /var/lib/nova/instances/ \
+	instance-00000015/disk: Permission denied
+```
+
+Both the problems can be resolved by setting the user and group in `/etc/libvirt/libvirtd.conf` as follows:
+
+```
+user = "nova"
+group = "nova"
+```
+
+And also changing the ownership as follows:
+
+```
+chown -R nova:nova /var/cache/libvirt
+chown -R nova:nova /var/run/libvirt
+chown -R nova:nova /var/lib/libvirt
+```
+
+### Nova Network
+
+If after the start up the `openstack-nova-network` service hangs with the following last message in
+the log file: 'Attempting to grab file lock "iptables" for method "apply"', the solution
+is^[https://answers.launchpad.net/nova/+question/200985]:
+
+```Bash
+rm /var/lib/nova/tmp/nova-iptables.lock
+```
+
 
 # Conclusion
 
