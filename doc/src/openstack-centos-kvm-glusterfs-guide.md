@@ -49,10 +49,10 @@ striving to address the issue, such as OpenStack, CloudStack, Eucalyptus, and Op
 mentioned projects basically allow anyone to not only deploy a private Cloud environment free of
 charge, but also contribute back to the development of the platform.
 
-The aim of this work is to facilitate furher development and adoption of open source Cloud computing
+The aim of this work is to facilitate further development and adoption of open source Cloud computing
 software by providing a step-by-step guide to installing the OpenStack Cloud platform on multiple
 computing nodes using a set of shell scripts. In contrast to the existing tools for automated
-installation of OpenStack is that the purpose of this work is not only obtaining an operating
+installation of OpenStack is that the purpose of this work is not only obtaining a fully operating
 OpenStack Cloud environment, but also learning the steps required to perform the installation from
 the ground up and understanding the responsibilities and interaction of the OpenStack components.
 This is achieved by splitting the installation process into multiple logical steps, and implementing
@@ -65,24 +65,24 @@ of the following software:
 - CentOS^[[http://centos.org/](http://centos.org/)]: a free Linux Operating System (OS) distribution
   derived from the Red Hat Enterprise Linux (RHEL) distribution.
 - GlusterFS^[[http://gluster.org/](http://gluster.org/)]: a distributed file system providing shared
-  replicated storage accross multiple servers over Ethernet or Infiniband. Having a storage shared
+  replicated storage across multiple servers over Ethernet or Infiniband. Having a storage shared
   between the compute nodes is a requirement for enabling live migration of VM instances. However,
   having a centralized shared storage service, such as NAS limits the scalability and leads to a
   single point of failure. In contrast, the advantages of a distributed file system solution, such
   as GlusterFS, are: (1) not single point of failure, which means even if a server fails, the
   storage and data will remain available due to automatic replication over multiple servers; (2)
-  higher scalability, as Input/Output (I/O) operations are distributed accross multiple server; and
+  higher scalability, as Input/Output (I/O) operations are distributed across multiple server; and
   (3) due to the data replication over multiple server, if a data replica if available on the host,
   VM instances access the data locally instead of over network improving the I/O performance.
 - KVM^[[http://www.linux-kvm.org/](http://www.linux-kvm.org/)]: a hypervisor providing full
-  virtialization for Linux leveraging hardware-assisted virtualization features of the Intel VT and
+  virtualization for Linux leveraging hardware-assisted virtualization features of the Intel VT and
   AMD-V chipsets. The kernel component of KVM is included in the Linux kernel since the 2.6.20
   version.
 - OpenStack: free open source IaaS Cloud computing software originally released by Rackspace and
   NASA under the Apache 2.0 License in July 2010. The OpenStack project is currently lead and
   managed by the OpenStack Foundation, which is "an independent body providing shared resources to
   help achieve the OpenStack Mission by Protecting, Empowering, and Promoting OpenStack software and
-  the community around it, including users, developers and the entire ecosystem."
+  the community around it, including users, developers and the entire ecosystem"
   ^[[http://wiki.openstack.org/Governance/Foundation/Structure](http://wiki.openstack.org/Governance/Foundation/Structure)].
   The OpenStack project is supported by more than 150 companies including AMD, Intel, Canonical,
   SUSE Linux, Red Hat, Cisco, Dell, HP, IBM and Yahoo!.
@@ -652,10 +652,10 @@ the installation, the script starts the `messagebus` and `avahi-daemon` services
 prerequisites of Libvirt.
 
 ```Bash
-# Install libvirt and its dependecies
+# Install libvirt and its dependencies
 yum -y install libvirt libvirt-python python-virtinst avahi dmidecode
 
-# Start the services required by livirt
+# Start the services required by libvirt
 service messagebus restart
 service avahi-daemon restart
 
@@ -1622,7 +1622,7 @@ This script creates a VM instance using the Cirros image added to Glance previou
 nova boot --image cirros-0.3.0-x86_64 --flavor m1.small cirros
 ```
 
-Depending on the hardwate the instantiation process may take from a few seconds to a few minutes.
+Depending on the hardware the instantiation process may take from a few seconds to a few minutes.
 The status of a VM instance can be checked using the following command:
 
 ```Bash
@@ -1805,7 +1805,22 @@ rm /var/lib/nova/tmp/nova-iptables.lock
 
 # Conclusion
 
+We have gone through and discussed all the steps required to get from bare hardware to a fully
+operating OpenStack infrastructure. We have started from notes on installing CentOS on the nodes,
+continued through setting up a network gateway, distributed replicated storage using GlusterFS, KVM
+hypervisor, and all the main OpenStack services. We have concluded with steps to test the OpenStack
+installation, suggestions on ways of finding problem sources and resolving them, and a discussion of
+solutions to a number of problems that may be encountered during the installation process.
 
+In our opinion, the availability of step-by-step installation and configuration guides, such as this
+one, is very important to lower the barrier to entry into the real world application of open source
+Cloud platforms for a wider audience. The task of providing such a guidance lies on both the
+official documentation and tutorials and materials developed by the project community. It is hard to
+underestimate the role of the community support in facilitating the adoption of open source
+software. We believe that the OpenStack project has attracted a large, active and growing community
+of people, who will undoubtedly greatly contribute to further advancement of both the software and
+documentation of OpenStack leading to a significant impact on the adoption of free open source
+software and Cloud computing.
 
 
 # References
