@@ -5,15 +5,94 @@
 
 # Introduction
 
-- Cloud Computing [@armbrust2010view; @buyya2009cloud]
-- Public / Private / Hybrid
-- Why Open Source Cloud Platforms are Important
-- OpenStack / Eucalyptus / CloudStack / OpenNebula
-- Complexity of Installing OpenStack
-- Our Step-by-Step Scripted Installation Approach
-- The purpose is not just having an up and running OpenStack installation, but also learning the steps
-  required to perform the installation from the ground up and understanding the responsibilities and
-  interaction of the OpenStack components.
+The Cloud computing model leverages virtualization to deliver computing resource to the users
+on-demand on a pay-per-use basis [@armbrust2010view; @buyya2009cloud]. It provides the properties of
+self-service and elasticity enabling the users to dynamically adjust their resource consumption
+according to the current workload. These properties of the Cloud computing model allow one to avoid
+high upfront investments in a computing infrastructure, thus reducing the time to market and
+facilitating a higher pace of innovation.
+
+Cloud computing resources are delivered to the users through three major service models:
+
+- Infrastructure as a Service (IaaS): computing resource are provided in the form of Virtual
+  Machines (VMs). A VM provides a view of a dedicated hardware to the user. The user is capable of
+  managing the system within a VM and deploying the required software. Examples of IaaS are Amazon
+  EC2^[http://aws.amazon.com/ec2/] and Google Compute
+  Engine^[http://cloud.google.com/products/compute-engine.html].
+- Platform as a Service (PaaS): the access to the resource is provided in the form of an Application
+  Programming Interface (API) that is used for application development and deployment. In this
+  model, the user does not have a direct access to the system resources, rather the resource
+  allocation to applications is managed by the platform. Examples of PaaS are Google App
+  Engine^[http://cloud.google.com/products/] and Microsoft Azure^[http://www.windowsazure.com/].
+- Software as a Service (SaaS): application-level software services are provided to the users on a
+  subscription bases. Examples of SaaS are Salesforce.com^[http://www.salesforce.com/] and Amazon
+  Web Services Marketplace^[https://aws.amazon.com/marketplace/].
+
+In this work, we focus on the low level service model -- IaaS. Apart from the service models, Cloud
+computing services are distinguished according to their deployment models. There are three basic
+deployment models:
+
+- Public Cloud: computing resources are provided publicly over the Internet based on a
+  pay-per-use model.
+- Private Cloud: the Cloud infrastructure is owned and operated internally by an organization.
+- Hybrid Cloud: computing resources are provided by a composition of a private and public Clouds.
+
+Public Clouds, such as Amazon EC2, have initiated and driven the industrial adoption of the Cloud
+computing model. However, the software platforms utilized by public Cloud providers are usually
+proprietary disallowing their deployment on-premise. In other words, due to closed-source software,
+it is not possible to deploy the same software platform used, for example, by Amazon EC2 on a
+private computing infrastructure. Fortunately, there exist several open source Cloud platforms
+striving to address the issue, such as OpenStack^[http://openstack.org/], CloudStack
+(http://cloudstack.org/), Eucalyptus^[http://www.eucalyptus.com/], and
+OpenNebula^[http://opennebula.org/]. The mentioned projects basically allow anyone to not only
+deploy a private Cloud environment free of charge, but also contribute back to the development of
+the platform.
+
+The aim of this work is to facilitate furher development and adoption of open source Cloud computing
+software by providing a step-by-step guide to installing the OpenStack Cloud platform on multiple
+computing nodes using a set of shell scripts. In contrast to the existing tools for automated
+installation of OpenStack is that the purpose of this work is not only obtaining an operating
+OpenStack Cloud environment, but also learning the steps required to perform the installation from
+the ground up and understanding the responsibilities and interaction of the OpenStack components.
+This is achieved by splitting the installation process into multiple logical steps, and implementing
+each step as a separate shell script. In this paper, we go through and discuss each of the complete
+sequence of steps required to install OpenStack on top of CentOS 6.3 using the Kernel-based Virtual
+Machine (KVM) as a hypervisor and GlusterFS as a distributed replicated file system to enable live
+migration and provide fault tolerance. In summary, the paper guides through the installation process
+of the following software:
+
+- CentOS^[http://centos.org/]: a free Linux Operating System (OS) distribution derived from the Red Hat Enterprise Linux
+  (RHEL) distribution.
+- GlusterFS^[http://gluster.org/]: a distributed file system providing shared replicated storage
+  accross multiple servers over Ethernet or Infiniband. Having a storage shared between the compute
+  nodes is a requirement for enabling live migration of VM instances. However, having a centralized
+  shared storage service, such as NAS limits the scalability and leads to a single point of failure.
+  In contrast, the advantages of a distributed file system solution, such as GlusterFS, are: (1) not
+  single point of failure, which means even if a server fails, the storage and data will remain
+  available due to automatic replication over multiple servers; (2) higher scalability, as
+  Input/Output (I/O) operations are distributed accross multiple server; and (3) due to the data
+  replication over multiple server, if a data replica if available on the host, VM instances access
+  the data locally instead of over network improving the I/O performance.
+- KVM^[http://www.linux-kvm.org/]: a hypervisor providing full virtialization for Linux leveraging
+  hardware-assisted virtualization features of the Intel VT and AMD-V chipsets. The kernel component
+  of KVM is included in the Linux kernel since the 2.6.20 version.
+- OpenStack: a free open source IaaS Cloud computing software originally released by Rackspace and
+  NASA under the Apache 2.0 License in July 2010. The OpenStack project is currently lead and
+  managed by the OpenStack Foundation, which is "an independent body providing shared resources to
+  help achieve the OpenStack Mission by Protecting, Empowering, and Promoting OpenStack software and
+  the community around it, including users, developers and the entire ecosystem."
+  ^[http://wiki.openstack.org/Governance/Foundation/Structure]. The OpenStack project is supported
+  by more than 150 companies including AMD, Intel, Canonical, SUSE Linux, Red Hat, Cisco, Dell, HP,
+  IBM and Yahoo!.
+
+In the next section we briefly compare 4 open source Cloud computing platforms, namely OpenStack,
+Eucalyptus, CloudStack, and OpenNebula. In Section 3, we give an overview of the OpenStack software,
+its features, main components, and their interaction. In Section 4, we discuss the existing tools
+for automated installation of OpenStack and differences from our approach. In Section 5 we provide a
+detailed description and discussion of the steps required install the OpenStack Cloud on top of
+CentOS using KVM and GlusterFS. In Section 6, we present our concluding remarks and a discussion of
+future directions.
+
 
 # Comparison of Open Source Cloud Platforms
 
@@ -22,6 +101,7 @@
 - CloudStack
 - OpenNebula
 
+
 # Overview of the OpenStack Cloud Platform
 
 - History
@@ -29,11 +109,15 @@
 - Main Services
 - Service Interaction
 
+
 # Existing OpenStack Installation Tools
 
 - DevStack^[http://devstack.org/]
 - Puppet / Chef^[http://docs.openstack.org/trunk/openstack-compute/admin/content/openstack-compute-deployment-tool-with-puppet.html]
 - Difference From our Approach
+- The purpose is not just having an up and running OpenStack installation, but also learning the steps
+  required to perform the installation from the ground up and understanding the responsibilities and
+  interaction of the OpenStack components.
 
 
 # Step-by-Step OpenStack Installation
