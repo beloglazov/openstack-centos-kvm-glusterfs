@@ -126,16 +126,23 @@ following:
 - *OpenStack Networking*: provides API-driven network and IP address management capabilities. The
    system allows the users to create their own networks and assign static, floating, or dynamic IP
    addresses to VM instances.
-- *OpenStack Dashboard*: provides a web interface for the administrators and users to the system
-   management capabilities, such as VM image management, VM instance life cycle management, storage
-   management, etc.
+- *OpenStack Dashboard (Horizon)*: provides a web interface for the administrators and users to the system
+   management capabilities, such as VM image management, VM instance life cycle management, and storage
+   management.
 - *OpenStack Identity (Keystone)*: a centralized user account management service acting as an
    authentication and access control system. In addition, the service provides the access to a
    registry of the OpenStack services deployed in the data center and their communication endpoints.
-- *OpenStack Image (Glance)*:
+- *OpenStack Image (Glance)*: provides various VM image management capabilities, such as
+   registration, delivery, and snapshotting. The service supports multiple VM image formats
+   including Raw. AMI, VHD, VDI (VirtualBox, qcow2, VMDK, and OVF.
 
-Tell about: decoupling, service interaction (AMPQ), possible service distribution and replication ->
-scalability and fault tolerance.
+The OpenStack software is architectured with the aim of providing decoupling between the services
+constituting the system. The services interact with each other through the public API they provide
+and using Keystone as a registry for obtaining the information about endpoints of the other
+services. The OpenStack Compute service, also referred to as Nova, is on a shared-nothing
+messaging-based architecture, which allows running the services on multiple servers. The services,
+which compose Nova communicate via the Advanced Message Queue Protocol (AMQP) using asynchronous
+calls to avoid blocking. In the next section we compare the major open source Cloud platforms.
 
 
 # Comparison of Open Source Cloud Platforms
