@@ -15,18 +15,18 @@ facilitating a higher pace of innovation.
 
 Cloud computing resources are delivered to the users through three major service models:
 
-- Infrastructure as a Service (IaaS): computing resource are provided in the form of Virtual
+- *Infrastructure as a Service (IaaS)*: computing resource are provided in the form of Virtual
   Machines (VMs). A VM provides a view of a dedicated hardware to the user. The user is capable of
   managing the system within a VM and deploying the required software. Examples of IaaS are Amazon
   EC2^[[http://aws.amazon.com/ec2/](http://aws.amazon.com/ec2/)] and Google Compute
   Engine^[[http://cloud.google.com/products/compute-engine.html](http://cloud.google.com/products/compute-engine.html)].
-- Platform as a Service (PaaS): the access to the resource is provided in the form of an Application
+- *Platform as a Service (PaaS)*: the access to the resource is provided in the form of an Application
   Programming Interface (API) that is used for application development and deployment. In this
   model, the user does not have a direct access to the system resources, rather the resource
   allocation to applications is managed by the platform. Examples of PaaS are Google App
   Engine^[[http://cloud.google.com/products/](http://cloud.google.com/products/)] and Microsoft
   Azure^[[http://www.windowsazure.com/](http://www.windowsazure.com/)].
-- Software as a Service (SaaS): application-level software services are provided to the users on a
+- *Software as a Service (SaaS)*: application-level software services are provided to the users on a
   subscription bases. Examples of SaaS are
   Salesforce.com^[[http://www.salesforce.com/](http://www.salesforce.com/)] and Amazon Web Services
   Marketplace^[[https://aws.amazon.com/marketplace/](https://aws.amazon.com/marketplace/)].
@@ -35,10 +35,10 @@ In this work, we focus on the low level service model -- IaaS. Apart from the se
 computing services are distinguished according to their deployment models. There are three basic
 deployment models:
 
-- Public Cloud: computing resources are provided publicly over the Internet based on a
+- *Public Cloud*: computing resources are provided publicly over the Internet based on a
   pay-per-use model.
-- Private Cloud: the Cloud infrastructure is owned and operated internally by an organization.
-- Hybrid Cloud: computing resources are provided by a composition of a private and public Clouds.
+- *Private Cloud*: the Cloud infrastructure is owned and operated internally by an organization.
+- *Hybrid Cloud*: computing resources are provided by a composition of a private and public Clouds.
 
 Public Clouds, such as Amazon EC2, have initiated and driven the industrial adoption of the Cloud
 computing model. However, the software platforms utilized by public Cloud providers are usually
