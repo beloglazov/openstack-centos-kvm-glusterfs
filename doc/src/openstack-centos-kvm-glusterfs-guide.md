@@ -49,18 +49,22 @@ striving to address the issue, such as OpenStack, CloudStack, Eucalyptus, and Op
 mentioned projects basically allow anyone to not only deploy a private Cloud environment free of
 charge, but also contribute back to the development of the platform.
 
-The aim of this work is to facilitate further development and adoption of open source Cloud computing
-software by providing a step-by-step guide to installing the OpenStack Cloud platform on multiple
-computing nodes using a set of shell scripts. In contrast to the existing tools for automated
-installation of OpenStack is that the purpose of this work is not only obtaining a fully operating
-OpenStack Cloud environment, but also learning the steps required to perform the installation from
-the ground up and understanding the responsibilities and interaction of the OpenStack components.
-This is achieved by splitting the installation process into multiple logical steps, and implementing
-each step as a separate shell script. In this paper, we go through and discuss each of the complete
-sequence of steps required to install OpenStack on top of CentOS 6.3 using the Kernel-based Virtual
-Machine (KVM) as a hypervisor and GlusterFS as a distributed replicated file system to enable live
-migration and provide fault tolerance. In summary, the paper guides through the installation process
-of the following software:
+The aim of this work is to facilitate further development and adoption of open source Cloud
+computing software by providing a step-by-step guide to installing the OpenStack Cloud platform on
+multiple computing nodes using a set of shell scripts. In contrast to the existing tools for
+automated installation of OpenStack is that the purpose of this work is not only obtaining a fully
+operating OpenStack Cloud environment, but also learning the steps required to perform the
+installation from the ground up and understanding the responsibilities and interaction of the
+OpenStack components. This is achieved by splitting the installation process into multiple logical
+steps, and implementing each step as a separate shell script. In this paper, we go through and
+discuss each of the complete sequence of steps required to install OpenStack on top of CentOS 6.3
+using the Kernel-based Virtual Machine (KVM) as a hypervisor and GlusterFS as a distributed
+replicated file system to enable live migration and provide fault tolerance. The source code
+described in this paper is released under the Apache 2.0 License and is publicly available
+online^[[https://github.com/beloglazov/openstack-centos-kvm-glusterfs](https://github.com/beloglazov/openstack-centos-kvm-glusterfs)].
+
+In summary, this paper discusses and guides through the installation process of the following
+software:
 
 - CentOS^[[http://centos.org/](http://centos.org/)]: a free Linux Operating System (OS) distribution
   derived from the Red Hat Enterprise Linux (RHEL) distribution.
@@ -136,7 +140,7 @@ following:
    registration, delivery, and snapshotting. The service supports multiple VM image formats
    including Raw. AMI, VHD, VDI (VirtualBox, qcow2, VMDK, and OVF.
 
-The OpenStack software is architectured with the aim of providing decoupling between the services
+The OpenStack software is architectured with an aim of providing decoupling between the services
 constituting the system. The services interact with each other through the public API they provide
 and using Keystone as a registry for obtaining the information about endpoints of the other
 services. The OpenStack Compute service, also referred to as Nova, is on a shared-nothing
@@ -164,6 +168,15 @@ calls to avoid blocking. In the next section we compare the major open source Cl
 
 
 # Step-by-Step OpenStack Installation
+
+As mentioned earlier, the aim of this work is to detail the steps required to perform a complete
+installation of OpenStack on multiple nodes. We split the installation process into multiple
+subsequent logical steps and provide a shell script for each of the steps. In this section, we
+explain and discuss every step followed to obtain a fully operational OpenStack installation on our
+testbed consisting of 1 controller and 4 compute nodes. The source code of the shell scripts
+described in this paper is released under the Apache 2.0 License and is publicly available
+online^[[https://github.com/beloglazov/openstack-centos-kvm-glusterfs](https://github.com/beloglazov/openstack-centos-kvm-glusterfs)].
+
 
 ## Hardware Setup
 
