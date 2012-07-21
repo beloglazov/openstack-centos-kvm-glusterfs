@@ -85,13 +85,13 @@ of the following software:
   the community around it, including users, developers and the entire ecosystem"
   ^[[http://wiki.openstack.org/Governance/Foundation/Structure](http://wiki.openstack.org/Governance/Foundation/Structure)].
 
-In the next section we briefly compare 4 open source Cloud computing platforms, namely OpenStack,
-Eucalyptus, CloudStack, and OpenNebula. In Section 3, we give an overview of the OpenStack software,
-its features, main components, and their interaction. In Section 4, we discuss the existing tools
-for automated installation of OpenStack and differences from our approach. In Section 5 we provide a
-detailed description and discussion of the steps required install the OpenStack Cloud on top of
-CentOS using KVM and GlusterFS. In Section 6, we conclude the paper with a summary and discussion of
-future directions.
+In the next section we give an overview of the OpenStack software, its features, main components,
+and their interaction. In Section 3, we briefly compare 4 open source Cloud computing platforms,
+namely OpenStack, Eucalyptus, CloudStack, and OpenNebula. In Section 4, we discuss the existing
+tools for automated installation of OpenStack and differences from our approach. In Section 5 we
+provide a detailed description and discussion of the steps required install the OpenStack Cloud on
+top of CentOS using KVM and GlusterFS. In Section 6, we conclude the paper with a summary and
+discussion of future directions.
 
 
 # Overview of the OpenStack Cloud Platform
