@@ -1,0 +1,13 @@
+The rapid growth in demand for computational power driven by modern
+service applications combined with the shift to the Cloud computing
+model have led to the establishment of large-scale virtualized data
+centers. Such data centers consume enormous amounts of electrical
+energy resulting in high operating costs and carbon dioxide emissions.
+Dynamic consolidation of virtual machines (VMs) using live migration
+and switching idle nodes to the sleep mode allow Cloud providers to
+optimize resource usage and reduce energy consumption. However, the
+obligation of providing high quality of service to customers leads to
+the necessity in dealing with the energy-performance trade-off, as
+aggressive consolidation may lead to performance degradation. Due to
+the variability of workloads experienced by modern applications, the
+VM placement should be optimized continuously in an online manner.

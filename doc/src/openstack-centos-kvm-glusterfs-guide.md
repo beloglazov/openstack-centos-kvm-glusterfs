@@ -4,9 +4,11 @@
 % 20th of July 2012
 
 
+\newpage
+
 # Introduction
 
-The Cloud computing model leverages virtualization to deliver computing resource to the users
+The Cloud computing model leverages virtualization to deliver computing resources to the users
 on-demand on a pay-per-use basis [@armbrust2010view; @buyya2009cloud]. It provides the properties of
 self-service and elasticity enabling the users to dynamically adjust their resource consumption
 according to the current workload. These properties of the Cloud computing model allow one to avoid
@@ -146,7 +148,10 @@ and using Keystone as a registry for obtaining the information about endpoints o
 services. The OpenStack Compute service, also referred to as Nova, is on a shared-nothing
 messaging-based architecture, which allows running the services on multiple servers. The services,
 which compose Nova communicate via the Advanced Message Queue Protocol (AMQP) using asynchronous
-calls to avoid blocking. In the next section we compare the major open source Cloud platforms.
+calls to avoid blocking. More detailed information about installation and administration of
+OpenStack in given in the official manuals
+[@openstack2012administration-manual; @openstack2012install-manual]. In the next section we compare
+OpenStack with the other major open source Cloud platforms.
 
 
 # Comparison of Open Source Cloud Platforms
