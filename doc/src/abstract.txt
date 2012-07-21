@@ -1,13 +1,15 @@
-The rapid growth in demand for computational power driven by modern
-service applications combined with the shift to the Cloud computing
-model have led to the establishment of large-scale virtualized data
-centers. Such data centers consume enormous amounts of electrical
-energy resulting in high operating costs and carbon dioxide emissions.
-Dynamic consolidation of virtual machines (VMs) using live migration
-and switching idle nodes to the sleep mode allow Cloud providers to
-optimize resource usage and reduce energy consumption. However, the
-obligation of providing high quality of service to customers leads to
-the necessity in dealing with the energy-performance trade-off, as
-aggressive consolidation may lead to performance degradation. Due to
-the variability of workloads experienced by modern applications, the
-VM placement should be optimized continuously in an online manner.
+Cloud computing has proven to be a successful distributed computing
+model demostrated by its wide spread industrial adoption. Free open
+source Cloud platforms are essential to further drive the
+deployment of private and hybrid Cloud computing environments.
+OpenStack is free open source software originally released by
+Rackspace and NASA, which strives to close the gap in the lack of a
+comprehensive Cloud platform with fast development and supported by
+both an active community of people and large companies. In this work,
+we go through and discuss the steps required to come from bare
+hardware to a fully operational multi-node OpenStack installation.
+Every step discussion in this paper is implemented in the form of a
+separate shell script making it easy to understand the intricate
+details of the installation process. The full set of the installation
+scripts is reseased under the Apache 2.0 License and is publicly
+available online.
