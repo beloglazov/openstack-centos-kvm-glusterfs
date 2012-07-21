@@ -84,8 +84,6 @@ of the following software:
   help achieve the OpenStack Mission by Protecting, Empowering, and Promoting OpenStack software and
   the community around it, including users, developers and the entire ecosystem"
   ^[[http://wiki.openstack.org/Governance/Foundation/Structure](http://wiki.openstack.org/Governance/Foundation/Structure)].
-  The OpenStack project is supported by more than 150 companies including AMD, Intel, Canonical,
-  SUSE Linux, Red Hat, Cisco, Dell, HP, IBM and Yahoo!.
 
 In the next section we briefly compare 4 open source Cloud computing platforms, namely OpenStack,
 Eucalyptus, CloudStack, and OpenNebula. In Section 3, we give an overview of the OpenStack software,
@@ -96,20 +94,56 @@ CentOS using KVM and GlusterFS. In Section 6, we conclude the paper with a summa
 future directions.
 
 
+# Overview of the OpenStack Cloud Platform
+
+
+![A high level view of the OpenStack service interaction [@openstack2012diagram]](openstack-software-diagram.png)
+
+OpenStack^[[http://openstack.org/](http://openstack.org/)] is a free open source IaaS Cloud platform
+originally released by Rackspace and NASA under the Apache 2.0 License in July 2010. OpenStack
+controls and manages compute, storage, and network resource aggregated from multiple servers of a
+data center. The system provides a web interface (dashboard) and APIs compatible with Amazon EC2 to
+the administrators and users that allow flexible on-demand provisioning of the resources.
+
+In April 2012 the project lead and management functions have been transferred to a newly formed
+OpenStack Foundation. The goals of the foundation are to support an open development process and
+community building, drive awareness and adoption, and encourage and maintain an ecosystem of
+companies powered by the OpenStack software. The OpenStack project is currently supported by more
+than 150 companies including AMD, Intel, Canonical, SUSE Linux, Red Hat, Cisco, Dell, HP, IBM and
+Yahoo!.
+
+The OpenStack software is divided into several services shown in Figure 1 that through their
+interaction provide the overall system management capabilities. The main services include the
+following:
+
+- *OpenStack Compute (Nova)*: manages the life cycle of VM instances from scheduling and resource
+   provisioning to live migration and security rules. By leveraging the virtualization API provided
+   by Libvirt, OpenStack Compute supports multiple hypervisors, such as KVM and Xen. storage system
+   allows the uses to create block storage devices and dynamically attach and detach
+- *OpenStack Storage*: provides block and object storage to use by VM instances. The block them from
+   VM instances using the dashboard or API. In addition to block storage, OpenStack provides a
+   scalable distributed object storage called Swift, which is accessible through an API.
+- *OpenStack Networking*: provides API-driven network and IP address management capabilities. The
+   system allows the users to create their own networks and assign static, floating, or dynamic IP
+   addresses to VM instances.
+- *OpenStack Dashboard*: provides a web interface for the administrators and users to the system
+   management capabilities, such as VM image management, VM instance life cycle management, storage
+   management, etc.
+- *OpenStack Identity (Keystone)*: a centralized user account management service acting as an
+   authentication and access control system. In addition, the service provides the access to a
+   registry of the OpenStack services deployed in the data center and their communication endpoints.
+- *OpenStack Image (Glance)*:
+
+Tell about: decoupling, service interaction (AMPQ), possible service distribution and replication ->
+scalability and fault tolerance.
+
+
 # Comparison of Open Source Cloud Platforms
 
 - OpenStack
 - Eucalyptus
 - CloudStack
 - OpenNebula
-
-
-# Overview of the OpenStack Cloud Platform
-
-- History
-- Features
-- Main Services
-- Service Interaction
 
 
 # Existing OpenStack Installation Tools
