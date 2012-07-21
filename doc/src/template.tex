@@ -129,8 +129,9 @@ $header-includes$
 $endfor$
 
 $if(title)$
-\title{$title$}
+\title{$title$$thanks$}
 $endif$
+%\author{$for(author)$$author$$sep$ \and $endfor$}
 $for(author)$\author{$author$}$endfor$
 \affil{$affilation$}
 \date{$date$}

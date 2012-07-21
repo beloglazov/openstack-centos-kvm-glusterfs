@@ -77,8 +77,8 @@ software:
   single point of failure. In contrast, the advantages of a distributed file system solution, such
   as GlusterFS, are: (1) not single point of failure, which means even if a server fails, the
   storage and data will remain available due to automatic replication over multiple servers; (2)
-  higher scalability, as Input/Output (I/O) operations are distributed across multiple server; and
-  (3) due to the data replication over multiple server, if a data replica if available on the host,
+  higher scalability, as Input/Output (I/O) operations are distributed across multiple server; and (3)
+  due to the data replication over multiple server, if a data replica if available on the host,
   VM instances access the data locally instead of over network improving the I/O performance.
 - KVM^[[http://www.linux-kvm.org/](http://www.linux-kvm.org/)]: a hypervisor providing full
   virtualization for Linux leveraging hardware-assisted virtualization features of the Intel VT and
