@@ -20,19 +20,19 @@ Cloud computing resources are delivered to the users through three major service
 - *Infrastructure as a Service (IaaS)*: computing resources are delivered in the form of Virtual
   Machines (VMs). A VM provides to the user a view of a dedicated hardware. The user is capable of
   managing the system within a VM and deploying the required software. Examples of IaaS are Amazon
-  EC2^[[http://aws.amazon.com/ec2/](http://aws.amazon.com/ec2/)] and Google Compute
-  Engine^[[http://cloud.google.com/products/compute-engine.html](http://cloud.google.com/products/compute-engine.html)].
+  EC2^[Amazon EC2. [http://aws.amazon.com/ec2/](http://aws.amazon.com/ec2/)] and Google Compute
+  Engine^[Google Compute Engine. [http://cloud.google.com/products/compute-engine.html](http://cloud.google.com/products/compute-engine.html)].
 - *Platform as a Service (PaaS)*: the access to the resources is provided in the form of an
   Application Programming Interface (API) that is used for application development and deployment.
   In this model, the user does not have a direct access to the system resources, rather the resource
-  allocation to applications is automatically managed by the platform. Examples of PaaS are Google
-  App Engine^[[http://cloud.google.com/products/](http://cloud.google.com/products/)] and Microsoft
-  Azure^[[http://www.windowsazure.com/](http://www.windowsazure.com/)].
+  allocation to applications is automatically managed by the platform. Examples of PaaS are Google App
+  Engine^[Google App Engine. [http://cloud.google.com/products/](http://cloud.google.com/products/)]
+  and Microsoft Azure^[Microsoft Azure. [http://www.windowsazure.com/](http://www.windowsazure.com/)].
 - *Software as a Service (SaaS)*: application-level software services are provided to the users on a
   subscription bases over the Internet. Examples of SaaS are
-  Salesforce.com^[[http://www.salesforce.com/](http://www.salesforce.com/)] and applications from
-  the Amazon Web Services
-  Marketplace^[[https://aws.amazon.com/marketplace/](https://aws.amazon.com/marketplace/)].
+  Salesforce.com^[Salesforce.com. [http://www.salesforce.com/](http://www.salesforce.com/)] and
+  applications from the Amazon Web Services
+  Marketplace^[Amazon Web Services Marketplace. [https://aws.amazon.com/marketplace/](https://aws.amazon.com/marketplace/)].
 
 In this work, we focus on the low level service model -- IaaS. Apart from the service models, Cloud
 computing services are distinguished according to their deployment models. There are three basic
@@ -64,16 +64,15 @@ each step as a separate shell script. In this paper, we go through and discuss e
 sequence of steps required to install OpenStack on top of CentOS 6.3 using the Kernel-based Virtual
 Machine (KVM) as a hypervisor and GlusterFS as a distributed replicated file system to enable live
 migration and provide fault tolerance. The source code described in this paper is released under the
-Apache
-2.0 License and is publicly available
-online^[[https://github.com/beloglazov/openstack-centos-kvm-glusterfs](https://github.com/beloglazov/openstack-centos-kvm-glusterfs)].
+Apache 2.0 License and is publicly available
+online^[The project repository. [https://github.com/beloglazov/openstack-centos-kvm-glusterfs](https://github.com/beloglazov/openstack-centos-kvm-glusterfs)].
 
 In summary, this paper discusses and guides through the installation process of the following
 software:
 
-- CentOS^[[http://centos.org/](http://centos.org/)]: a free Linux Operating System (OS) distribution
+- CentOS^[CentOS. [http://centos.org/](http://centos.org/)]: a free Linux Operating System (OS) distribution
   derived from the Red Hat Enterprise Linux (RHEL) distribution.
-- GlusterFS^[[http://gluster.org/](http://gluster.org/)]: a distributed file system providing shared
+- GlusterFS^[GlusterFS. [http://gluster.org/](http://gluster.org/)]: a distributed file system providing shared
   replicated storage across multiple servers over Ethernet or Infiniband. Having a storage shared
   between the compute nodes is a requirement for enabling live migration of VM instances. However,
   having a centralized shared storage service, such as NAS limits the scalability and leads to a
@@ -83,16 +82,17 @@ software:
   scalability, as Input/Output (I/O) operations are distributed across multiple servers; and (3) due
   to the data replication over multiple servers, if a data replica is available on the host, VM
   instances access the data locally rather than remotely over network improving the I/O performance.
-- KVM^[[http://www.linux-kvm.org/](http://www.linux-kvm.org/)]: a hypervisor providing full
+- KVM^[KVM. [http://www.linux-kvm.org/](http://www.linux-kvm.org/)]: a hypervisor providing full
   virtualization for Linux leveraging hardware-assisted virtualization support of the Intel VT and
   AMD-V chipsets. The kernel component of KVM is included in the Linux kernel since the 2.6.20
   version.
-- OpenStack: free open source IaaS Cloud computing software originally released by Rackspace and
-  NASA under the Apache 2.0 License in July 2010. The OpenStack project is currently lead and
-  managed by the OpenStack Foundation, which is "an independent body providing shared resources to
-  help achieve the OpenStack Mission by Protecting, Empowering, and Promoting OpenStack software and
-  the community around it, including users, developers and the entire ecosystem"
-  ^[[http://wiki.openstack.org/Governance/Foundation/Structure](http://wiki.openstack.org/Governance/Foundation/Structure)].
+- OpenStack^[OpenStack. [http://openstack.org/](http://openstack.org/)]: free open source IaaS Cloud
+  computing software originally released by Rackspace and NASA under the Apache 2.0 License in July 2010.
+  The OpenStack project is currently lead and managed by the OpenStack Foundation, which is
+  "an independent body providing shared resources to help achieve the OpenStack Mission by
+  Protecting, Empowering, and Promoting OpenStack software and the community around it, including
+  users, developers and the entire ecosystem"
+  ^[The OpenStack Foundation structure. [http://wiki.openstack.org/Governance/Foundation/Structure](http://wiki.openstack.org/Governance/Foundation/Structure)].
 
 In the next section we give an overview of the OpenStack software, its features, main components,
 and their interaction. In Section 3, we briefly compare 4 open source Cloud computing platforms,
@@ -108,11 +108,11 @@ future directions.
 
 ![A high level view of the OpenStack service interaction [@openstack2012diagram]](openstack-software-diagram.png)
 
-OpenStack^[[http://openstack.org/](http://openstack.org/)] is a free open source IaaS Cloud platform
-originally released by Rackspace and NASA under the Apache 2.0 License in July 2010. OpenStack
-controls and manages compute, storage, and network resource aggregated from multiple servers in a
-data center. The system provides a web interface (dashboard) and APIs compatible with Amazon EC2 to
-the administrators and users that allow flexible on-demand provisioning of the resources.
+OpenStack is a free open source IaaS Cloud platform originally released by Rackspace and NASA under
+the Apache 2.0 License in July 2010. OpenStack controls and manages compute, storage, and network
+resource aggregated from multiple servers in a data center. The system provides a web interface
+(dashboard) and APIs compatible with Amazon EC2 to the administrators and users that allow flexible
+on-demand provisioning of the resources.
 
 In April 2012, the project lead and management functions have been transferred to a newly formed
 OpenStack Foundation. The goals of the foundation are to support an open development process and
@@ -127,7 +127,7 @@ following:
 
 - *OpenStack Compute (Nova)*: manages the life cycle of VM instances from scheduling and resource
    provisioning to live migration and security rules. By leveraging the virtualization API provided
-   by Libvirt^[[http://libvirt.org/](http://libvirt.org/)], OpenStack Compute supports multiple
+   by Libvirt^[Libvirt. [http://libvirt.org/](http://libvirt.org/)], OpenStack Compute supports multiple
    hypervisors, such as KVM and Xen.
 - *OpenStack Storage*: provides block and object storage to use by VM instances. The block storage
    system allows the uses to create block storage devices and dynamically attach and detach them
@@ -185,7 +185,7 @@ explain and discuss every step needed to be followed to obtain a fully operation
 installation on our testbed consisting of 1 controller and 4 compute nodes. The source code of the
 shell scripts described in this paper is released under the Apache 2.0 License and is publicly
 available
-online^[[https://github.com/beloglazov/openstack-centos-kvm-glusterfs](https://github.com/beloglazov/openstack-centos-kvm-glusterfs)].
+online^[The project repository. [https://github.com/beloglazov/openstack-centos-kvm-glusterfs](https://github.com/beloglazov/openstack-centos-kvm-glusterfs)].
 
 
 ## Hardware Setup
@@ -333,7 +333,7 @@ controller. Table 1 shows the partitioning scheme for the compute hosts. `vg_bas
 comprising the standard OS partitions: `lv_root`, `lv_home` and `lv_swap`. `vg_gluster` is a special
 volume group containing a single `lv_gluster` partition, which is dedicated to serve as a GlusterFS
 brick. The `lv_gluster` logical volume is formatted using the
-XFS^[[http://en.wikipedia.org/wiki/XFS](http://en.wikipedia.org/wiki/XFS)] file system, as
+XFS^[XFS. [http://en.wikipedia.org/wiki/XFS](http://en.wikipedia.org/wiki/XFS)] file system, as
 recommended for GlusterFS bricks.
 
 Table: The partitioning scheme for the compute hosts
@@ -424,7 +424,7 @@ configuration of eth0, the network interface connected to the public network in 
 
 In all the following steps, it is assumed that the user logged in is `root`. If the Internet is
 available on the gateway, it is necessary to install the
-Git^[[http://git-scm.com/](http://git-scm.com/)] version control client to be able to clone the
+Git^[Git. [http://git-scm.com/](http://git-scm.com/)] version control client to be able to clone the
 repository containing the installation scripts. This can be done using `yum`, the default package
 manager in CentOS, as follows:
 
@@ -560,7 +560,7 @@ service iptables restart
 (@) `02-selinux-permissive.sh`
 
 This script switches
-SELinux^[[http://en.wikipedia.org/wiki/Security-Enhanced_Linux](http://en.wikipedia.org/wiki/Security-Enhanced_Linux)]
+SELinux^[SELinux. [http://en.wikipedia.org/wiki/Security-Enhanced_Linux](http://en.wikipedia.org/wiki/Security-Enhanced_Linux)]
 into the permissive mode. By default, SELinux blocks certain operations, such as VM migrations.
 Switching SELinux into the permissive mode is not recommended for production environments, but is
 acceptable for testing purposes.
@@ -723,7 +723,7 @@ chmod +x /etc/sysconfig/modules/kvm.modules
 
 (@) `03-libvirt-install.sh`
 
-This script installs Libvirt^[[http://libvirt.org/](http://libvirt.org/)], its dependencies and the
+This script installs Libvirt^[Libvirt. [http://libvirt.org/](http://libvirt.org/)], its dependencies and the
 related tools. Libvirt provides an abstraction and a common Application Programming Interface (API)
 over various hypervisors. It is used by OpenStack to provide support for multiple hypervisors
 including KVM and Xen. After the installation, the script starts the `messagebus` and `avahi-daemon`
@@ -785,7 +785,7 @@ The scripts described in this section need to be executed on all the hosts.
 (@) `01-epel-add-repo.sh`
 
 This scripts adds the Extra Packages for Enterprise
-Linux^[[http://fedoraproject.org/wiki/EPEL](http://fedoraproject.org/wiki/EPEL)] (EPEL) repository,
+Linux^[The EPEL repository. [http://fedoraproject.org/wiki/EPEL](http://fedoraproject.org/wiki/EPEL)] (EPEL) repository,
 which contains the OpenStack related packages.
 
 ```Bash
@@ -1058,10 +1058,10 @@ The purpose of this script is to create user accounts, roles and tenants in Keys
 user and service accounts for each OpenStack service: Keystone, Glance, and Nova. Since the process
 is complicated when done manually (it is necessary to define relations between database records), we
 use the *keystone-init*
-project^[[https://github.com/nimbis/keystone-init](https://github.com/nimbis/keystone-init)] to
-automate the process. The *keystone-init* project allows one to create a configuration file in the
-"YAML Ain't Markup
-Language"^[[http://en.wikipedia.org/wiki/YAML](http://en.wikipedia.org/wiki/YAML)] (YAML) data
+project^[The *keystone-init* project. [https://github.com/nimbis/keystone-init](https://github.com/nimbis/keystone-init)]
+to automate the process. The *keystone-init* project allows one to create a configuration file in
+the "YAML Ain't Markup
+Language"^[YAML. [http://en.wikipedia.org/wiki/YAML](http://en.wikipedia.org/wiki/YAML)] (YAML) data
 format defining the required OpenStack user accounts. Then, according the defined configuration, the
 required database records are automatically created.
 
@@ -1230,13 +1230,13 @@ chkconfig openstack-glance-api on
 
 (@) `18-add-cirros.sh`
 
-This script downloads the Cirros VM
-image^[[https://launchpad.net/cirros/](https://launchpad.net/cirros/)] and imports it into Glance.
-This image is very simplistic: its size is just 9.4 MB. However, it is sufficient for testing
-OpenStack.
+This script downloads the CirrOS VM
+image^[CirrOS. [https://launchpad.net/cirros/](https://launchpad.net/cirros/)] and imports it into Glance.
+This image contains a pre-installed CirrOS, a Tiny OS specialized for running in a Cloud. The image
+is very simplistic: its size is just 9.4 MB. However, it is sufficient for testing OpenStack.
 
 ```Bash
-# Download the Cirros VM image
+# Download the CirrOS VM image
 mkdir /tmp/images
 cd /tmp/images
 wget https://launchpad.net/cirros/trunk/0.3.0/+download/\
@@ -1254,10 +1254,10 @@ rm -rf /tmp/images
 
 (@) `19-add-ubuntu.sh`
 
-This script download the Ubuntu Cloud
-Image^[[http://uec-images.ubuntu.com/](http://uec-images.ubuntu.com/)] and imports it into Glance.
-This is a VM image with a pre-installed version of Ubuntu that is customized by Ubuntu engineering
-to run on cloud-platforms such as Openstack, Amazon EC2, and LXC.
+This script downloads the Ubuntu Cloud
+Image^[Ubuntu Cloud Images. [http://uec-images.ubuntu.com/](http://uec-images.ubuntu.com/)] and
+imports it into Glance. This is a VM image with a pre-installed version of Ubuntu that is customized
+by Ubuntu engineering to run on Cloud platforms such as Openstack, Amazon EC2, and LXC.
 
 ```Bash
 # Download an Ubuntu Cloud image
@@ -1508,7 +1508,7 @@ This script sets restrictive permissions (640) on the Nova configuration file, s
 sensitive information, such as user credentials. Then, the script sets the ownership on the Nova and
 Libvirt related directories to the `nova` user and `nova` group. The script also sets the user and
 group used by the Quick
-EMUlator^[[http://en.wikipedia.org/wiki/QEMU](http://en.wikipedia.org/wiki/QEMU)] (QEMU) service to
+EMUlator^[QEMU. [http://en.wikipedia.org/wiki/QEMU](http://en.wikipedia.org/wiki/QEMU)] (QEMU) service to
 `nova`. This is required since a number of directories need to accessed by both Nova using the
 `nova` user and `nova` group, and QEMU.
 
@@ -1570,7 +1570,7 @@ on launch. This only works on Linux systems that keep their network configuratio
 	```
 
 2. Flat DHCP Mode: Nova runs a
-Dnsmasq^[[http://en.wikipedia.org/wiki/Dnsmasq](http://en.wikipedia.org/wiki/Dnsmasq)] server
+Dnsmasq^[Dnsmasq. [http://en.wikipedia.org/wiki/Dnsmasq](http://en.wikipedia.org/wiki/Dnsmasq)] server
 listening to a created network bridge that assigns public IP addresses to VM instances. This is the
 mode we use in this work. There must be only one host running the `openstack-nova-network` service.
 The `network_host` option in `nova.conf` specifies which host the `openstack-nova-network` service is
@@ -1814,10 +1814,10 @@ echo ". 01-source-configrc.sh"
 
 (@) `02-boot-cirros.sh`
 
-This script creates a VM instance using the Cirros image added to Glance previously.
+This script creates a VM instance using the CirrOS image added to Glance previously.
 
 ```Bash
-# Create a VM instance from the Cirros image
+# Create a VM instance from the CirrOS image
 nova boot --image cirros-0.3.0-x86_64 --flavor m1.small cirros
 ```
 
@@ -1831,7 +1831,7 @@ nova show cirros
 This command shows detailed information about the VM instances, such as the host name, where the VM
 has been allocated to, instance name, current state, flavor, image name, IP address of the VM, etc.
 Once the state of the VM turns into `ACTIVE`, it means that the VM has started booting. It may take
-some more time before the VM is ready to accept SSH connections. The Cirros VM image has a default
+some more time before the VM is ready to accept SSH connections. The CirrOS VM image has a default
 user `cirros` with the `cubswin:)` password. The following command can be used to SSH into the VM
 instance once it is booted:
 
@@ -1998,7 +1998,7 @@ chown -R nova:nova /var/lib/libvirt
 
 If after a start up, the `openstack-nova-network` service hangs with the following last message in
 the log file: 'Attempting to grab file lock "iptables" for method "apply"', the solution is the
-following^[[https://answers.launchpad.net/nova/+question/200985](https://answers.launchpad.net/nova/+question/200985)]:
+following^[OpenStack Compute Questions. [https://answers.launchpad.net/nova/+question/200985](https://answers.launchpad.net/nova/+question/200985)]:
 
 ```Bash
 rm /var/lib/nova/tmp/nova-iptables.lock
