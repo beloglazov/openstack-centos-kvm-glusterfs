@@ -1,55 +1,20 @@
 % A Step-by-Step Guide to Installing OpenStack on CentOS Using the KVM
-  Hypervisor and GlusterFS Distributed File System
-% Anton Beloglazov; Sareh Fotuhi Piraghaj; Mohammed Alrokayan; Rajkumar Buyya
-% 23rd of July 2012
+Hypervisor and GlusterFS Distributed File System % Anton Beloglazov;
+Sareh Fotuhi Piraghaj; Mohammed Alrokayan; Rajkumar Buyya % 23rd of July
+2012
 
--   Introduction
--   Overview of the OpenStack Cloud Platform
--   Comparison of Open Source Cloud Platforms
--   Existing OpenStack Installation Tools
--   Step-by-Step OpenStack Installation
-    -   Hardware Setup
-    -   Organization of the Installation Package
-    -   Configuration Files
-    -   Installation Procedure
-        -   CentOS
-            -   Network Configuration.
-            -   Hard Drive Partitioning.
-
-        -   Network Gateway
-        -   GlusterFS Distributed Replicated Storage
-            -   02-glusterfs-all (all nodes).
-            -   03-glusterfs-controller (controller).
-            -   04-glusterfs-all (all nodes).
-
-        -   KVM
-        -   OpenStack
-            -   06-openstack-all (all nodes).
-            -   07-openstack-controller (controller).
-            -   08-openstack-compute (compute nodes).
-            -   09-openstack-gateway (network gateway).
-            -   10-openstack-controller (controller).
-
-    -   OpenStack Troubleshooting
-        -   Glance
-        -   Nova Compute
-        -   Nova Network
-
--   Conclusion
--   References
-
-\newpage
+\\newpage
 
 Introduction
 ============
 
 The Cloud computing model leverages virtualization to deliver computing
-resources to users on-demand on a pay-per-use basis [1], [2]. It
-provides the properties of self-service and elasticity enabling the
-users to dynamically and flexibly adjust their resource consumption
-according to the current workload. These properties of the Cloud
-computing model allow one to avoid high upfront investments in a
-computing infrastructure, thus reducing the time to market and
+resources to users on-demand on a pay-per-use basis [@armbrust2010view;
+@buyya2009cloud]. It provides the properties of self-service and
+elasticity enabling the users to dynamically and flexibly adjust their
+resource consumption according to the current workload. These properties
+of the Cloud computing model allow one to avoid high upfront investments
+in a computing infrastructure, thus reducing the time to market and
 facilitating a higher pace of innovation.
 
 Cloud computing resources are delivered to the users through three major
@@ -59,18 +24,27 @@ service models:
     delivered in the form of Virtual Machines (VMs). A VM provides to
     the user a view of a dedicated hardware. The user is capable of
     managing the system within a VM and deploying the required software.
-    Examples of IaaS are Amazon EC2[^1] and Google Compute Engine[^2].
+    Examples of IaaS are Amazon EC2\^[Amazon EC2.
+    [http://aws.amazon.com/ec2/](http://aws.amazon.com/ec2/)] and Google
+    Compute Engine\^[Google Compute Engine.
+    [http://cloud.google.com/products/compute-engine.html](http://cloud.google.com/products/compute-engine.html)].
 -   *Platform as a Service (PaaS)*: the access to the resources is
     provided in the form of an Application Programming Interface (API)
     that is used for application development and deployment. In this
     model, the user does not have a direct access to the system
     resources, rather the resource allocation to applications is
     automatically managed by the platform. Examples of PaaS are Google
-    App Engine[^3] and Microsoft Azure[^4].
+    App Engine\^[Google App Engine.
+    [http://cloud.google.com/products/](http://cloud.google.com/products/)]
+    and Microsoft Azure\^[Microsoft Azure.
+    [http://www.windowsazure.com/](http://www.windowsazure.com/)].
 -   *Software as a Service (SaaS)*: application-level software services
     are provided to the users on a subscription bases over the Internet.
-    Examples of SaaS are Salesforce.com[^5] and applications from the
-    Amazon Web Services Marketplace[^6].
+    Examples of SaaS are Salesforce.com\^[Salesforce.com.
+    [http://www.salesforce.com/](http://www.salesforce.com/)] and
+    applications from the Amazon Web Services Marketplace\^[Amazon Web
+    Services Marketplace.
+    [https://aws.amazon.com/marketplace/](https://aws.amazon.com/marketplace/)].
 
 In this work, we focus on the low level service model – IaaS. Apart from
 the service models, Cloud computing services are distinguished according
@@ -111,40 +85,46 @@ CentOS 6.3 using the Kernel-based Virtual Machine (KVM) as a hypervisor
 and GlusterFS as a distributed replicated file system to enable live
 migration and provide fault tolerance. The source code described in this
 paper is released under the Apache 2.0 License and is publicly available
-online[^7].
+online\^[The project repository.
+[https://github.com/beloglazov/openstack-centos-kvm-glusterfs](https://github.com/beloglazov/openstack-centos-kvm-glusterfs)].
 
 In summary, this paper discusses and guides through the installation
 process of the following software:
 
--   CentOS[^8]: a free Linux Operating System (OS) distribution derived
-    from the Red Hat Enterprise Linux (RHEL) distribution.
--   GlusterFS[^9]: a distributed file system providing shared replicated
-    storage across multiple servers over Ethernet or Infiniband. Having
-    a storage shared between the compute nodes is a requirement for
-    enabling live migration of VM instances. However, having a
-    centralized shared storage service, such as NAS limits the
-    scalability and leads to a single point of failure. In contrast, the
-    advantages of a distributed file system solution, such as GlusterFS,
-    are: (1) no single point of failure, which means even if a server
-    fails, the storage and data will remain available due to automatic
-    replication over multiple servers; (2) higher scalability, as
-    Input/Output (I/O) operations are distributed across multiple
-    servers; and (3) due to the data replication over multiple servers,
-    if a data replica is available on the host, VM instances access the
-    data locally rather than remotely over network improving the I/O
-    performance.
--   KVM[^10]: a hypervisor providing full virtualization for Linux
-    leveraging hardware-assisted virtualization support of the Intel VT
-    and AMD-V chipsets. The kernel component of KVM is included in the
-    Linux kernel since the 2.6.20 version.
--   OpenStack[^11]: free open source IaaS Cloud computing software
-    originally released by Rackspace and NASA under the Apache 2.0
-    License in July 2010. The OpenStack project is currently lead and
-    managed by the OpenStack Foundation, which is “an independent body
-    providing shared resources to help achieve the OpenStack Mission by
-    Protecting, Empowering, and Promoting OpenStack software and the
-    community around it, including users, developers and the entire
-    ecosystem”.[^12]
+-   CentOS\^[CentOS. [http://centos.org/](http://centos.org/)]: a free
+    Linux Operating System (OS) distribution derived from the Red Hat
+    Enterprise Linux (RHEL) distribution.
+-   GlusterFS\^[GlusterFS. [http://gluster.org/](http://gluster.org/)]:
+    a distributed file system providing shared replicated storage across
+    multiple servers over Ethernet or Infiniband. Having a storage
+    shared between the compute nodes is a requirement for enabling live
+    migration of VM instances. However, having a centralized shared
+    storage service, such as NAS limits the scalability and leads to a
+    single point of failure. In contrast, the advantages of a
+    distributed file system solution, such as GlusterFS, are: (1) no
+    single point of failure, which means even if a server fails, the
+    storage and data will remain available due to automatic replication
+    over multiple servers; (2) higher scalability, as Input/Output (I/O)
+    operations are distributed across multiple servers; and (3) due to
+    the data replication over multiple servers, if a data replica is
+    available on the host, VM instances access the data locally rather
+    than remotely over network improving the I/O performance.
+-   KVM\^[KVM. [http://www.linux-kvm.org/](http://www.linux-kvm.org/)]:
+    a hypervisor providing full virtualization for Linux leveraging
+    hardware-assisted virtualization support of the Intel VT and AMD-V
+    chipsets. The kernel component of KVM is included in the Linux
+    kernel since the 2.6.20 version.
+-   OpenStack\^[OpenStack.
+    [http://openstack.org/](http://openstack.org/)]: free open source
+    IaaS Cloud computing software originally released by Rackspace and
+    NASA under the Apache 2.0 License in July 2010. The OpenStack
+    project is currently lead and managed by the OpenStack Foundation,
+    which is “an independent body providing shared resources to help
+    achieve the OpenStack Mission by Protecting, Empowering, and
+    Promoting OpenStack software and the community around it, including
+    users, developers and the entire ecosystem” \^[The OpenStack
+    Foundation.
+    [http://wiki.openstack.org/Governance/Foundation/Structure](http://wiki.openstack.org/Governance/Foundation/Structure)].
 
 In the next section we give an overview of the OpenStack software, its
 features, main components, and their interaction. In Section 3, we
@@ -160,7 +140,7 @@ Overview of the OpenStack Cloud Platform
 ========================================
 
 ![A high level view of the OpenStack service interaction
-[3]](openstack-software-diagram.png)
+[@openstack2012diagram]](openstack-software-diagram.png)
 
 OpenStack is a free open source IaaS Cloud platform originally released
 by Rackspace and NASA under the Apache 2.0 License in July 2010.
@@ -185,8 +165,9 @@ capabilities. The main services include the following:
 -   *OpenStack Compute (Nova)*: manages the life cycle of VM instances
     from scheduling and resource provisioning to live migration and
     security rules. By leveraging the virtualization API provided by
-    Libvirt[^13], OpenStack Compute supports multiple hypervisors, such
-    as KVM and Xen.
+    Libvirt\^[Libvirt. [http://libvirt.org/](http://libvirt.org/)],
+    OpenStack Compute supports multiple hypervisors, such as KVM and
+    Xen.
 -   *OpenStack Storage*: provides block and object storage to use by VM
     instances. The block storage system allows the uses to create block
     storage devices and dynamically attach and detach them from VM
@@ -221,7 +202,8 @@ which allows running the services on multiple servers. The services,
 which compose Nova communicate via the Advanced Message Queue Protocol
 (AMQP) using asynchronous calls to avoid blocking. More detailed
 information on installation and administration of OpenStack in given in
-the official manuals [4], [5]. In the next section we compare OpenStack
+the official manuals [@openstack2012administration-manual;
+@openstack2012install-manual]. In the next section we compare OpenStack
 with the other major open source Cloud platforms.
 
 Comparison of Open Source Cloud Platforms
@@ -235,8 +217,9 @@ Comparison of Open Source Cloud Platforms
 Existing OpenStack Installation Tools
 =====================================
 
--   DevStack[^14]
--   Puppet / Chef[^15]
+-   DevStack\^[[http://devstack.org/](http://devstack.org/)]
+-   Puppet /
+    Chef\^[http://docs.openstack.org/trunk/openstack-compute/admin/content/openstack-compute-deployment-tool-with-puppet.html]
 -   Difference From our Approach
 -   The purpose is not just having an up and running OpenStack
     installation, but also learning the steps required to perform the
@@ -254,7 +237,8 @@ section, we explain and discuss every step needed to be followed to
 obtain a fully operational OpenStack installation on our testbed
 consisting of 1 controller and 4 compute nodes. The source code of the
 shell scripts described in this paper is released under the Apache 2.0
-License and is publicly available online[^16].
+License and is publicly available online\^[The project repository.
+[https://github.com/beloglazov/openstack-centos-kvm-glusterfs](https://github.com/beloglazov/openstack-centos-kvm-glusterfs)].
 
 Hardware Setup
 --------------
@@ -342,36 +326,38 @@ to running the installation scripts. The configuration files are
 described below.
 
 `configrc:`
-:   This file contains a number of environmental variables defining
-    various aspects of OpenStack’s configuration, such as administration
-    and service account credentials, as well as access points. The file
-    must be “sourced” to export the variables into the current shell
-    session. The file can be sourced directly by running: `. configrc`,
-    or using the scripts described later. A simple test to check whether
-    the variables have been correctly exported is to `echo` any of the
-    variables. For example, `echo $OS_USERNAME` must output `admin` for
-    the default configuration.
+
+: This file contains a number of environmental variables defining
+various aspects of OpenStack’s configuration, such as administration and
+service account credentials, as well as access points. The file must be
+“sourced” to export the variables into the current shell session. The
+file can be sourced directly by running: `. configrc`, or using the
+scripts described later. A simple test to check whether the variables
+have been correctly exported is to `echo` any of the variables. For
+example, `echo $OS_USERNAME` must output `admin` for the default
+configuration.
 
 `hosts:`
-:   This files contains a mapping between the IP addresses of the hosts
-    in the local network and their host names. We apply the following
-    host name convention: the compute hosts are named *computeX*, where
-    *X* is replaced by the number of the host. According the described
-    hardware setup, the default configuration defines 4 compute hosts:
-    `compute1` (192.168.0.1), `compute2` (192.168.0.2), `compute3`
-    (192.168.0.3), `compute4` (192.168.0.4); and 1 `controller`
-    (192.168.0.5). As mentioned above, in our setup one of the compute
-    hosts is connected to the public network and acts as a gateway. We
-    assign to this host the host name `compute1`, and also alias it as
-    `gateway`.
+
+: This files contains a mapping between the IP addresses of the hosts in
+the local network and their host names. We apply the following host name
+convention: the compute hosts are named *computeX*, where *X* is
+replaced by the number of the host. According the described hardware
+setup, the default configuration defines 4 compute hosts: `compute1`
+(192.168.0.1), `compute2` (192.168.0.2), `compute3` (192.168.0.3),
+`compute4` (192.168.0.4); and 1 `controller` (192.168.0.5). As mentioned
+above, in our setup one of the compute hosts is connected to the public
+network and acts as a gateway. We assign to this host the host name
+`compute1`, and also alias it as `gateway`.
 
 `ntp.conf:`
-:   This files contains a list of Network Time Protocol (NTP) servers to
-    use by all the hosts. It is important to set accessible servers,
-    since time synchronization is important for OpenStack services to
-    interact correctly. By default, this file defines servers used
-    within the University of Melbourne. It is advised to replace the
-    default configuration with a list of preferred servers.
+
+: This files contains a list of Network Time Protocol (NTP) servers to
+use by all the hosts. It is important to set accessible servers, since
+time synchronization is important for OpenStack services to interact
+correctly. By default, this file defines servers used within the
+University of Melbourne. It is advised to replace the default
+configuration with a list of preferred servers.
 
 It is important to replaced the default configuration defined in the
 described configuration files, since the default configuration is
@@ -385,8 +371,9 @@ Installation Procedure
 The installation scripts have been tested with CentOS 6.3, which has
 been installed on all the hosts. The CentOS installation mainly follows
 the standard process described in detail in the Red Hat Enterprise Linux
-6 Installation Guide [6]. The steps of the installation process that
-differ from the standard are discussed in this section.
+6 Installation Guide [@redhat2012installation]. The steps of the
+installation process that differ from the standard are discussed in this
+section.
 
 #### Network Configuration.
 
@@ -422,25 +409,27 @@ scheme for the compute hosts. `vg_base` is a volume group comprising the
 standard OS partitions: `lv_root`, `lv_home` and `lv_swap`. `vg_gluster`
 is a special volume group containing a single `lv_gluster` partition,
 which is dedicated to serve as a GlusterFS brick. The `lv_gluster`
-logical volume is formatted using the XFS[^17] file system, as
-recommended for GlusterFS bricks.
+logical volume is formatted using the XFS\^[XFS.
+[http://en.wikipedia.org/wiki/XFS](http://en.wikipedia.org/wiki/XFS)]
+file system, as recommended for GlusterFS bricks.
 
-  Device                 Size (MB)   Mount Point / Volume  Type
-  ---------------------- ----------- --------------------- ----------
-  *LVM Volume Groups*                                      
-    vg\_base             20996                             
-      lv\_root           10000       /                     ext4
-      lv\_swap           6000                              swap
-      lv\_home           4996        /home                 ext4
-    vg\_gluster          216972                            
-      lv\_gluster        216972      /export/gluster       xfs
-  *Hard Drives*                                            
-    sda                                                    
-      sda1               500         /boot                 ext4
-      sda2               21000       vg\_base              PV (LVM)
-      sda3               216974      vg\_gluster           PV (LVM)
+Table: The partitioning scheme for the compute hosts
 
-  : The partitioning scheme for the compute hosts
++———————+———-+——————–+———+ |Device |Size\\ (MB)|Mount Point /
+Volume|Type |
++=====================+==========+====================+=========+ |*LVM
+Volume Groups* | | | | +———————+———-+——————–+———+ |\\ \\ vg\_base |20996
+| | | +———————+———-+——————–+———+ |\\ \\ \\ \\ lv\_root |10000 |/ |ext4 |
++———————+———-+——————–+———+ |\\ \\ \\ \\ lv\_swap |6000 | |swap |
++———————+———-+——————–+———+ |\\ \\ \\ \\ lv\_home |4996 |/home |ext4 |
++———————+———-+——————–+———+ |\\ \\ vg\_gluster |216972 | | |
++———————+———-+——————–+———+ |\\ \\ \\ \\ lv\_gluster |216972
+|/export/gluster |xfs | +———————+———-+——————–+———+ |*Hard Drives* | | |
+| +———————+———-+——————–+———+ |\\ \\ sda | | | |
++———————+———-+——————–+———+ |\\ \\ \\ \\ sda1 |500 |/boot |ext4 |
++———————+———-+——————–+———+ |\\ \\ \\ \\ sda2 |21000 |vg\_base |PV (LVM)
+| +———————+———-+——————–+———+ |\\ \\ \\ \\ sda3 |216974 |vg\_gluster |PV
+(LVM) | +———————+———-+——————–+———+
 
 Table 2 shows the partitioning scheme for the controller. It does not
 include a `vg_gluster` volume group since the controller is not going to
@@ -454,26 +443,27 @@ for storing VM images by OpenStack Glance. The mount point for
 `lv_images` is `/var/lib/glance/images`, which is the default directory
 used by Glance to store VM image files.
 
-  Device               Size (MB)   Mount Point / Volume   Type
-  -------------------- ----------- ---------------------- ----------
-  *LVM Volume Groups*                                     
-    nova-volumes       29996                              
-      Free             29996                              
-    vg\_base           16996                              
-      lv\_root         10000       /                      ext4
-      lv\_swap         2000                               swap
-      lv\_home         4996        /home                  ext4
-    vg\_images         28788                              
-      lv\_images       28788       /var/lib/glance/images ext4
-  *Hard Drives*                                           
-    sda                                                   
-      sda1             500         /boot                  ext4
-      sda2             17000       vg\_base               PV (LVM)
-      sda3             30000       nova-volumes           PV (LVM)
-      sda4             28792                              Extended
-        sda5           28788       vg\_images             PV (LVM)
+Table: The partitioning scheme for the controller
 
-  : The partitioning scheme for the controller
++——————-+———-+———————-+———+ |Device |Size\\ (MB)|Mount Point / Volume
+|Type |
++===================+==========+======================+=========+ |*LVM
+Volume Groups*| | | | +——————-+———-+———————-+———+ |\\ \\ nova-volumes
+|29996 | | | +——————-+———-+———————-+———+ |\\ \\ \\ \\ Free |29996 | | |
++——————-+———-+———————-+———+ |\\ \\ vg\_base |16996 | | |
++——————-+———-+———————-+———+ |\\ \\ \\ \\ lv\_root |10000 |/ |ext4 |
++——————-+———-+———————-+———+ |\\ \\ \\ \\ lv\_swap |2000 | |swap |
++——————-+———-+———————-+———+ |\\ \\ \\ \\ lv\_home |4996 |/home |ext4 |
++——————-+———-+———————-+———+ |\\ \\ vg\_images |28788 | | |
++——————-+———-+———————-+———+ |\\ \\ \\ \\ lv\_images |28788
+|/var/lib/glance/images|ext4 | +——————-+———-+———————-+———+ |*Hard
+Drives* | | | | +——————-+———-+———————-+———+ |\\ \\ sda | | | |
++——————-+———-+———————-+———+ |\\ \\ \\ \\ sda1 |500 |/boot |ext4 |
++——————-+———-+———————-+———+ |\\ \\ \\ \\ sda2 |17000 |vg\_base |PV (LVM)
+| +——————-+———-+———————-+———+ |\\ \\ \\ \\ sda3 |30000 |nova-volumes |PV
+(LVM) | +——————-+———-+———————-+———+ |\\ \\ \\ \\ sda4 |28792 | |Extended
+| +——————-+———-+———————-+———+ |\\ \\ \\ \\ \\ \\ sda5 |28788 |vg\_images
+|PV (LVM) | +——————-+———-+———————-+———+
 
 ### Network Gateway
 
@@ -486,33 +476,27 @@ to the public network in our setup.
 
 In all the following steps, it is assumed that the user logged in is
 `root`. If the Internet is available on the gateway, it is necessary to
-install the Git[^18] version control client to be able to clone the
-repository containing the installation scripts. This can be done using
-`yum`, the default package manager in CentOS, as follows:
+install the Git\^[Git. [http://git-scm.com/](http://git-scm.com/)]
+version control client to be able to clone the repository containing the
+installation scripts. This can be done using `yum`, the default package
+manager in CentOS, as follows:
 
-~~~~ {.Bash}
-yum install -y git
-~~~~
+`Bash yum install -y git`
 
 Next, the repository can be cloned using the following command:
 
-~~~~ {.Bash}
-git clone \
-   https://github.com/beloglazov/openstack-centos-kvm-glusterfs.git
-~~~~
+`Bash git clone \    https://github.com/beloglazov/openstack-centos-kvm-glusterfs.git`
 
 Now, we can continue the installation using the scripts contained in the
 cloned Git repository. As described above, the starting point is the
 directory called `01-network-gateway`.
 
-~~~~ {.Bash}
-cd openstack-centos-kvm-glusterfs/01-network-gateway
-~~~~
+`Bash cd openstack-centos-kvm-glusterfs/01-network-gateway`
 
 All the scripts described below can be run by executing
 `./<script name>.sh` in the command line.
 
-(1) `01-iptables-nat.sh`
+(@) `01-iptables-nat.sh`
 
 This script flushes all the default `iptables` rules to open all the
 ports. This is acceptable for testing; however, it is not recommended
@@ -521,38 +505,44 @@ sets up NAT using `iptables` by forwarding packets from eth1 (the local
 network interface) through eth0. The last stage is saving the defined
 `iptables` rules and restarting the service.
 
-~~~~ {.Bash}
-# Flush the iptables rules.
-iptables -F
-iptables -t nat -F
-iptables -t mangle -F
+\`\`\`Bash
 
-# Set up packet forwarding for NAT
-iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-iptables -A FORWARD -i eth1 -j ACCEPT
-iptables -A FORWARD -o eth1 -j ACCEPT
+Flush the iptables rules.
+=========================
 
-# Save the iptables configuration into a file and restart iptables
-service iptables save
-service iptables restart
-~~~~
+iptables -F iptables -t nat -F iptables -t mangle -F
 
-(2) `02-ip-forward.sh`
+Set up packet forwarding for NAT
+================================
+
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE iptables -A FORWARD
+-i eth1 -j ACCEPT iptables -A FORWARD -o eth1 -j ACCEPT
+
+Save the iptables configuration into a file and restart iptables
+================================================================
+
+service iptables save service iptables restart \`\`\`
+
+(@) `02-ip-forward.sh`
 
 By default, IP packet forwarding is disabled in CentOS; therefore, it is
 necessary to enable it by modifying the `/etc/sysctl.conf` configuration
 file. This is done by the `02-ip-forward.sh` script as follows:
 
-~~~~ {.Bash}
-# Enable IP packet forwarding
-sed -i 's/net.ipv4.ip_forward = 0/net.ipv4.ip_forward = 1/g' \
-   /etc/sysctl.conf
+\`\`\`Bash
 
-# Restart the network service
-service network restart
-~~~~
+Enable IP packet forwarding
+===========================
 
-(3) `03-copy-hosts.sh`
+sed -i ’s/net.ipv4.ip\_forward = 0/net.ipv4.ip\_forward = 1/g’ \\
+/etc/sysctl.conf
+
+Restart the network service
+===========================
+
+service network restart \`\`\`
+
+(@) `03-copy-hosts.sh`
 
 This script copies the `hosts` file from the `config` directory to
 `/etc` locally, as well to all the other hosts: the remaining compute
@@ -563,16 +553,21 @@ the other hosts for password-less SSH connections. Once the `hosts` file
 is copied to all the hosts, they can be accessed by using their
 respective host names instead of the IP addresses.
 
-~~~~ {.Bash}
-# Copy the hosts file into the local configuration
+\`\`\`Bash
+
+Copy the hosts file into the local configuration
+================================================
+
 cp ../config/hosts /etc/
 
-# Copy the hosts file to the other nodes.
-scp ../config/hosts root@compute2:/etc/
-scp ../config/hosts root@compute3:/etc/
-scp ../config/hosts root@compute4:/etc/
-scp ../config/hosts root@controller:/etc/
-~~~~
+Copy the hosts file to the other nodes.
+=======================================
+
+scp ../config/hosts root@compute2:/etc/ scp ../config/hosts
+root@compute3:/etc/ scp ../config/hosts root@compute4:/etc/ scp
+../config/hosts root@controller:/etc/
+
+\`\`\`
 
 From this point, all the installation steps on any host can be performed
 remotely over SSH.
@@ -591,96 +586,87 @@ can be conveniently managed from a single machine simultaneously. Before
 applying further installation scripts, it is necessary to run the
 following commands:
 
-~~~~ {.Bash}
-# Update the OS packages
+\`\`\`Bash
+
+Update the OS packages
+======================
+
 yum update -y
 
-# Install Git
+Install Git
+===========
+
 yum install -y git
 
-# Clone the repository
-git clone \
-   https://github.com/beloglazov/openstack-centos-kvm-glusterfs.git
-~~~~
+Clone the repository
+====================
+
+git clone \\
+https://github.com/beloglazov/openstack-centos-kvm-glusterfs.git
+
+\`\`\`
 
 It is optional but might be useful to install other programs on all the
 hosts, such as `man`, `nano`, or `emacs` for reading manuals and editing
 files.
 
-(4) `01-iptables-flush.sh`
+(@) `01-iptables-flush.sh`
 
 This script flushes all the default `iptables` rules to allow
 connections through all the ports. As mentioned above, this is insecure
 and not recommended for production environments. For production it is
 recommended to open only the required ports.
 
-~~~~ {.Bash}
-# Flush the iptables rules.
+\`\`\`Bash
+
+Flush the iptables rules.
+=========================
+
 iptables -F
 
-# Save the configuration and restart iptables
-service iptables save
-service iptables restart
-~~~~
+Save the configuration and restart iptables
+===========================================
 
-(5) `02-selinux-permissive.sh`
+service iptables save service iptables restart
 
-This script switches SELinux[^19] into the permissive mode. By default,
-SELinux blocks certain operations, such as VM migrations. Switching
-SELinux into the permissive mode is not recommended for production
-environments, but is acceptable for testing purposes.
+\`\`\`
 
-~~~~ {.Bash}
-# Set SELinux into the permissive mode
-sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
-echo 0 > /selinux/enforce
-~~~~
+(@) `02-selinux-permissive.sh`
 
-(6) `03-glusterfs-install.sh`
+This script switches SELinux\^[SELinux.
+[http://en.wikipedia.org/wiki/Security-Enhanced\_Linux](http://en.wikipedia.org/wiki/Security-Enhanced_Linux)]
+into the permissive mode. By default, SELinux blocks certain operations,
+such as VM migrations. Switching SELinux into the permissive mode is not
+recommended for production environments, but is acceptable for testing
+purposes.
+
+`Bash # Set SELinux into the permissive mode sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config echo 0 > /selinux/enforce`
+
+(@) `03-glusterfs-install.sh`
 
 This script installs GlusterFS services and their dependencies.
 
-~~~~ {.Bash}
-# Install GlusterFS and its dependencies
-yum -y install \
-   openssh-server wget fuse fuse-libs openib libibverbs \
-   http://download.gluster.org/pub/gluster/glusterfs/LATEST/\
-      CentOS/glusterfs-3.3.0-1.el6.x86_64.rpm \
-   http://download.gluster.org/pub/gluster/glusterfs/LATEST/\
-      CentOS/glusterfs-fuse-3.3.0-1.el6.x86_64.rpm \
-   http://download.gluster.org/pub/gluster/glusterfs/LATEST/\
-      CentOS/glusterfs-server-3.3.0-1.el6.x86_64.rpm
-~~~~
+`Bash # Install GlusterFS and its dependencies yum -y install \    openssh-server wget fuse fuse-libs openib libibverbs \    http://download.gluster.org/pub/gluster/glusterfs/LATEST/\       CentOS/glusterfs-3.3.0-1.el6.x86_64.rpm \    http://download.gluster.org/pub/gluster/glusterfs/LATEST/\       CentOS/glusterfs-fuse-3.3.0-1.el6.x86_64.rpm \    http://download.gluster.org/pub/gluster/glusterfs/LATEST/\       CentOS/glusterfs-server-3.3.0-1.el6.x86_64.rpm`
 
-(7) `04-glusterfs-start.sh`
+(@) `04-glusterfs-start.sh`
 
 This script starts the GlusterFS service, and sets the service to start
 during the system start up.
 
-~~~~ {.Bash}
-# Start the GlusterFS service
-service glusterd restart
-chkconfig glusterd on
-~~~~
+`Bash # Start the GlusterFS service service glusterd restart chkconfig glusterd on`
 
 #### 03-glusterfs-controller (controller).
 
 The scripts described in this section need to be run only on the
 controller.
 
-(8) `01-glusterfs-probe.sh`
+(@) `01-glusterfs-probe.sh`
 
 This script probes the compute hosts to add them to a GlusterFS cluster.
 
-~~~~ {.Bash}
-# Probe GlusterFS peer hosts
-gluster peer probe compute1
-gluster peer probe compute2
-gluster peer probe compute3
-gluster peer probe compute4
-~~~~
+`Bash # Probe GlusterFS peer hosts gluster peer probe compute1 gluster peer probe compute2 gluster peer probe compute3 gluster peer probe compute4`
 
-(9) `02-glusterfs-create-volume.sh`
+(@) `02-glusterfs-create-volume.sh`
 
 This scripts creates a GlusterFS volume out of the bricks exported by
 the compute hosts mounted to `/export/gluster` for storing VM instances.
@@ -692,21 +678,25 @@ a single server, the complete replication provided by GlusterFS improves
 the read performance, since all the read operations are local. This is
 important to enable efficient live migration of VMs.
 
-~~~~ {.Bash}
-# Create a GlusterFS volume replicated over 4 gluster hosts
-gluster volume create vm-instances replica 4 \
-   compute1:/export/gluster compute2:/export/gluster \
-   compute3:/export/gluster compute4:/export/gluster
+\`\`\`Bash
 
-# Start the created volume
-gluster volume start vm-instances
-~~~~
+Create a GlusterFS volume replicated over 4 gluster hosts
+=========================================================
+
+gluster volume create vm-instances replica 4 \\ compute1:/export/gluster
+compute2:/export/gluster \\ compute3:/export/gluster
+compute4:/export/gluster
+
+Start the created volume
+========================
+
+gluster volume start vm-instances \`\`\`
 
 #### 04-glusterfs-all (all nodes).
 
 The script described in this section needs to be run on all the hosts.
 
-(10) `01-glusterfs-mount.sh`
+(@) `01-glusterfs-mount.sh`
 
 This scripts adds a line to the `/etc/fstab` configuration file to
 automatically mount the GlusterFS volume during the system start up to
@@ -721,13 +711,7 @@ coordinates live migration by writing some temporary data to the shared
 directory. The `mount -a` command re-mounts everything from the config
 file after it has been modified.
 
-~~~~ {.Bash}
-# Mount the GlusterFS volume
-mkdir -p /var/lib/nova/instances
-echo "localhost:/vm-instances /var/lib/nova/instances \
-   glusterfs defaults 0 0" >> /etc/fstab
-mount -a
-~~~~
+`Bash # Mount the GlusterFS volume mkdir -p /var/lib/nova/instances echo "localhost:/vm-instances /var/lib/nova/instances \    glusterfs defaults 0 0" >> /etc/fstab mount -a`
 
 ### KVM
 
@@ -742,9 +726,7 @@ Basic Input Output System (BIOS); therefore, it is necessary to verify
 that it is enabled. To check whether hardware-assisted virtualization is
 supported by the hardware, the following Linux command can be used:
 
-~~~~ {.Bash}
-grep -E 'vmx|svm' /proc/cpuinfo
-~~~~
+`Bash grep -E 'vmx|svm' /proc/cpuinfo`
 
 If the command returns any output, it means that the system supports
 hardware-assisted virtualization. The `vmx` processor feature flag
@@ -752,16 +734,13 @@ represents an Intel VT chipset, whereas the `svm` flag represents AMD-V.
 Depending on the flag returned, you need to modify the
 `02-kvm-modprobe.sh` script.
 
-(11) `01-kvm-install.sh`
+(@) `01-kvm-install.sh`
 
 This script installs KVM and the related tools.
 
-~~~~ {.Bash}
-# Install KVM and the related tools
-yum -y install kvm qemu-kvm qemu-kvm-tools
-~~~~
+`Bash # Install KVM and the related tools yum -y install kvm qemu-kvm qemu-kvm-tools`
 
-(12) `02-kvm-modprobe.sh`
+(@) `02-kvm-modprobe.sh`
 
 This script enables KVM in the OS. If the
 `grep -E 'vmx|svm' /proc/cpuinfo` command described above returned
@@ -770,75 +749,72 @@ KVM module by default. If the command returned `svm`, it is necessary to
 comment the `modprobe kvm-intel` line and uncomment the
 `modprobe kvm-amd` line.
 
-~~~~ {.Bash}
-# Create a script for enabling the KVM kernel module
-echo "
-modprobe kvm
+\`\`\`Bash
 
-# Uncomment this line if the host has an AMD CPU
-#modprobe kvm-amd
+Create a script for enabling the KVM kernel module
+==================================================
 
-# Uncomment this line if the host has an Intel CPU
-modprobe kvm-intel
-" > /etc/sysconfig/modules/kvm.modules
+echo " modprobe kvm
+
+Uncomment this line if the host has an AMD CPU
+==============================================
+
+modprobe kvm-amd
+================
+
+Uncomment this line if the host has an Intel CPU
+================================================
+
+modprobe kvm-intel " \> /etc/sysconfig/modules/kvm.modules
 
 chmod +x /etc/sysconfig/modules/kvm.modules
 
-# Enable KVM
-/etc/sysconfig/modules/kvm.modules
-~~~~
+Enable KVM
+==========
 
-(13) `03-libvirt-install.sh`
+/etc/sysconfig/modules/kvm.modules \`\`\`
 
-This script installs Libvirt[^20], its dependencies and the related
-tools. Libvirt provides an abstraction and a common Application
+(@) `03-libvirt-install.sh`
+
+This script installs Libvirt\^[Libvirt.
+[http://libvirt.org/](http://libvirt.org/)], its dependencies and the
+related tools. Libvirt provides an abstraction and a common Application
 Programming Interface (API) over various hypervisors. It is used by
 OpenStack to provide support for multiple hypervisors including KVM and
 Xen. After the installation, the script starts the `messagebus` and
 `avahi-daemon` services, which are prerequisites of Libvirt.
 
-~~~~ {.Bash}
-# Install Libvirt and its dependencies
+\`\`\`Bash
+
+Install Libvirt and its dependencies
+====================================
+
 yum -y install libvirt libvirt-python python-virtinst avahi dmidecode
 
-# Start the services required by Libvirt
-service messagebus restart
-service avahi-daemon restart
+Start the services required by Libvirt
+======================================
 
-# Start the service during the system start up
-chkconfig messagebus on
-chkconfig avahi-daemon on
-~~~~
+service messagebus restart service avahi-daemon restart
 
-(14) `04-libvirt-config.sh`
+Start the service during the system start up
+============================================
+
+chkconfig messagebus on chkconfig avahi-daemon on \`\`\`
+
+(@) `04-libvirt-config.sh`
 
 This script modifies the Libvirt configuration to enable communication
 over TCP without authentication. This is required by OpenStack to enable
 live migration of VM instances.
 
-~~~~ {.Bash}
-# Enable the communication with Libvirt
-# over TCP without authentication.
-sed -i 's/#listen_tls = 0/listen_tls = 0/g' \
-   /etc/libvirt/libvirtd.conf
-sed -i 's/#listen_tcp = 1/listen_tcp = 1/g' \
-   /etc/libvirt/libvirtd.conf
-sed -i 's/#auth_tcp = "sasl"/auth_tcp = "none"/g' \
-   /etc/libvirt/libvirtd.conf
-sed -i 's/#LIBVIRTD_ARGS="--listen"/LIBVIRTD_ARGS="--listen"/g' \
-   /etc/sysconfig/libvirtd
-~~~~
+`Bash # Enable the communication with Libvirt # over TCP without authentication. sed -i 's/#listen_tls = 0/listen_tls = 0/g' \    /etc/libvirt/libvirtd.conf sed -i 's/#listen_tcp = 1/listen_tcp = 1/g' \    /etc/libvirt/libvirtd.conf sed -i 's/#auth_tcp = "sasl"/auth_tcp = "none"/g' \    /etc/libvirt/libvirtd.conf sed -i 's/#LIBVIRTD_ARGS="--listen"/LIBVIRTD_ARGS="--listen"/g' \    /etc/sysconfig/libvirtd`
 
-(15) `05-libvirt-start.sh`
+(@) `05-libvirt-start.sh`
 
 This script starts the `libvirtd` service and sets it to automatically
 start during the system start up.
 
-~~~~ {.Bash}
-# Start the Libvirt service
-service libvirtd restart
-chkconfig libvirtd on
-~~~~
+`Bash # Start the Libvirt service service libvirtd restart chkconfig libvirtd on`
 
 ### OpenStack
 
@@ -850,65 +826,55 @@ OpenStack installation.
 The scripts described in this section need to be executed on all the
 hosts.
 
-(16) `01-epel-add-repo.sh`
+(@) `01-epel-add-repo.sh`
 
-This scripts adds the Extra Packages for Enterprise Linux[^21] (EPEL)
-repository, which contains the OpenStack related packages.
+This scripts adds the Extra Packages for Enterprise Linux\^[The EPEL
+repository.
+[http://fedoraproject.org/wiki/EPEL](http://fedoraproject.org/wiki/EPEL)]
+(EPEL) repository, which contains the OpenStack related packages.
 
-~~~~ {.Bash}
-# Add the EPEL repo: http://fedoraproject.org/wiki/EPEL
-yum install -y http://dl.fedoraproject.org/pub/epel/6/i386/\
-   epel-release-6-7.noarch.rpm
-~~~~
+`Bash # Add the EPEL repo: http://fedoraproject.org/wiki/EPEL yum install -y http://dl.fedoraproject.org/pub/epel/6/i386/\    epel-release-6-7.noarch.rpm`
 
-(17) `02-ntp-install.sh`
+(@) `02-ntp-install.sh`
 
 This script install the NTP service, which is required to automatically
 synchronize the time with external NTP servers.
 
-~~~~ {.Bash}
-# Install NTP
-yum install -y ntp
-~~~~
+`Bash # Install NTP yum install -y ntp`
 
-(18) `03-ntp-config.sh`
+(@) `03-ntp-config.sh`
 
 This script replaces the default servers specified in the
 `/etc/ntp.conf` configuration file with the servers specified in the
 `config/ntp.conf` file described above. If the default set of servers is
 satisfactory, then the execution of this script is not required.
 
-~~~~ {.Bash}
-# Fetch the NTP servers specified in ../config/ntp.conf
-SERVER1=`cat ../config/ntp.conf | sed '1!d;q'`
-SERVER2=`cat ../config/ntp.conf | sed '2!d;q'`
-SERVER3=`cat ../config/ntp.conf | sed '3!d;q'`
+\`\``Bash # Fetch the NTP servers specified in ../config/ntp.conf SERVER1=`cat
+../config/ntp.conf | sed ‘1!d;q’`SERVER2=`cat ../config/ntp.conf | sed
+‘2!d;q’`SERVER3=`cat ../config/ntp.conf | sed ‘3!d;q’\`
 
-# Replace the default NTP servers with the above
-sed -i "s/server 0.*pool.ntp.org/$SERVER1/g" /etc/ntp.conf
-sed -i "s/server 1.*pool.ntp.org/$SERVER2/g" /etc/ntp.conf
-sed -i "s/server 2.*pool.ntp.org/$SERVER3/g" /etc/ntp.conf
-~~~~
+Replace the default NTP servers with the above
+==============================================
 
-(19) `04-ntp-start.sh`
+sed -i “s/server 0.*pool.ntp.org/\$SERVER1/g" /etc/ntp.conf sed -i
+"s/server 1.*pool.ntp.org/\$SERVER2/g” /etc/ntp.conf sed -i “s/server
+2.\*pool.ntp.org/\$SERVER3/g” /etc/ntp.conf \`\`\`
+
+(@) `04-ntp-start.sh`
 
 This script starts the `ntpdate` service and sets it to start during the
 system start up. Upon the start, the `ntpdate` service synchronizes the
 time with the servers specified in the `/etc/ntp.conf` configuration
 file.
 
-~~~~ {.Bash}
-# Start the NTP service
-service ntpdate restart
-chkconfig ntpdate on
-~~~~
+`Bash # Start the NTP service service ntpdate restart chkconfig ntpdate on`
 
 #### 07-openstack-controller (controller).
 
 The scripts described in this section need to be run only on the
 controller host.
 
-(20) `01-source-configrc.sh`
+(@) `01-source-configrc.sh`
 
 This scripts is mainly used to remind of the necessity to “source” the
 `configrc` file prior to continuing, since some scripts in this
@@ -916,93 +882,84 @@ directory use the environmental variable defined in `configrc`. To
 source the file, it is necessary to run the following command:
 `. 01-source-configrc.sh`.
 
-~~~~ {.Bash}
-echo "To make the environmental variables available \
-   in the current session, run: "
-echo ". 01-source-configrc.sh"
+\`\`\`Bash echo “To make the environmental variables available \\ in the
+current session, run:” echo “. 01-source-configrc.sh”
 
-# Export the variables defined in ../config/configrc
-. ../config/configrc
-~~~~
+Export the variables defined in ../config/configrc
+==================================================
 
-(21) `02-mysql-install.sh`
+. ../config/configrc \`\`\`
+
+(@) `02-mysql-install.sh`
 
 This script installs the MySQL server, which is required to host the
 databases used by the OpenStack services.
 
-~~~~ {.Bash}
-# Install the MySQL server
-yum install -y mysql mysql-server
-~~~~
+`Bash # Install the MySQL server yum install -y mysql mysql-server`
 
-(22) `03-mysql-start.sh`
+(@) `03-mysql-start.sh`
 
 This script start the MySQL service and initializes the password of the
 `root` MySQL user using a variable from the `configrc` file called
 `$MYSQL_ROOT_PASSWORD`.
 
-~~~~ {.Bash}
-# Start the MySQL service
-service mysqld start
-chkconfig mysqld on
+\`\`\`Bash
 
-# Initialize the MySQL root password
-mysqladmin -u root password $MYSQL_ROOT_PASSWORD
+Start the MySQL service
+=======================
 
-echo ""
-echo "The MySQL root password has been set \
-   to the value of $MYSQL_ROOT_PASSWORD: \"$MYSQL_ROOT_PASSWORD\""
-~~~~
+service mysqld start chkconfig mysqld on
 
-(23) `04-keystone-install.sh`
+Initialize the MySQL root password
+==================================
+
+mysqladmin -u root password \$MYSQL\_ROOT\_PASSWORD
+
+echo “” echo “The MySQL root password has been set \\ to the value of
+\$MYSQL\_ROOT\_PASSWORD: \\”\$MYSQL\_ROOT\_PASSWORD\\“” \`\`\`
+
+(@) `04-keystone-install.sh`
 
 This script installs Keystone - the OpenStack identity management
 service, and other OpenStack command line utilities.
 
-~~~~ {.Bash}
-# Install OpenStack utils and Keystone, the identity management service
-yum install -y openstack-utils openstack-keystone
-~~~~
+`Bash # Install OpenStack utils and Keystone, the identity management service yum install -y openstack-utils openstack-keystone`
 
-(24) `05-keystone-create-db.sh`
+(@) `05-keystone-create-db.sh`
 
 This script creates a MySQL database for Keystone called `keystone`,
 which is used to store various identity data. The script also creates a
 `keystone` user and grants the user with full permissions to the
 `keystone` database.
 
-~~~~ {.Bash}
-# Create a database for Keystone
-../lib/mysqlq.sh "CREATE DATABASE keystone;"
+\`\`\`Bash
 
-# Create a keystone user and grant all privileges
-# to the keystone database
-../lib/mysqlq.sh "GRANT ALL ON keystone.* TO 'keystone'@'controller' \
-   IDENTIFIED BY '$KEYSTONE_MYSQL_PASSWORD';"
-~~~~
+Create a database for Keystone
+==============================
 
-(25) `06-keystone-generate-admin-token.sh`
+../lib/mysqlq.sh “CREATE DATABASE keystone;”
+
+Create a keystone user and grant all privileges
+===============================================
+
+to the keystone database
+========================
+
+../lib/mysqlq.sh “GRANT ALL ON keystone.\* TO ‘keystone’@‘controller’ \\
+IDENTIFIED BY ‘\$KEYSTONE\_MYSQL\_PASSWORD’;” \`\`\`
+
+(@) `06-keystone-generate-admin-token.sh`
 
 Keystone allows two types of authentication for administrative action
 like creating users, tenants, etc:
 
 1.  Using an admin token and `admin_port` (35357), e.g.:
 
-    ~~~~ {.Bash}
-    keystone \
-       --token=<admin token> \
-       --endpoint=http://controller:35357/v2.0 user-list
-    ~~~~
+    `Bash keystone \    --token=<admin token> \    --endpoint=http://controller:35357/v2.0 user-list`
 
 2.  Using an admin user and `public_port` (5000), e.g.:
 
-    ~~~~ {.Bash}
-    keystone \
-       --os_username=admin \
-       --os_tenant_name=admin \
-       --os_password=<password> \
-       --os_auth_url=http://controller:5000/v2.0 user-list
-    ~~~~
+    `Bash keystone \    --os_username=admin \    --os_tenant_name=admin \    --os_password=<password> \    --os_auth_url=http://controller:5000/v2.0 user-list`
 
 Services, such as Glance and Nova, can also authenticate in Keystone
 using one of two ways. One way is to share the admin token among the
@@ -1013,34 +970,19 @@ service tenant and admin role in that tenant.
 
 Here is an example of the password-based authenication for nova:
 
-~~~~ {.Bash}
-    nova \
-       --os_username=nova \
-       --os_password=<password> \
-       --os_tenant_name=service \
-       --os_auth_url=http://controller:5000/v2.0 list
-~~~~
+`Bash     nova \        --os_username=nova \        --os_password=<password> \        --os_tenant_name=service \        --os_auth_url=http://controller:5000/v2.0 list`
 
 One of two sets of authentication parameters is required to be specified
 in `/etc/nova/api-paste.ini`. The first option is to set up the
 token-based authentication, like the following:
 
-~~~~ {.Bash}
-auth_host = controller
-auth_protocol = http
-admin_token = <admin token>
-~~~~
+\`\`\`Bash auth\_host = controller auth\_protocol = http admin\_token =
+<admin token> \`\`\`\`
 
 The second option is to set up the password-based authentication, as
 follows:
 
-~~~~ {.Bash}
-auth_host = controller
-auth_protocol = http
-admin_tenant_name = service
-admin_user = nova
-admin_password = <password>
-~~~~
+`Bash auth_host = controller auth_protocol = http admin_tenant_name = service admin_user = nova admin_password = <password>`
 
 The password-based authentication might be preferable, since it uses
 Keystone’s database backend to store user credentials. Therefore, it is
@@ -1059,78 +1001,75 @@ The `06-keystone-generate-admin-token.sh` script generates a random
 token used to authorize the Keystone admin account. The generated token
 is stored in the `./keystone-admin-token` file.
 
-~~~~ {.Bash}
-# Generate an admin token for Keystone and save it into
-# ./keystone-admin-token
-openssl rand -hex 10 > keystone-admin-token
-~~~~
+`Bash # Generate an admin token for Keystone and save it into # ./keystone-admin-token openssl rand -hex 10 > keystone-admin-token`
 
-(26) `07-keystone-config.sh`
+(@) `07-keystone-config.sh`
 
 This script modifies the configuration file of Keystone,
 `/etc/keystone/keystone.conf`. It sets the generated admin token and the
 MySQL connection configuration using the variables defined in
 `configrc`.
 
-~~~~ {.Bash}
-# Set the generated admin token in the Keystone configuration
-openstack-config --set /etc/keystone/keystone.conf DEFAULT \
-   admin_token `cat keystone-admin-token`
+\`\``Bash # Set the generated admin token in the Keystone configuration openstack-config --set /etc/keystone/keystone.conf DEFAULT \    admin_token`cat
+keystone-admin-token\`
 
-# Set the connection to the MySQL server
-openstack-config --set /etc/keystone/keystone.conf sql connection \
-   mysql://keystone:$KEYSTONE_MYSQL_PASSWORD@controller/keystone
-~~~~
+Set the connection to the MySQL server
+======================================
 
-(27) `08-keystone-init-db.sh`
+openstack-config –set /etc/keystone/keystone.conf sql connection \\
+mysql://keystone:\$KEYSTONE\_MYSQL\_PASSWORD@controller/keystone
+
+\`\`\`
+
+(@) `08-keystone-init-db.sh`
 
 This script initializes the `keystone` database using the
 `keystone-manage` command line tool. The executed command creates tables
 in the database.
 
-~~~~ {.Bash}
-# Initialize the database for Keystone
-keystone-manage db_sync
-~~~~
+`Bash # Initialize the database for Keystone keystone-manage db_sync`
 
-(28) `09-keystone-permissions.sh`
+(@) `09-keystone-permissions.sh`
 
 This script sets restrictive permissions (640) on the Keystone
 configuration file, since it contains the MySQL account credentials and
 the admin token. Then, the scripts sets the ownership of the Keystone
 related directories to the `keystone` user and `keystone` group.
 
-~~~~ {.Bash}
-# Set restrictive permissions on the Keystone config file
+\`\`\`Bash
+
+Set restrictive permissions on the Keystone config file
+=======================================================
+
 chmod 640 /etc/keystone/keystone.conf
 
-# Set the ownership for the Keystone related directories
-chown -R keystone:keystone /var/log/keystone
-chown -R keystone:keystone /var/lib/keystone
-~~~~
+Set the ownership for the Keystone related directories
+======================================================
 
-(29) `10-keystone-start.sh`
+chown -R keystone:keystone /var/log/keystone chown -R keystone:keystone
+/var/lib/keystone \`\`\`
+
+(@) `10-keystone-start.sh`
 
 This script starts the Keystone service and sets it to automatically
 start during the system start up.
 
-~~~~ {.Bash}
-# Start the Keystone service
-service openstack-keystone restart
-chkconfig openstack-keystone on
-~~~~
+`Bash # Start the Keystone service service openstack-keystone restart chkconfig openstack-keystone on`
 
-(30) `11-keystone-create-users.sh`
+(@) `11-keystone-create-users.sh`
 
 The purpose of this script is to create user accounts, roles and tenants
 in Keystone for the admin user and service accounts for each OpenStack
 service: Keystone, Glance, and Nova. Since the process is complicated
 when done manually (it is necessary to define relations between database
-records), we use the *keystone-init* project[^22] to automate the
-process. The *keystone-init* project allows one to create a
-configuration file in the “YAML Ain’t Markup Language”[^23] (YAML) data
-format defining the required OpenStack user accounts. Then, according
-the defined configuration, the required database records are
+records), we use the *keystone-init* project\^[The *keystone-init*
+project.
+[https://github.com/nimbis/keystone-init](https://github.com/nimbis/keystone-init)]
+to automate the process. The *keystone-init* project allows one to
+create a configuration file in the “YAML Ain’t Markup Language”\^[YAML.
+[http://en.wikipedia.org/wiki/YAML](http://en.wikipedia.org/wiki/YAML)]
+(YAML) data format defining the required OpenStack user accounts. Then,
+according the defined configuration, the required database records are
 automatically created.
 
 Our script first installs a dependency of *keystone-init* and clones the
@@ -1143,216 +1082,247 @@ repository to allow one to browse the generated configuration file,
 e.g. to check the correctness. When the repository is not required
 anymore, it can be removed by executing `rm -rf keystone-init`.
 
-~~~~ {.Bash}
-# Install PyYAML, a YAML Python library
+\`\`\`Bash
+
+Install PyYAML, a YAML Python library
+=====================================
+
 yum install -y PyYAML
 
-# Clone a repository with Keystone initialization scripts
+Clone a repository with Keystone initialization scripts
+=======================================================
+
 git clone https://github.com/nimbis/keystone-init.git
 
-# Replace the default configuration with the values defined be the
-# environmental variables in configrc
-sed -i "s/192.168.206.130/controller/g" \
-   keystone-init/config.yaml
-sed -i "s/012345SECRET99TOKEN012345/`cat keystone-admin-token`/g" \
-   keystone-init/config.yaml
-sed -i "s/name:        openstackDemo/name:        $OS_TENANT_NAME/g" \
-   keystone-init/config.yaml
-sed -i "s/name:     adminUser/name:     $OS_USERNAME/g" \
-   keystone-init/config.yaml
-sed -i "s/password: secretword/password: $OS_PASSWORD/g" \
-   keystone-init/config.yaml
-sed -i "s/name:     glance/name:     $GLANCE_SERVICE_USERNAME/g" \
-   keystone-init/config.yaml
-sed -i "s/password: glance/password: $GLANCE_SERVICE_PASSWORD/g" \
-   keystone-init/config.yaml
-sed -i "s/name:     nova/name:     $NOVA_SERVICE_USERNAME/g" \
-   keystone-init/config.yaml
-sed -i "s/password: nova/password: $NOVA_SERVICE_PASSWORD/g" \
-   keystone-init/config.yaml
-sed -i "s/RegionOne/$OS_REGION_NAME/g" \
-   keystone-init/config.yaml
+Replace the default configuration with the values defined be the
+================================================================
 
-# Run the Keystone initialization script
+environmental variables in configrc
+===================================
+
+sed -i “s/192.168.206.130/controller/g” \\ keystone-init/config.yaml sed
+-i “s/012345SECRET99TOKEN012345/`cat keystone-admin-token`/g” \\
+keystone-init/config.yaml sed -i “s/name: openstackDemo/name:
+\$OS\_TENANT\_NAME/g” \\ keystone-init/config.yaml sed -i “s/name:
+adminUser/name: \$OS\_USERNAME/g” \\ keystone-init/config.yaml sed -i
+“s/password: secretword/password: \$OS\_PASSWORD/g” \\
+keystone-init/config.yaml sed -i “s/name: glance/name:
+\$GLANCE\_SERVICE\_USERNAME/g” \\ keystone-init/config.yaml sed -i
+“s/password: glance/password: \$GLANCE\_SERVICE\_PASSWORD/g” \\
+keystone-init/config.yaml sed -i “s/name: nova/name:
+\$NOVA\_SERVICE\_USERNAME/g” \\ keystone-init/config.yaml sed -i
+“s/password: nova/password: \$NOVA\_SERVICE\_PASSWORD/g” \\
+keystone-init/config.yaml sed -i “s/RegionOne/\$OS\_REGION\_NAME/g” \\
+keystone-init/config.yaml
+
+Run the Keystone initialization script
+======================================
+
 ./keystone-init/keystone-init.py ./keystone-init/config.yaml
 
-echo ""
-echo "The applied config file is keystone-init/config.yaml"
-echo "You may do 'rm -rf keystone-init' to remove \
-   the no more needed keystone-init directory"
-~~~~
+echo “” echo “The applied config file is keystone-init/config.yaml” echo
+“You may do ‘rm -rf keystone-init’ to remove \\ the no more needed
+keystone-init directory” \`\`\`
 
-(31) `12-glance-install.sh`
+(@) `12-glance-install.sh`
 
 This script install Glance – the OpenStack VM image management service.
 
-~~~~ {.Bash}
-# Install OpenStack Glance, an image management service
-yum install -y openstack-glance
-~~~~
+`Bash # Install OpenStack Glance, an image management service yum install -y openstack-glance`
 
-(32) `13-glance-create-db.sh`
+(@) `13-glance-create-db.sh`
 
 This script creates a MySQL database for Glance called `glance`, which
 is used to store VM image metadata. The script also creates a `glance`
 user and grants full permissions to the `glance` database to this user.
 
-~~~~ {.Bash}
-# Create a database for Glance
-../lib/mysqlq.sh "CREATE DATABASE glance;"
+\`\`\`Bash
 
-# Create a glance user and grant all privileges
-# to the glance database
-../lib/mysqlq.sh "GRANT ALL ON glance.* TO 'glance'@'controller' \
-   IDENTIFIED BY '$GLANCE_MYSQL_PASSWORD';"
-~~~~
+Create a database for Glance
+============================
 
-(33) `14-glance-config.sh`
+../lib/mysqlq.sh “CREATE DATABASE glance;”
+
+Create a glance user and grant all privileges
+=============================================
+
+to the glance database
+======================
+
+../lib/mysqlq.sh “GRANT ALL ON glance.\* TO ‘glance’@‘controller’ \\
+IDENTIFIED BY ‘\$GLANCE\_MYSQL\_PASSWORD’;” \`\`\`
+
+(@) `14-glance-config.sh`
 
 This scripts modifies the configuration files of the Glance services,
 which include the API and Registry services. Apart from various
 credentials, the script also sets Keystone as the identity management
 service used by Glance.
 
-~~~~ {.Bash}
-# Make Glance API use Keystone as the identity management service
-openstack-config --set /etc/glance/glance-api.conf \
-   paste_deploy flavor keystone
+\`\`\`Bash
 
-# Set Glance API user credentials
-openstack-config --set /etc/glance/glance-api-paste.ini \
-   filter:authtoken admin_tenant_name $GLANCE_SERVICE_TENANT
-openstack-config --set /etc/glance/glance-api-paste.ini \
-   filter:authtoken admin_user $GLANCE_SERVICE_USERNAME
-openstack-config --set /etc/glance/glance-api-paste.ini \
-   filter:authtoken admin_password $GLANCE_SERVICE_PASSWORD
+Make Glance API use Keystone as the identity management service
+===============================================================
 
-# Set Glance Cache user credentials
-openstack-config --set /etc/glance/glance-cache.conf \
-   DEFAULT admin_tenant_name $GLANCE_SERVICE_TENANT
-openstack-config --set /etc/glance/glance-cache.conf \
-   DEFAULT admin_user $GLANCE_SERVICE_USERNAME
-openstack-config --set /etc/glance/glance-cache.conf \
-   DEFAULT admin_password $GLANCE_SERVICE_PASSWORD
+openstack-config –set /etc/glance/glance-api.conf \\ paste\_deploy
+flavor keystone
 
-# Set Glance Registry to use Keystone
-# as the identity management service
-openstack-config --set /etc/glance/glance-registry.conf \
-   paste_deploy flavor keystone
+Set Glance API user credentials
+===============================
 
-# Set the connection to the MySQL server
-openstack-config --set /etc/glance/glance-registry.conf \
-   DEFAULT sql_connection \
-      mysql://glance:$GLANCE_MYSQL_PASSWORD@controller/glance
+openstack-config –set /etc/glance/glance-api-paste.ini \\
+filter:authtoken admin\_tenant\_name \$GLANCE\_SERVICE\_TENANT
+openstack-config –set /etc/glance/glance-api-paste.ini \\
+filter:authtoken admin\_user \$GLANCE\_SERVICE\_USERNAME
+openstack-config –set /etc/glance/glance-api-paste.ini \\
+filter:authtoken admin\_password \$GLANCE\_SERVICE\_PASSWORD
 
-# Set Glance Registry user credentials
-openstack-config --set /etc/glance/glance-registry-paste.ini \
-   filter:authtoken admin_tenant_name $GLANCE_SERVICE_TENANT
-openstack-config --set /etc/glance/glance-registry-paste.ini \
-   filter:authtoken admin_user $GLANCE_SERVICE_USERNAME
-openstack-config --set /etc/glance/glance-registry-paste.ini \
-   filter:authtoken admin_password $GLANCE_SERVICE_PASSWORD
-~~~~
+Set Glance Cache user credentials
+=================================
 
-(34) `15-glance-init-db.sh`
+openstack-config –set /etc/glance/glance-cache.conf \\ DEFAULT
+admin\_tenant\_name \$GLANCE\_SERVICE\_TENANT openstack-config –set
+/etc/glance/glance-cache.conf \\ DEFAULT admin\_user
+\$GLANCE\_SERVICE\_USERNAME openstack-config –set
+/etc/glance/glance-cache.conf \\ DEFAULT admin\_password
+\$GLANCE\_SERVICE\_PASSWORD
+
+Set Glance Registry to use Keystone
+===================================
+
+as the identity management service
+==================================
+
+openstack-config –set /etc/glance/glance-registry.conf \\ paste\_deploy
+flavor keystone
+
+Set the connection to the MySQL server
+======================================
+
+openstack-config –set /etc/glance/glance-registry.conf \\ DEFAULT
+sql\_connection \\
+mysql://glance:\$GLANCE\_MYSQL\_PASSWORD@controller/glance
+
+Set Glance Registry user credentials
+====================================
+
+openstack-config –set /etc/glance/glance-registry-paste.ini \\
+filter:authtoken admin\_tenant\_name \$GLANCE\_SERVICE\_TENANT
+openstack-config –set /etc/glance/glance-registry-paste.ini \\
+filter:authtoken admin\_user \$GLANCE\_SERVICE\_USERNAME
+openstack-config –set /etc/glance/glance-registry-paste.ini \\
+filter:authtoken admin\_password \$GLANCE\_SERVICE\_PASSWORD \`\`\`
+
+(@) `15-glance-init-db.sh`
 
 This scripts initializes the `glance` database using the `glance-manage`
 command line tool.
 
-~~~~ {.Bash}
-# Initialize the database for Glance
-glance-manage db_sync
-~~~~
+`Bash # Initialize the database for Glance glance-manage db_sync`
 
-(35) `16-glance-permissions.sh`
+(@) `16-glance-permissions.sh`
 
 This scripts sets restrictive permissions (640) on the Glance
 configuration files, since they contain sensitive information. The
 script also set the ownership of the Glance related directories to the
 `glance` user and `glance` group.
 
-~~~~ {.Bash}
-# Set restrictive permissions for the Glance config files
-chmod 640 /etc/glance/*.conf
-chmod 640 /etc/glance/*.ini
+\`\`\`Bash
 
-# Set the ownership for the Glance related directories
-chown -R glance:glance /var/log/glance
-chown -R glance:glance /var/lib/glance
-~~~~
+Set restrictive permissions for the Glance config files
+=======================================================
 
-(36) `17-glance-start.sh`
+chmod 640 /etc/glance/*.conf chmod 640 /etc/glance/*.ini
+
+Set the ownership for the Glance related directories
+====================================================
+
+chown -R glance:glance /var/log/glance chown -R glance:glance
+/var/lib/glance \`\`\`
+
+(@) `17-glance-start.sh`
 
 This script starts the Glance services: API and Registry. The script
 sets the services to automatically start during the system start up.
 
-~~~~ {.Bash}
-# Start the Glance Registry and API services
-service openstack-glance-registry restart
-service openstack-glance-api restart
+\`\`\`Bash
 
-chkconfig openstack-glance-registry on
-chkconfig openstack-glance-api on
-~~~~
+Start the Glance Registry and API services
+==========================================
 
-(37) `18-add-cirros.sh`
+service openstack-glance-registry restart service openstack-glance-api
+restart
 
-This script downloads the CirrOS VM image[^24] and imports it into
-Glance. This image contains a pre-installed CirrOS, a Tiny OS
-specialized for running in a Cloud. The image is very simplistic: its
-size is just 9.4 MB. However, it is sufficient for testing OpenStack.
+chkconfig openstack-glance-registry on chkconfig openstack-glance-api on
+\`\`\`
 
-~~~~ {.Bash}
-# Download the CirrOS VM image
-mkdir /tmp/images
-cd /tmp/images
-wget https://launchpad.net/cirros/trunk/0.3.0/+download/\
-   cirros-0.3.0-x86_64-disk.img
+(@) `18-add-cirros.sh`
 
-# Add the downloaded image to Glance
-glance add name="cirros-0.3.0-x86_64" is_public=true \
-   disk_format=qcow2 container_format=bare \
-   < cirros-0.3.0-x86_64-disk.img
+This script downloads the CirrOS VM image\^[CirrOS.
+[https://launchpad.net/cirros/](https://launchpad.net/cirros/)] and
+imports it into Glance. This image contains a pre-installed CirrOS, a
+Tiny OS specialized for running in a Cloud. The image is very
+simplistic: its size is just 9.4 MB. However, it is sufficient for
+testing OpenStack.
 
-# Remove the temporary directory
-rm -rf /tmp/images
-~~~~
+\`\`\`Bash
 
-(38) `19-add-ubuntu.sh`
+Download the CirrOS VM image
+============================
 
-This script downloads the Ubuntu Cloud Image[^25] and imports it into
-Glance. This is a VM image with a pre-installed version of Ubuntu that
-is customized by Ubuntu engineering to run on Cloud platforms such as
-Openstack, Amazon EC2, and LXC.
+mkdir /tmp/images cd /tmp/images wget
+https://launchpad.net/cirros/trunk/0.3.0/+download/\\
+cirros-0.3.0-x86\_64-disk.img
 
-~~~~ {.Bash}
-# Download an Ubuntu Cloud image
-mkdir /tmp/images
-cd /tmp/images
-wget http://uec-images.ubuntu.com/precise/current/\
-   precise-server-cloudimg-amd64-disk1.img
+Add the downloaded image to Glance
+==================================
 
-# Add the downloaded image to Glance
-glance add name="ubuntu" is_public=true disk_format=qcow2 \
-   container_format=bare < precise-server-cloudimg-amd64-disk1.img
+glance add name=“cirros-0.3.0-x86\_64” is\_public=true \\
+disk\_format=qcow2 container\_format=bare \\ \<
+cirros-0.3.0-x86\_64-disk.img
 
-# Remove the temporary directory
-rm -rf /tmp/images
-~~~~
+Remove the temporary directory
+==============================
 
-(39) `20-nova-install.sh`
+rm -rf /tmp/images \`\`\`
+
+(@) `19-add-ubuntu.sh`
+
+This script downloads the Ubuntu Cloud Image\^[Ubuntu Cloud Images.
+[http://uec-images.ubuntu.com/](http://uec-images.ubuntu.com/)] and
+imports it into Glance. This is a VM image with a pre-installed version
+of Ubuntu that is customized by Ubuntu engineering to run on Cloud
+platforms such as Openstack, Amazon EC2, and LXC.
+
+\`\`\`Bash
+
+Download an Ubuntu Cloud image
+==============================
+
+mkdir /tmp/images cd /tmp/images wget
+http://uec-images.ubuntu.com/precise/current/\\
+precise-server-cloudimg-amd64-disk1.img
+
+Add the downloaded image to Glance
+==================================
+
+glance add name=“ubuntu” is\_public=true disk\_format=qcow2 \\
+container\_format=bare \< precise-server-cloudimg-amd64-disk1.img
+
+Remove the temporary directory
+==============================
+
+rm -rf /tmp/images \`\`\`
+
+(@) `20-nova-install.sh`
 
 This script installs Nova – the OpenStack compute service, as well as
 the Qpid AMQP message broker. The message broker is required by the
 OpenStack services to communicate with each other.
 
-~~~~ {.Bash}
-# Install OpenStack Nova (compute service)
-# and the Qpid AMQP message broker
-yum install -y openstack-nova* qpid-cpp-server
-~~~~
+`Bash # Install OpenStack Nova (compute service) # and the Qpid AMQP message broker yum install -y openstack-nova* qpid-cpp-server`
 
-(40) `21-nova-create-db.sh`
+(@) `21-nova-create-db.sh`
 
 This script creates a MySQL database for Nova called `nova`, which is
 used to store VM instance metadata. The script also creates a `nova`
@@ -1360,38 +1330,51 @@ user and grants full permissions to the `nova` database to this user.
 The script also enables the access to the database from hosts other than
 controller.
 
-~~~~ {.Bash}
-# Create a database for Nova
-../lib/mysqlq.sh "CREATE DATABASE nova;"
+\`\`\`Bash
 
-# Create a nova user and grant all privileges
-# to the nova database
-../lib/mysqlq.sh "GRANT ALL ON nova.* TO 'nova'@'controller' \
-   IDENTIFIED BY '$NOVA_MYSQL_PASSWORD';"
+Create a database for Nova
+==========================
 
-# The following is need to allow access
-# from Nova services running on other hosts
-../lib/mysqlq.sh "GRANT ALL ON nova.* TO 'nova'@'%' \
-   IDENTIFIED BY '$NOVA_MYSQL_PASSWORD';"
-~~~~
+../lib/mysqlq.sh “CREATE DATABASE nova;”
 
-(41) `22-nova-permissions.sh`
+Create a nova user and grant all privileges
+===========================================
+
+to the nova database
+====================
+
+../lib/mysqlq.sh “GRANT ALL ON nova.\* TO ‘nova’@‘controller’ \\
+IDENTIFIED BY ‘\$NOVA\_MYSQL\_PASSWORD’;”
+
+The following is need to allow access
+=====================================
+
+from Nova services running on other hosts
+=========================================
+
+../lib/mysqlq.sh “GRANT ALL ON nova.\* TO ‘nova’@‘%’ \\ IDENTIFIED BY
+‘\$NOVA\_MYSQL\_PASSWORD’;” \`\`\`
+
+(@) `22-nova-permissions.sh`
 
 This script sets restrictive permissions on the Nova configuration file,
 since it contains sensitive information, such as user credentials. The
 script also sets the ownership of the Nova related directories to the
 `nova` group.
 
-~~~~ {.Bash}
-# Set restrictive permissions for the Nova config file
+\`\`\`Bash
+
+Set restrictive permissions for the Nova config file
+====================================================
+
 chmod 640 /etc/nova/nova.conf
 
-# Set the ownership for the Nova related directories
-chown -R root:nova /etc/nova
-chown -R nova:nova /var/lib/nova
-~~~~
+Set the ownership for the Nova related directories
+==================================================
 
-(42) `23-nova-config.sh`
+chown -R root:nova /etc/nova chown -R nova:nova /var/lib/nova \`\`\`
+
+(@) `23-nova-config.sh`
 
 The `/etc/nova/nova.conf` configuration file should be present on all
 the compute hosts running Nova Compute, as well as on the controller,
@@ -1403,83 +1386,99 @@ installation scripts of the controller and compute hosts. The
 `23-nova-config.sh` script invokes the Nova configuration script
 provided in the `lib` directory.
 
-~~~~ {.Bash}
-# Run the Nova configuration script
-# defined in ../lib/nova-config.sh
-../lib/nova-config.sh
-~~~~
+`Bash # Run the Nova configuration script # defined in ../lib/nova-config.sh ../lib/nova-config.sh`
 
 The content of the `nova-config.sh` script is given below:
 
-~~~~ {.Bash}
-# This is a Nova configuration shared
-# by the compute hosts, gateway and controller
+\`\`\`Bash
 
-# Enable verbose output
-openstack-config --set /etc/nova/nova.conf \
-   DEFAULT verbose True
+This is a Nova configuration shared
+===================================
 
-# Set the connection to the MySQL server
-openstack-config --set /etc/nova/nova.conf \
-   DEFAULT sql_connection \
-      mysql://nova:$NOVA_MYSQL_PASSWORD@controller/nova
+by the compute hosts, gateway and controller
+============================================
 
-# Make Nova use Keystone as the identity management service
-openstack-config --set /etc/nova/nova.conf \
-   DEFAULT auth_strategy keystone
+Enable verbose output
+=====================
 
-# Set the host name of the Qpid AMQP message broker
-openstack-config --set /etc/nova/nova.conf \
-   DEFAULT qpid_hostname controller
+openstack-config –set /etc/nova/nova.conf \\ DEFAULT verbose True
 
-# Set Nova user credentials
-openstack-config --set /etc/nova/api-paste.ini \
-   filter:authtoken admin_tenant_name $NOVA_SERVICE_TENANT
-openstack-config --set /etc/nova/api-paste.ini \
-   filter:authtoken admin_user $NOVA_SERVICE_USERNAME
-openstack-config --set /etc/nova/api-paste.ini \
-   filter:authtoken admin_password $NOVA_SERVICE_PASSWORD
-openstack-config --set /etc/nova/api-paste.ini \
-   filter:authtoken auth_uri $NOVA_OS_AUTH_URL
+Set the connection to the MySQL server
+======================================
 
-# Set the network configuration
-openstack-config --set /etc/nova/nova.conf \
-   DEFAULT network_host compute1
-openstack-config --set /etc/nova/nova.conf \
-   DEFAULT fixed_range 10.0.0.0/24
-openstack-config --set /etc/nova/nova.conf \
-   DEFAULT flat_interface eth1
-openstack-config --set /etc/nova/nova.conf \
-   DEFAULT flat_network_bridge br100
-openstack-config --set /etc/nova/nova.conf \
-   DEFAULT public_interface eth1
+openstack-config –set /etc/nova/nova.conf \\ DEFAULT sql\_connection \\
+mysql://nova:\$NOVA\_MYSQL\_PASSWORD@controller/nova
 
-# Set the Glance host name
-openstack-config --set /etc/nova/nova.conf \
-   DEFAULT glance_host controller
+Make Nova use Keystone as the identity management service
+=========================================================
 
-# Set the VNC configuration
-openstack-config --set /etc/nova/nova.conf \
-   DEFAULT vncserver_listen 0.0.0.0
-openstack-config --set /etc/nova/nova.conf \
-   DEFAULT vncserver_proxyclient_address controller
+openstack-config –set /etc/nova/nova.conf \\ DEFAULT auth\_strategy
+keystone
 
-# This is the host accessible from outside,
-# where novncproxy is running on
-openstack-config --set /etc/nova/nova.conf \
-   DEFAULT novncproxy_base_url \
-      http://$PUBLIC_IP_ADDRESS:6080/vnc_auto.html
+Set the host name of the Qpid AMQP message broker
+=================================================
 
-# This is the host accessible from outside,
-# where xvpvncproxy is running on
-openstack-config --set /etc/nova/nova.conf \
-   DEFAULT xvpvncproxy_base_url \
-      http://$PUBLIC_IP_ADDRESS:6081/console
+openstack-config –set /etc/nova/nova.conf \\ DEFAULT qpid\_hostname
+controller
 
-# Set the host name of the metadata service
-openstack-config --set /etc/nova/nova.conf \
-   DEFAULT metadata_host $METADATA_HOST
-~~~~
+Set Nova user credentials
+=========================
+
+openstack-config –set /etc/nova/api-paste.ini \\ filter:authtoken
+admin\_tenant\_name \$NOVA\_SERVICE\_TENANT openstack-config –set
+/etc/nova/api-paste.ini \\ filter:authtoken admin\_user
+\$NOVA\_SERVICE\_USERNAME openstack-config –set /etc/nova/api-paste.ini
+\\ filter:authtoken admin\_password \$NOVA\_SERVICE\_PASSWORD
+openstack-config –set /etc/nova/api-paste.ini \\ filter:authtoken
+auth\_uri \$NOVA\_OS\_AUTH\_URL
+
+Set the network configuration
+=============================
+
+openstack-config –set /etc/nova/nova.conf \\ DEFAULT network\_host
+compute1 openstack-config –set /etc/nova/nova.conf \\ DEFAULT
+fixed\_range 10.0.0.0/24 openstack-config –set /etc/nova/nova.conf \\
+DEFAULT flat\_interface eth1 openstack-config –set /etc/nova/nova.conf
+\\ DEFAULT flat\_network\_bridge br100 openstack-config –set
+/etc/nova/nova.conf \\ DEFAULT public\_interface eth1
+
+Set the Glance host name
+========================
+
+openstack-config –set /etc/nova/nova.conf \\ DEFAULT glance\_host
+controller
+
+Set the VNC configuration
+=========================
+
+openstack-config –set /etc/nova/nova.conf \\ DEFAULT vncserver\_listen
+0.0.0.0 openstack-config –set /etc/nova/nova.conf \\ DEFAULT
+vncserver\_proxyclient\_address controller
+
+This is the host accessible from outside,
+=========================================
+
+where novncproxy is running on
+==============================
+
+openstack-config –set /etc/nova/nova.conf \\ DEFAULT
+novncproxy\_base\_url \\
+http://\$PUBLIC\_IP\_ADDRESS:6080/vnc\_auto.html
+
+This is the host accessible from outside,
+=========================================
+
+where xvpvncproxy is running on
+===============================
+
+openstack-config –set /etc/nova/nova.conf \\ DEFAULT
+xvpvncproxy\_base\_url \\ http://\$PUBLIC\_IP\_ADDRESS:6081/console
+
+Set the host name of the metadata service
+=========================================
+
+openstack-config –set /etc/nova/nova.conf \\ DEFAULT metadata\_host
+\$METADATA\_HOST \`\`\`
 
 Apart from user credentials, the script configures a few other important
 options:
@@ -1498,56 +1497,55 @@ options:
     gateway) – `$PUBLIC_IP_ADDRESS`;
 -   the Nova metadata service host name – controller.
 
-(43) `24-nova-init-db.sh`
+(@) `24-nova-init-db.sh`
 
 This scripts initializes the `nova` database using the `nova-manage`
 command line tool.
 
-~~~~ {.Bash}
-# Initialize the database for Nova
-nova-manage db sync
-~~~~
+`Bash # Initialize the database for Nova nova-manage db sync`
 
-(44) `25-nova-start.sh`
+(@) `25-nova-start.sh`
 
 This script starts various Nova services, as well as their dependencies:
 the Qpid AMQP message broker, and iSCSI target daemon used by the
 `nova-volume` service.
 
-~~~~ {.Bash}
-# Start the Qpid AMQP message broker
+\`\`\`Bash
+
+Start the Qpid AMQP message broker
+==================================
+
 service qpidd restart
 
-# iSCSI target daemon for nova-volume
+iSCSI target daemon for nova-volume
+===================================
+
 service tgtd restart
 
-# Start OpenStack Nova services
-service openstack-nova-api restart
-service openstack-nova-cert restart
-service openstack-nova-consoleauth restart
-service openstack-nova-direct-api restart
-service openstack-nova-metadata-api restart
-service openstack-nova-scheduler restart
-service openstack-nova-volume restart
+Start OpenStack Nova services
+=============================
 
-# Make the service start on the system startup
-chkconfig qpidd on
-chkconfig tgtd on
-chkconfig openstack-nova-api on
-chkconfig openstack-nova-cert on
-chkconfig openstack-nova-consoleauth on
-chkconfig openstack-nova-direct-api on
-chkconfig openstack-nova-metadata-api on
-chkconfig openstack-nova-scheduler on
-chkconfig openstack-nova-volume on
-~~~~
+service openstack-nova-api restart service openstack-nova-cert restart
+service openstack-nova-consoleauth restart service
+openstack-nova-direct-api restart service openstack-nova-metadata-api
+restart service openstack-nova-scheduler restart service
+openstack-nova-volume restart
+
+Make the service start on the system startup
+============================================
+
+chkconfig qpidd on chkconfig tgtd on chkconfig openstack-nova-api on
+chkconfig openstack-nova-cert on chkconfig openstack-nova-consoleauth on
+chkconfig openstack-nova-direct-api on chkconfig
+openstack-nova-metadata-api on chkconfig openstack-nova-scheduler on
+chkconfig openstack-nova-volume on \`\`\`
 
 #### 08-openstack-compute (compute nodes).
 
 The scripts described in this section should be run on the compute
 hosts.
 
-(45) `01-source-configrc.sh`
+(@) `01-source-configrc.sh`
 
 This scripts is mainly used to remind of the necessity to “source” the
 `configrc` file prior to continuing, since some scripts in this
@@ -1555,73 +1553,66 @@ directory use the environmental variable defined in `configrc`. To
 source the file, it is necessary to run the following command:
 `. 01-source-configrc.sh`.
 
-~~~~ {.Bash}
-echo "To make the environmental variables available \
-   in the current session, run: "
-echo ". 01-source-configrc.sh"
+\`\`\`Bash echo “To make the environmental variables available \\ in the
+current session, run:” echo “. 01-source-configrc.sh”
 
-# Export the variables defined in ../config/configrc
-. ../config/configrc
-~~~~
+Export the variables defined in ../config/configrc
+==================================================
 
-(46) `02-install-nova.sh`
+. ../config/configrc \`\`\`
+
+(@) `02-install-nova.sh`
 
 This script installs OpenStack Nova and OpenStack utilities.
 
-~~~~ {.Bash}
-# Install OpenStack Nova and utils
-yum install -y openstack-nova* openstack-utils
-~~~~
+`Bash # Install OpenStack Nova and utils yum install -y openstack-nova* openstack-utils`
 
-(47) `03-nova-permissions.sh`
+(@) `03-nova-permissions.sh`
 
 This script sets restrictive permissions (640) on the Nova configuration
 file, since it contains sensitive information, such as user credentials.
 Then, the script sets the ownership on the Nova and Libvirt related
 directories to the `nova` user and `nova` group. The script also sets
-the user and group used by the Quick EMUlator[^26] (QEMU) service to
-`nova`. This is required since a number of directories need to accessed
-by both Nova using the `nova` user and `nova` group, and QEMU.
+the user and group used by the Quick EMUlator\^[QEMU.
+[http://en.wikipedia.org/wiki/QEMU](http://en.wikipedia.org/wiki/QEMU)]
+(QEMU) service to `nova`. This is required since a number of directories
+need to accessed by both Nova using the `nova` user and `nova` group,
+and QEMU.
 
-~~~~ {.Bash}
-# Set restrictive permissions for the Nova config file
+\`\`\`Bash
+
+Set restrictive permissions for the Nova config file
+====================================================
+
 chmod 640 /etc/nova/nova.conf
 
-# Set the ownership for the Nova related directories
-chown -R root:nova /etc/nova
-chown -R nova:nova /var/lib/nova
-chown -R nova:nova /var/cache/libvirt
-chown -R nova:nova /var/run/libvirt
-chown -R nova:nova /var/lib/libvirt
+Set the ownership for the Nova related directories
+==================================================
 
-# Make Qemu run under the nova user and group
-sed -i 's/#user = "root"/user = "nova"/g' /etc/libvirt/qemu.conf
-sed -i 's/#group = "root"/group = "nova"/g' /etc/libvirt/qemu.conf
-~~~~
+chown -R root:nova /etc/nova chown -R nova:nova /var/lib/nova chown -R
+nova:nova /var/cache/libvirt chown -R nova:nova /var/run/libvirt chown
+-R nova:nova /var/lib/libvirt
 
-(48) `04-nova-config.sh`
+Make Qemu run under the nova user and group
+===========================================
+
+sed -i ’s/\#user = “root”/user = “nova”/g’ /etc/libvirt/qemu.conf sed -i
+’s/\#group = “root”/group = “nova”/g’ /etc/libvirt/qemu.conf \`\`\`
+
+(@) `04-nova-config.sh`
 
 This scripts invokes the Nova configuration script provided in the `lib`
 directory, which has been detailed above.
 
-~~~~ {.Bash}
-# Run the Nova configuration script
-# defined in ../lib/nova-config.sh
-../lib/nova-config.sh
-~~~~
+`Bash # Run the Nova configuration script # defined in ../lib/nova-config.sh ../lib/nova-config.sh`
 
-(49) `05-nova-compute-start.sh`
+(@) `05-nova-compute-start.sh`
 
 First, this script restarts the Libvirt service since its configuration
 has been modified. Then, the script starts Nova compute service and sets
 it to automatically start during the system start up.
 
-~~~~ {.Bash}
-# Start the Libvirt and Nova services
-service libvirtd restart
-service openstack-nova-compute restart
-chkconfig openstack-nova-compute on
-~~~~
+`Bash # Start the Libvirt and Nova services service libvirtd restart service openstack-nova-compute restart chkconfig openstack-nova-compute on`
 
 #### 09-openstack-gateway (network gateway).
 
@@ -1636,31 +1627,27 @@ Nova supports three network configuration modes:
     `/etc/network/interfaces`. To enable this mode, the following option
     should be specified in `nova.conf`:
 
-    ~~~~ {.Bash}
-    network_manager=nova.network.manager.FlatManager
-    ~~~~
+    `Bash network_manager=nova.network.manager.FlatManager`
 
-2.  Flat DHCP Mode: Nova runs a Dnsmasq[^27] server listening to a
-    created network bridge that assigns public IP addresses to VM
-    instances. This is the mode we use in this work. There must be only
-    one host running the `openstack-nova-network` service. The
-    `network_host` option in `nova.conf` specifies which host the
-    `openstack-nova-network` service is running on. The network bridge
-    name is specified using the `flat_network_bridge` option. To enable
-    this mode, the following option should be specified in `nova.conf`:
+2.  Flat DHCP Mode: Nova runs a Dnsmasq\^[Dnsmasq.
+    [http://en.wikipedia.org/wiki/Dnsmasq](http://en.wikipedia.org/wiki/Dnsmasq)]
+    server listening to a created network bridge that assigns public IP
+    addresses to VM instances. This is the mode we use in this work.
+    There must be only one host running the `openstack-nova-network`
+    service. The `network_host` option in `nova.conf` specifies which
+    host the `openstack-nova-network` service is running on. The network
+    bridge name is specified using the `flat_network_bridge` option. To
+    enable this mode, the following option should be specified in
+    `nova.conf`:
 
-    ~~~~ {.Bash}
-    network_manager=nova.network.manager.FlatDHCPManager
-    ~~~~
+    `Bash network_manager=nova.network.manager.FlatDHCPManager`
 
 3.  VLAN Mode: VM instances are assigned private IP addresses from
     networks created for each tenant / project. Instances are accessed
     through a special VPN VM instance. To enable this mode, the
     following option should be specified in `nova.conf`:
 
-    ~~~~ {.Bash}
-    network_manager=nova.network.manager.VlanManager
-    ~~~~
+    `Bash network_manager=nova.network.manager.VlanManager`
 
 Nova runs a metadata service on http://169.254.169.254 that is queried
 by VM instances to obtain SSH keys and other user data. The
@@ -1673,7 +1660,7 @@ option configured in `nova.conf` (the defaults are the IP address of the
 running on different hosts, the `metadata_host` option should point to
 the IP address of `openstack-nova-metadata-api`.
 
-(50) `01-source-configrc.sh`
+(@) `01-source-configrc.sh`
 
 This scripts is mainly used to remind of the necessity to “source” the
 `configrc` file prior to continuing, since some scripts in this
@@ -1681,16 +1668,15 @@ directory use the environmental variable defined in `configrc`. To
 source the file, it is necessary to run the following command:
 `. 01-source-configrc.sh`.
 
-~~~~ {.Bash}
-echo "To make the environmental variables available \
-   in the current session, run: "
-echo ". 01-source-configrc.sh"
+\`\`\`Bash echo “To make the environmental variables available \\ in the
+current session, run:” echo “. 01-source-configrc.sh”
 
-# Export the variables defined in ../config/configrc
-. ../config/configrc
-~~~~
+Export the variables defined in ../config/configrc
+==================================================
 
-(51) `02-nova-start.sh`
+. ../config/configrc \`\`\`
+
+(@) `02-nova-start.sh`
 
 It is assumed that the gateway host is one of the compute hosts;
 therefore, the OpenStack compute service has already been configured and
@@ -1704,52 +1690,54 @@ connections to VM instances from the outside network; therefore, they
 must be run on a machine that has access to the public network, which is
 the gateway in our case.
 
-~~~~ {.Bash}
-# Start the Libvirt and Nova services
-# (network, compute and VNC proxies)
-service libvirtd restart
-service openstack-nova-network restart
-service openstack-nova-compute restart
-service openstack-nova-novncproxy restart
+\`\`\`Bash
+
+Start the Libvirt and Nova services
+===================================
+
+(network, compute and VNC proxies)
+==================================
+
+service libvirtd restart service openstack-nova-network restart service
+openstack-nova-compute restart service openstack-nova-novncproxy restart
 service openstack-nova-xvpvncproxy restart
 
-# Make the service start on the system start up
-chkconfig openstack-nova-network on
-chkconfig openstack-nova-compute on
-chkconfig openstack-nova-novncproxy on
-chkconfig openstack-nova-xvpvncproxy on
-~~~~
+Make the service start on the system start up
+=============================================
 
-(52) `03-nova-network-create.sh`
+chkconfig openstack-nova-network on chkconfig openstack-nova-compute on
+chkconfig openstack-nova-novncproxy on chkconfig
+openstack-nova-xvpvncproxy on \`\`\`
+
+(@) `03-nova-network-create.sh`
 
 This service creates a Nova network 10.0.0.0/24, which is used to
 allocate IP addresses from by Dnsmasq to VM instances. The created
 network is configured to use the `br100` Linux bridge to connect VM
 instances to the physical network.
 
-~~~~ {.Bash}
-# Create a Nova network for VM instances: 10.0.0.0/24
-nova-manage network create --label=public \
-   --fixed_range_v4=10.0.0.0/24 --num_networks=1 \
-   --network_size=256 --bridge=br100
-~~~~
+`Bash # Create a Nova network for VM instances: 10.0.0.0/24 nova-manage network create --label=public \    --fixed_range_v4=10.0.0.0/24 --num_networks=1 \    --network_size=256 --bridge=br100`
 
-(53) `04-nova-secgroup-add.sh`
+(@) `04-nova-secgroup-add.sh`
 
 This script adds two rules to the default OpenStack security group. The
 first rule enables the Internet Control Message Protocol (ICMP) for VM
 instances (the ping command). The second rule enables TCP connections
 via the 22 port, which is used by SSH.
 
-~~~~ {.Bash}
-# Enable ping for VMs
+\`\`\`Bash
+
+Enable ping for VMs
+===================
+
 nova secgroup-add-rule default icmp -1 -1 0.0.0.0/0
 
-# Enable SSH for VMs
-nova secgroup-add-rule default tcp 22 22 0.0.0.0/0
-~~~~
+Enable SSH for VMs
+==================
 
-(54) `05-dashboard-install.sh`
+nova secgroup-add-rule default tcp 22 22 0.0.0.0/0 \`\`\`
+
+(@) `05-dashboard-install.sh`
 
 This script installs the OpenStack dashboard. The OpenStack dashboard
 provides a web-interface to managing an OpenStack environment. Since the
@@ -1757,12 +1745,9 @@ dashboard is supposed to be accessed from outside, this service must be
 installed on a host that has access to the public network, which is the
 gateway in our setup.
 
-~~~~ {.Bash}
-# Install OpenStack Dashboard
-yum install -y openstack-dashboard
-~~~~
+`Bash # Install OpenStack Dashboard yum install -y openstack-dashboard`
 
-(55) `06-dashboard-config.sh`
+(@) `06-dashboard-config.sh`
 
 This script configures the OpenStack dashboard. Particularly, the script
 sets the `OPENSTACK_HOST` configuration option denoting the host name of
@@ -1770,19 +1755,22 @@ the management host to `controller`. The script also sets the default
 Keystone role to the value of the `$OS_TENANT_NAME` environmental
 variable.
 
-~~~~ {.Bash}
-# Set the OpenStack management host
-sed -i 's/OPENSTACK_HOST = "127.0.0.1"/\
-   OPENSTACK_HOST = "controller"/g' \
-   /etc/openstack-dashboard/local_settings
+\`\`\`Bash
 
-# Set the Keystone default role
-sed -i "s/OPENSTACK_KEYSTONE_DEFAULT_ROLE = \"Member\"/\
-   OPENSTACK_KEYSTONE_DEFAULT_ROLE = \"$OS_TENANT_NAME\"/g" \
-   /etc/openstack-dashboard/local_settings
-~~~~
+Set the OpenStack management host
+=================================
 
-(56) `07-dashboard-start.sh`
+sed -i ’s/OPENSTACK\_HOST = “127.0.0.1”/\\ OPENSTACK\_HOST =
+“controller”/g’ \\ /etc/openstack-dashboard/local\_settings
+
+Set the Keystone default role
+=============================
+
+sed -i “s/OPENSTACK\_KEYSTONE\_DEFAULT\_ROLE = \\”Member\\“/\\
+OPENSTACK\_KEYSTONE\_DEFAULT\_ROLE = \\”\$OS\_TENANT\_NAME\\“/g” \\
+/etc/openstack-dashboard/local\_settings \`\`\`
+
+(@) `07-dashboard-start.sh`
 
 This script starts the `httpd` service, which is a web server configured
 to serve the OpenStack dashboard. The script also sets the `httpd`
@@ -1792,11 +1780,7 @@ service is started, the dashboard will be available at
 the public IP address of the gateway host for accessing the dashboard
 from the outside network.
 
-~~~~ {.Bash}
-# Start the httpd service.
-service httpd restart
-chkconfig httpd on
-~~~~
+`Bash # Start the httpd service. service httpd restart chkconfig httpd on`
 
 At this point the installation of OpenStack can be considered completed.
 The next steps are only intended for testing the environment.
@@ -1812,9 +1796,7 @@ the `configrc`. This can be done by executing the following command:
 `. config/configrc`. The check whether Keystone is properly initialized
 and the authorization works, the following command can be used:
 
-~~~~ {.Bash}
-keystone user-list
-~~~~
+`Bash keystone user-list`
 
 If everything is configured correctly, the command should output a table
 with a list of user accounts, such as `admin`, `nova`, `glance`, etc.
@@ -1823,9 +1805,7 @@ The next service to test is Glance. In the previous steps, we have
 already imported VM images into Glance; therefore, it is possible to
 output a list of them:
 
-~~~~ {.Bash}
-glance index
-~~~~
+`Bash glance index`
 
 The command should output a list of two VM images: `cirros-0.3.0-x86_64`
 and `ubuntu`.
@@ -1833,25 +1813,26 @@ and `ubuntu`.
 A list of active OpenStack service spanning all the hosts can be output
 using the following command:
 
-~~~~ {.Bash}
-nova-manage service list
-~~~~
+`Bash nova-manage service list`
 
 The command should output approximately the following table:
 
-  Binary           Host        Zone  Status  State Updated
-  ---------------- ----------- ----- ------- ----- ---------
-  nova-consoleauth controller  nova  enabled :-)   \<date\>
-  nova-cert        controller  nova  enabled :-)   \<date\>
-  nova-scheduler   controller  nova  enabled :-)   \<date\>
-  nova-volume      controller  nova  enabled :-)   \<date\>
-  nova-compute     compute1    nova  enabled :-)   \<date\>
-  nova-compute     compute2    nova  enabled :-)   \<date\>
-  nova-compute     compute3    nova  enabled :-)   \<date\>
-  nova-compute     compute4    nova  enabled :-)   \<date\>
-  nova-network     controller  nova  enabled :-)   \<date\>
+Table: The expected output of the `nova-manage service list` command
 
-  : The expected output of the `nova-manage service list` command
++—————-+———-+—-+——-+—–+——–+ |Binary |Host |Zone|Status |State|Updated |
++================+==========+====+=======+=====+========+
+|nova-consoleauth|controller|nova|enabled|:-) |\\<date\>|
++—————-+———-+—-+——-+—–+——–+ |nova-cert |controller|nova|enabled|:-)
+|\\<date\>| +—————-+———-+—-+——-+—–+——–+ |nova-scheduler
+|controller|nova|enabled|:-) |\\<date\>| +—————-+———-+—-+——-+—–+——–+
+|nova-volume |controller|nova|enabled|:-) |\\<date\>|
++—————-+———-+—-+——-+—–+——–+ |nova-compute |compute1 |nova|enabled|:-)
+|\\<date\>| +—————-+———-+—-+——-+—–+——–+ |nova-compute |compute2
+|nova|enabled|:-) |\\<date\>| +—————-+———-+—-+——-+—–+——–+ |nova-compute
+|compute3 |nova|enabled|:-) |\\<date\>| +—————-+———-+—-+——-+—–+——–+
+|nova-compute |compute4 |nova|enabled|:-) |\\<date\>|
++—————-+———-+—-+——-+—–+——–+ |nova-network |controller|nova|enabled|:-)
+|\\<date\>| +—————-+———-+—-+——-+—–+——–+
 
 If the value of any cell in the `State` column is `XXX` instead of
 `:-)`, it means that the corresponding service failed to start. The
@@ -1873,7 +1854,7 @@ test the actual instantiation of VMs using the OpenStack command line
 tools, as shown by the scripts from the `10-openstack-controller`
 directory.
 
-(57) `01-source-configrc.sh`
+(@) `01-source-configrc.sh`
 
 This scripts is mainly used to remind of the necessity to “source” the
 `configrc` file prior to continuing, since some scripts in this
@@ -1881,32 +1862,26 @@ directory use the environmental variable defined in `configrc`. To
 source the file, it is necessary to run the following command:
 `. 01-source-configrc.sh`.
 
-~~~~ {.Bash}
-echo "To make the environmental variables available \
-   in the current session, run: "
-echo ". 01-source-configrc.sh"
+\`\`\`Bash echo “To make the environmental variables available \\ in the
+current session, run:” echo “. 01-source-configrc.sh”
 
-# Export the variables defined in ../config/configrc
-. ../config/configrc
-~~~~
+Export the variables defined in ../config/configrc
+==================================================
 
-(58) `02-boot-cirros.sh`
+. ../config/configrc \`\`\`
+
+(@) `02-boot-cirros.sh`
 
 This script creates a VM instance using the CirrOS image added to Glance
 previously.
 
-~~~~ {.Bash}
-# Create a VM instance from the CirrOS image
-nova boot --image cirros-0.3.0-x86_64 --flavor m1.small cirros
-~~~~
+`Bash # Create a VM instance from the CirrOS image nova boot --image cirros-0.3.0-x86_64 --flavor m1.small cirros`
 
 Depending on the hardware the instantiation process may take from a few
 seconds to a few minutes. The status of a VM instance can be checked
 using the following command:
 
-~~~~ {.Bash}
-nova show cirros
-~~~~
+`Bash nova show cirros`
 
 This command shows detailed information about the VM instances, such as
 the host name, where the VM has been allocated to, instance name,
@@ -1917,18 +1892,14 @@ connections. The CirrOS VM image has a default user `cirros` with the
 `cubswin:)` password. The following command can be used to SSH into the
 VM instance once it is booted:
 
-~~~~ {.Bash}
-ssh curros@<ip address>
-~~~~
+`Bash ssh curros@<ip address>`
 
 Where `<ip address>` is replaced with the actual IP address of the VM
 instance. The following command can be used to delete the VM instance:
 
-~~~~ {.Bash}
-nova delete cirros
-~~~~
+`Bash nova delete cirros`
 
-(59) `03-keypair-add.sh`
+(@) `03-keypair-add.sh`
 
 Nova supports injection of SSH keys into VM instances for password-less
 authentication. This script creates a key pair, which can be used by
@@ -1936,56 +1907,43 @@ Nova to inject into VMs. The generated public key is stored internally
 by Nova, whereas, the private key is saved into the specified
 `../config/test.pem` file.
 
-~~~~ {.Bash}
-# Create a key pair
-nova keypair-add test > ../config/test.pem
-chmod 600 ../config/test.pem
-~~~~
+`Bash # Create a key pair nova keypair-add test > ../config/test.pem chmod 600 ../config/test.pem`
 
-(60) `04-boot-ubuntu.sh`
+(@) `04-boot-ubuntu.sh`
 
 This script creates a VM instance using the Ubuntu Cloud image added to
 Glance previously. The executed command instructs OpenStack to inject
 the previously generated public key called `test` to allow password-less
 SSH connections.
 
-~~~~ {.Bash}
-# Create a VM instance from the Ubuntu Cloud image
-nova boot --image ubuntu --flavor m1.small --key_name test ubuntu
-~~~~
+`Bash # Create a VM instance from the Ubuntu Cloud image nova boot --image ubuntu --flavor m1.small --key_name test ubuntu`
 
-(61) `05-ssh-into-vm.sh`
+(@) `05-ssh-into-vm.sh`
 
 This script shows how to SSH into a VM instance, which has been injected
 with the previously generated `test` key. The script accepts one
 argument: the IP address of the VM instance.
 
-~~~~ {.Bash}
-# SSH into a VM instance using the generated test.pem key.
+\`\`\`Bash
 
-if [ $# -ne 1 ]
-then
-    echo "You must specify one arguments - \
-       the IP address of the VM instance"
-    exit 1
-fi
+SSH into a VM instance using the generated test.pem key.
+========================================================
 
-ssh -i ../config/test.pem -l test $1
-~~~~
+if [ \$\# -ne 1 ] then echo “You must specify one arguments - \\ the IP
+address of the VM instance” exit 1 fi
 
-(62) `06-nova-volume-create.sh`
+ssh -i ../config/test.pem -l test \$1 \`\`\`
+
+(@) `06-nova-volume-create.sh`
 
 This script shows how to create a 2 GB Nova volume called `myvolume`.
 Once created, the volume can be dynamically attached to a VM instance,
 as shown in the next script. A volume can only be attached to one
 instance at a time.
 
-~~~~ {.Bash}
-# Create a 2GB volume called myvolume
-nova volume-create --display_name myvolume 2
-~~~~
+`Bash # Create a 2GB volume called myvolume nova volume-create --display_name myvolume 2`
 
-(63) `07-nova-volume-attach.sh`
+(@) `07-nova-volume-attach.sh`
 
 This script shows how to attached a volume to a VM instance. The script
 accepts two arguments: (1) the name of the VM instance to attach the
@@ -1994,19 +1952,16 @@ Once attached, the volume will be available inside the VM instance as
 the `/dev/vdc/` device. The volume is provided as a block storage, which
 means it has be formatted before it can be used.
 
-~~~~ {.Bash}
-# Attach the created volume to a VM instance as /dev/vdc.
+\`\`\`Bash
 
-if [ $# -ne 2 ]
-then
-    echo "You must specify two arguments:"
-    echo "(1) the name of the VM instance"
-    echo "(2) the ID of the volume to attach"
-    exit 1
-fi
+Attach the created volume to a VM instance as /dev/vdc.
+=======================================================
 
-nova volume-attach $1 $2 /dev/vdc
-~~~~
+if [ \$\# -ne 2 ] then echo “You must specify two arguments:” echo “(1)
+the name of the VM instance” echo “(2) the ID of the volume to attach”
+exit 1 fi
+
+nova volume-attach \$1 \$2 /dev/vdc \`\`\`
 
 OpenStack Troubleshooting
 -------------------------
@@ -2037,54 +1992,36 @@ reason of a failure might be the fact that the Glance Registry service
 starts before the MySQL server. The solution to this problem is to
 restart the Glance services as follows:
 
-~~~~ {.Bash}
-service openstack-glance-registry restart
-service openstack-glance-api restart
-~~~~
+`Bash service openstack-glance-registry restart service openstack-glance-api restart`
 
 ### Nova Compute
 
 The `libvirtd` service may fail with errors, such the following:
 
-~~~~ {.Bash}
-15391: error : qemuProcessReadLogOutput:1005 : \
-   internal error Process exited while reading console \
-   log output: chardev: opening backend "file" failed
-~~~~
+`Bash 15391: error : qemuProcessReadLogOutput:1005 : \    internal error Process exited while reading console \    log output: chardev: opening backend "file" failed`
 
 And such as:
 
-~~~~ {.Bash}
-error : qemuProcessReadLogOutput:1005 : internal error \
-   Process exited while reading console log output: \
-   char device redirected to /dev/pts/3
-qemu-kvm: -drive file=/var/lib/nova/instances/instance-00000015/ \
-   disk,if=none,id=drive-virtio-disk0,format=qcow2,cache=none: \
-   could not open disk image /var/lib/nova/instances/ \
-   instance-00000015/disk: Permission denied
-~~~~
+`Bash error : qemuProcessReadLogOutput:1005 : internal error \    Process exited while reading console log output: \    char device redirected to /dev/pts/3 qemu-kvm: -drive file=/var/lib/nova/instances/instance-00000015/ \    disk,if=none,id=drive-virtio-disk0,format=qcow2,cache=none: \    could not open disk image /var/lib/nova/instances/ \    instance-00000015/disk: Permission denied`
 
 Both the problems can be resolved by setting the user and group in the
 `/etc/libvirt/libvirtd.conf` configuration file as follows:
 
-    user = "nova"
-    group = "nova"
+`user = "nova" group = "nova"`
 
 And also changing the ownership as follows:
 
-    chown -R nova:nova /var/cache/libvirt
-    chown -R nova:nova /var/run/libvirt
-    chown -R nova:nova /var/lib/libvirt
+`chown -R nova:nova /var/cache/libvirt chown -R nova:nova /var/run/libvirt chown -R nova:nova /var/lib/libvirt`
 
 ### Nova Network
 
 If after a start up, the `openstack-nova-network` service hangs with the
 following last message in the log file: ‘Attempting to grab file lock
-“iptables” for method “apply”’, the solution is the following[^28]:
+“iptables” for method “apply”’, the solution is the
+following\^[OpenStack Compute Questions.
+[https://answers.launchpad.net/nova/+question/200985](https://answers.launchpad.net/nova/+question/200985)]:
 
-~~~~ {.Bash}
-rm /var/lib/nova/tmp/nova-iptables.lock
-~~~~
+`Bash rm /var/lib/nova/tmp/nova-iptables.lock`
 
 Conclusion
 ==========
@@ -2114,99 +2051,3 @@ open source software and Cloud computing.
 
 References
 ==========
-
-[1] M. Armbrust, A. Fox, R. Griffith, A. D. Joseph, R. Katz, A.
-Konwinski, G. Lee, D. Patterson, A. Rabkin, I. Stoica, and others, “A
-view of cloud computing,” *Communications of the ACM*, vol. 53, pp.
-50–58, 2010.
-
-[2] R. Buyya, C. S. Yeo, S. Venugopal, J. Broberg, and I. Brandic,
-“Cloud computing and emerging IT platforms: Vision, hype, and reality
-for delivering computing as the 5th utility,” *Future Generation
-computer systems*, vol. 25, pp. 599–616, 2009.
-
-[3] OpenStack LLC, “OpenStack: The Open Source Cloud Operating System,”
-21-Jul-2012. [Online]. Available:
-[http://www.openstack.org/software/](http://www.openstack.org/software/ "http://www.openstack.org/software/").
-
-[4] OpenStack LLC, “OpenStack Compute Administration Manual,” 2012.
-
-[5] OpenStack LLC, “OpenStack Install and Deploy Manual,” 2012.
-
-[6] R. Landmann, J. Reed, D. Cantrell, H. D. Goede, and J. Masters, “Red
-Hat Enterprise Linux 6 Installation Guide,” 2012.
-
-[^1]: Amazon EC2.
-    [http://aws.amazon.com/ec2/](http://aws.amazon.com/ec2/).
-
-[^2]: Google Compute Engine.
-    [http://cloud.google.com/products/compute-engine.html](http://cloud.google.com/products/compute-engine.html).
-
-[^3]: Google App Engine.
-    [http://cloud.google.com/products/](http://cloud.google.com/products/).
-
-[^4]: Microsoft Azure.
-    [http://www.windowsazure.com/](http://www.windowsazure.com/).
-
-[^5]: Salesforce.com.
-    [http://www.salesforce.com/](http://www.salesforce.com/).
-
-[^6]: Amazon Web Services Marketplace.
-    [https://aws.amazon.com/marketplace/](https://aws.amazon.com/marketplace/).
-
-[^7]: The project repository.
-    [https://github.com/beloglazov/openstack-centos-kvm-glusterfs](https://github.com/beloglazov/openstack-centos-kvm-glusterfs).
-
-[^8]: CentOS. [http://centos.org/](http://centos.org/).
-
-[^9]: GlusterFS. [http://gluster.org/](http://gluster.org/).
-
-[^10]: KVM. [http://www.linux-kvm.org/](http://www.linux-kvm.org/).
-
-[^11]: OpenStack. [http://openstack.org/](http://openstack.org/).
-
-[^12]: The OpenStack Foundation.
-    [http://wiki.openstack.org/Governance/Foundation/Structure](http://wiki.openstack.org/Governance/Foundation/Structure).
-
-[^13]: Libvirt. [http://libvirt.org/](http://libvirt.org/).
-
-[^14]: [Http://devstack.org/](http://devstack.org/).
-
-[^15]: Http://docs.openstack.org/trunk/openstack-compute/admin/content/openstack-compute-deployment-tool-with-puppet.html.
-
-[^16]: The project repository.
-    [https://github.com/beloglazov/openstack-centos-kvm-glusterfs](https://github.com/beloglazov/openstack-centos-kvm-glusterfs).
-
-[^17]: XFS.
-    [http://en.wikipedia.org/wiki/XFS](http://en.wikipedia.org/wiki/XFS).
-
-[^18]: Git. [http://git-scm.com/](http://git-scm.com/).
-
-[^19]: SELinux.
-    [http://en.wikipedia.org/wiki/Security-Enhanced\_Linux](http://en.wikipedia.org/wiki/Security-Enhanced_Linux).
-
-[^20]: Libvirt. [http://libvirt.org/](http://libvirt.org/).
-
-[^21]: The EPEL repository.
-    [http://fedoraproject.org/wiki/EPEL](http://fedoraproject.org/wiki/EPEL).
-
-[^22]: The *keystone-init* project.
-    [https://github.com/nimbis/keystone-init](https://github.com/nimbis/keystone-init).
-
-[^23]: YAML.
-    [http://en.wikipedia.org/wiki/YAML](http://en.wikipedia.org/wiki/YAML).
-
-[^24]: CirrOS.
-    [https://launchpad.net/cirros/](https://launchpad.net/cirros/).
-
-[^25]: Ubuntu Cloud Images.
-    [http://uec-images.ubuntu.com/](http://uec-images.ubuntu.com/).
-
-[^26]: QEMU.
-    [http://en.wikipedia.org/wiki/QEMU](http://en.wikipedia.org/wiki/QEMU).
-
-[^27]: Dnsmasq.
-    [http://en.wikipedia.org/wiki/Dnsmasq](http://en.wikipedia.org/wiki/Dnsmasq).
-
-[^28]: OpenStack Compute Questions.
-    [https://answers.launchpad.net/nova/+question/200985](https://answers.launchpad.net/nova/+question/200985).
