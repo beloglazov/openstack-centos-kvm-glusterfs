@@ -1,36 +1,37 @@
 % A Step-by-Step Guide to Installing OpenStack on CentOS Using the KVM Hypervisor and GlusterFS
   Distributed File System
 % Anton Beloglazov; Sareh Fotuhi Piraghaj; Mohammed Alrokayan; Rajkumar Buyya
-% 21st of July 2012
+% 23st of July 2012
 
 
 \newpage
 
 # Introduction
 
-The Cloud computing model leverages virtualization to deliver computing resources to the users
-on-demand on a pay-per-use basis [@armbrust2010view; @buyya2009cloud]. It provides the properties of
-self-service and elasticity enabling the users to dynamically adjust their resource consumption
-according to the current workload. These properties of the Cloud computing model allow one to avoid
-high upfront investments in a computing infrastructure, thus reducing the time to market and
-facilitating a higher pace of innovation.
+The Cloud computing model leverages virtualization to deliver computing resources to users on-demand
+on a pay-per-use basis [@armbrust2010view; @buyya2009cloud]. It provides the properties of
+self-service and elasticity enabling the users to dynamically and flexibly adjust their resource
+consumption according to the current workload. These properties of the Cloud computing model allow
+one to avoid high upfront investments in a computing infrastructure, thus reducing the time to
+market and facilitating a higher pace of innovation.
 
 Cloud computing resources are delivered to the users through three major service models:
 
-- *Infrastructure as a Service (IaaS)*: computing resource are provided in the form of Virtual
-  Machines (VMs). A VM provides a view of a dedicated hardware to the user. The user is capable of
+- *Infrastructure as a Service (IaaS)*: computing resources are delivered in the form of Virtual
+  Machines (VMs). A VM provides to the user a view of a dedicated hardware. The user is capable of
   managing the system within a VM and deploying the required software. Examples of IaaS are Amazon
   EC2^[[http://aws.amazon.com/ec2/](http://aws.amazon.com/ec2/)] and Google Compute
   Engine^[[http://cloud.google.com/products/compute-engine.html](http://cloud.google.com/products/compute-engine.html)].
-- *Platform as a Service (PaaS)*: the access to the resource is provided in the form of an Application
-  Programming Interface (API) that is used for application development and deployment. In this
-  model, the user does not have a direct access to the system resources, rather the resource
-  allocation to applications is managed by the platform. Examples of PaaS are Google App
-  Engine^[[http://cloud.google.com/products/](http://cloud.google.com/products/)] and Microsoft
+- *Platform as a Service (PaaS)*: the access to the resources is provided in the form of an
+  Application Programming Interface (API) that is used for application development and deployment.
+  In this model, the user does not have a direct access to the system resources, rather the resource
+  allocation to applications is automatically managed by the platform. Examples of PaaS are Google
+  App Engine^[[http://cloud.google.com/products/](http://cloud.google.com/products/)] and Microsoft
   Azure^[[http://www.windowsazure.com/](http://www.windowsazure.com/)].
 - *Software as a Service (SaaS)*: application-level software services are provided to the users on a
-  subscription bases. Examples of SaaS are
-  Salesforce.com^[[http://www.salesforce.com/](http://www.salesforce.com/)] and Amazon Web Services
+  subscription bases over the Internet. Examples of SaaS are
+  Salesforce.com^[[http://www.salesforce.com/](http://www.salesforce.com/)] and applications from
+  the Amazon Web Services
   Marketplace^[[https://aws.amazon.com/marketplace/](https://aws.amazon.com/marketplace/)].
 
 In this work, we focus on the low level service model -- IaaS. Apart from the service models, Cloud
@@ -39,7 +40,8 @@ deployment models:
 
 - *Public Cloud*: computing resources are provided publicly over the Internet based on a
   pay-per-use model.
-- *Private Cloud*: the Cloud infrastructure is owned and operated internally by an organization.
+- *Private Cloud*: the Cloud infrastructure is owned by an organization, and hosted and operated
+   internally.
 - *Hybrid Cloud*: computing resources are provided by a composition of a private and public Clouds.
 
 Public Clouds, such as Amazon EC2, have initiated and driven the industrial adoption of the Cloud
@@ -52,17 +54,18 @@ mentioned projects basically allow anyone to not only deploy a private Cloud env
 charge, but also contribute back to the development of the platform.
 
 The aim of this work is to facilitate further development and adoption of open source Cloud
-computing software by providing a step-by-step guide to installing the OpenStack Cloud platform on
-multiple computing nodes using a set of shell scripts. In contrast to the existing tools for
-automated installation of OpenStack is that the purpose of this work is not only obtaining a fully
-operating OpenStack Cloud environment, but also learning the steps required to perform the
-installation from the ground up and understanding the responsibilities and interaction of the
-OpenStack components. This is achieved by splitting the installation process into multiple logical
-steps, and implementing each step as a separate shell script. In this paper, we go through and
-discuss each of the complete sequence of steps required to install OpenStack on top of CentOS 6.3
-using the Kernel-based Virtual Machine (KVM) as a hypervisor and GlusterFS as a distributed
-replicated file system to enable live migration and provide fault tolerance. The source code
-described in this paper is released under the Apache 2.0 License and is publicly available
+computing software by providing a step-by-step guide to installing OpenStack on multiple computing
+nodes using a set of shell scripts. The difference from the existing tools for automated
+installation of OpenStack is that the purpose of this work is not only obtaining a fully operational
+OpenStack Cloud environment, but also learning the steps required to perform the installation from
+the ground up and understanding the responsibilities and interaction of the OpenStack components.
+This is achieved by splitting the installation process into multiple logical steps, and implementing
+each step as a separate shell script. In this paper, we go through and discuss each of the complete
+sequence of steps required to install OpenStack on top of CentOS 6.3 using the Kernel-based Virtual
+Machine (KVM) as a hypervisor and GlusterFS as a distributed replicated file system to enable live
+migration and provide fault tolerance. The source code described in this paper is released under the
+Apache
+2.0 License and is publicly available
 online^[[https://github.com/beloglazov/openstack-centos-kvm-glusterfs](https://github.com/beloglazov/openstack-centos-kvm-glusterfs)].
 
 In summary, this paper discusses and guides through the installation process of the following
@@ -75,13 +78,13 @@ software:
   between the compute nodes is a requirement for enabling live migration of VM instances. However,
   having a centralized shared storage service, such as NAS limits the scalability and leads to a
   single point of failure. In contrast, the advantages of a distributed file system solution, such
-  as GlusterFS, are: (1) not single point of failure, which means even if a server fails, the
-  storage and data will remain available due to automatic replication over multiple servers; (2)
-  higher scalability, as Input/Output (I/O) operations are distributed across multiple server; and (3)
-  due to the data replication over multiple server, if a data replica if available on the host,
-  VM instances access the data locally instead of over network improving the I/O performance.
+  as GlusterFS, are: (1) no single point of failure, which means even if a server fails, the storage
+  and data will remain available due to automatic replication over multiple servers; (2) higher
+  scalability, as Input/Output (I/O) operations are distributed across multiple servers; and (3) due
+  to the data replication over multiple servers, if a data replica is available on the host, VM
+  instances access the data locally rather than remotely over network improving the I/O performance.
 - KVM^[[http://www.linux-kvm.org/](http://www.linux-kvm.org/)]: a hypervisor providing full
-  virtualization for Linux leveraging hardware-assisted virtualization features of the Intel VT and
+  virtualization for Linux leveraging hardware-assisted virtualization support of the Intel VT and
   AMD-V chipsets. The kernel component of KVM is included in the Linux kernel since the 2.6.20
   version.
 - OpenStack: free open source IaaS Cloud computing software originally released by Rackspace and
@@ -94,10 +97,10 @@ software:
 In the next section we give an overview of the OpenStack software, its features, main components,
 and their interaction. In Section 3, we briefly compare 4 open source Cloud computing platforms,
 namely OpenStack, Eucalyptus, CloudStack, and OpenNebula. In Section 4, we discuss the existing
-tools for automated installation of OpenStack and differences from our approach. In Section 5 we
-provide a detailed description and discussion of the steps required install the OpenStack Cloud on
-top of CentOS using KVM and GlusterFS. In Section 6, we conclude the paper with a summary and
-discussion of future directions.
+tools for automated installation of OpenStack and the differences from our approach. In Section 5 we
+provide a detailed description and discussion of the steps required to install OpenStack on top of
+CentOS using KVM and GlusterFS. In Section 6, we conclude the paper with a summary and discussion of
+future directions.
 
 
 # Overview of the OpenStack Cloud Platform
@@ -107,11 +110,11 @@ discussion of future directions.
 
 OpenStack^[[http://openstack.org/](http://openstack.org/)] is a free open source IaaS Cloud platform
 originally released by Rackspace and NASA under the Apache 2.0 License in July 2010. OpenStack
-controls and manages compute, storage, and network resource aggregated from multiple servers of a
+controls and manages compute, storage, and network resource aggregated from multiple servers in a
 data center. The system provides a web interface (dashboard) and APIs compatible with Amazon EC2 to
 the administrators and users that allow flexible on-demand provisioning of the resources.
 
-In April 2012 the project lead and management functions have been transferred to a newly formed
+In April 2012, the project lead and management functions have been transferred to a newly formed
 OpenStack Foundation. The goals of the foundation are to support an open development process and
 community building, drive awareness and adoption, and encourage and maintain an ecosystem of
 companies powered by the OpenStack software. The OpenStack project is currently supported by more
@@ -124,11 +127,12 @@ following:
 
 - *OpenStack Compute (Nova)*: manages the life cycle of VM instances from scheduling and resource
    provisioning to live migration and security rules. By leveraging the virtualization API provided
-   by Libvirt, OpenStack Compute supports multiple hypervisors, such as KVM and Xen. storage system
-   allows the uses to create block storage devices and dynamically attach and detach
-- *OpenStack Storage*: provides block and object storage to use by VM instances. The block them from
-   VM instances using the dashboard or API. In addition to block storage, OpenStack provides a
-   scalable distributed object storage called Swift, which is accessible through an API.
+   by Libvirt^[[http://libvirt.org/](http://libvirt.org/)], OpenStack Compute supports multiple
+   hypervisors, such as KVM and Xen.
+- *OpenStack Storage*: provides block and object storage to use by VM instances. The block storage
+   system allows the uses to create block storage devices and dynamically attach and detach them
+   from VM instances using the dashboard or API. In addition to block storage, OpenStack provides a
+   scalable distributed object storage called Swift, which is also accessible through an API.
 - *OpenStack Networking*: provides API-driven network and IP address management capabilities. The
    system allows the users to create their own networks and assign static, floating, or dynamic IP
    addresses to VM instances.
@@ -140,15 +144,15 @@ following:
    registry of the OpenStack services deployed in the data center and their communication endpoints.
 - *OpenStack Image (Glance)*: provides various VM image management capabilities, such as
    registration, delivery, and snapshotting. The service supports multiple VM image formats
-   including Raw. AMI, VHD, VDI (VirtualBox, qcow2, VMDK, and OVF.
+   including Raw, AMI, VHD, VDI, qcow2, VMDK, and OVF.
 
 The OpenStack software is architectured with an aim of providing decoupling between the services
-constituting the system. The services interact with each other through the public API they provide
-and using Keystone as a registry for obtaining the information about endpoints of the other
-services. The OpenStack Compute service, also referred to as Nova, is on a shared-nothing
+constituting the system. The services interact with each other through the public APIs they provide
+and using Keystone as a registry for obtaining the information about the communication endpoints.
+The OpenStack Compute service, also referred to as Nova, is built on a shared-nothing
 messaging-based architecture, which allows running the services on multiple servers. The services,
 which compose Nova communicate via the Advanced Message Queue Protocol (AMQP) using asynchronous
-calls to avoid blocking. More detailed information about installation and administration of
+calls to avoid blocking. More detailed information on installation and administration of
 OpenStack in given in the official manuals
 [@openstack2012administration-manual; @openstack2012install-manual]. In the next section we compare
 OpenStack with the other major open source Cloud platforms.
@@ -177,9 +181,10 @@ OpenStack with the other major open source Cloud platforms.
 As mentioned earlier, the aim of this work is to detail the steps required to perform a complete
 installation of OpenStack on multiple nodes. We split the installation process into multiple
 subsequent logical steps and provide a shell script for each of the steps. In this section, we
-explain and discuss every step followed to obtain a fully operational OpenStack installation on our
-testbed consisting of 1 controller and 4 compute nodes. The source code of the shell scripts
-described in this paper is released under the Apache 2.0 License and is publicly available
+explain and discuss every step needed to be followed to obtain a fully operational OpenStack
+installation on our testbed consisting of 1 controller and 4 compute nodes. The source code of the
+shell scripts described in this paper is released under the Apache 2.0 License and is publicly
+available
 online^[[https://github.com/beloglazov/openstack-centos-kvm-glusterfs](https://github.com/beloglazov/openstack-centos-kvm-glusterfs)].
 
 
@@ -188,7 +193,7 @@ online^[[https://github.com/beloglazov/openstack-centos-kvm-glusterfs](https://g
 The testbed used for testing the installation scripts consists of the following hardware:
 
 - 1 x Dell Optiplex 745
-	- Intel(R) Core(TM)2 CPU (2 cores, 2 threads) 6600 @ 2.40GHz
+	- Intel(R) Core(TM) 2 CPU (2 cores, 2 threads) 6600 @ 2.40GHz
 	- 2GB DDR2-667
 	- Seagate Barracuda 80GB, 7200 RPM SATA II (ST3808110AS)
 	- Broadcom 5751 NetXtreme Gigabit Controller
@@ -205,12 +210,12 @@ The Dell Optiplex 745 machine has been chosen to serve as a management host runn
 OpenStack services. The management host is referred to as the *controller* further in the text. The 4
 IBM System x3200 M3 servers are used as *compute hosts*, i.e. for hosting VM instances.
 
-Due to specifics of our setup, the only one machine connected to public network and the Internet is
+Due to the specifics of our setup, the only one machine connected to the public network and the Internet is
 one of the IBM System x3200 M3 servers. This server is refereed to as the *gateway*. The gateway is
 connected to the public network via the eth0 network interface.
 
-All the machines form a local network connected through the Netgear FS116 network switch. The
-compute hosts are connected to the local network via their eth1 network interfaces. The controller
+All the machines form a local network connected via the Netgear FS116 network switch. The
+compute hosts are connected to the local network through their eth1 network interfaces. The controller
 is connected to the local network through its eth0 interface. To provide the access to the public
 network and the Internet, the gateway performs Network Address Translation (NAT) for the hosts from
 the local network.
@@ -229,7 +234,7 @@ directories have a specific format. The prefix (before the first dash) is the nu
 order of execution. For example, the scripts from the directory with the prefix *01* must be
 executed first, followed by the scripts from the directory with the prefix *02*, etc. The middle
 part of a directory name denotes the purpose of the scripts in this directory. The suffix (after the
-last dash) specifies the host, on which the scripts from this directory should be executed on. There
+last dash) specifies the host, on which the scripts from this directory should be executed. There
 are 4 possible values of the target host prefix:
 
 - *all* -- execute the scripts on all the hosts;
@@ -257,7 +262,7 @@ files are described below.
 
   `configrc:`
 
-  :    This files contains a number of environmental variables defining various aspects of OpenStack's
+  :    This file contains a number of environmental variables defining various aspects of OpenStack's
        configuration, such as administration and service account credentials, as well as access
        points. The file must be "sourced" to export the variables into the current shell session.
        The file can be sourced directly by running: `. configrc`, or using the scripts described
@@ -267,14 +272,14 @@ files are described below.
 
   `hosts:`
 
-  :    This files contains a mapping between the IP addresses of the hosts in the local network and
+  : This files contains a mapping between the IP addresses of the hosts in the local network and
        their host names. We apply the following host name convention: the compute hosts are named
        *computeX*, where *X* is replaced by the number of the host. According the described hardware
-       setup, the default configuration defines 1 `controller` (192.168.0.1), and 4 compute hosts:
-       `compute1` (192.168.0.1), `compute2` (192.168.0.2), `compute3` (192.168.0.3), `compute4`
-       (192.168.0.4). As mentioned above, in our setup one of the compute hosts is connected to the
-       public network and acts as a gateway. We assign to this host the host name `compute1`, and
-       also alias it as `gateway`.
+       setup, the default configuration defines 4 compute hosts: `compute1` (192.168.0.1),
+       `compute2` (192.168.0.2), `compute3` (192.168.0.3), `compute4` (192.168.0.4); and 1
+       `controller` (192.168.0.5). As mentioned above, in our setup one of the compute hosts is
+       connected to the public network and acts as a gateway. We assign to this host the host name
+       `compute1`, and also alias it as `gateway`.
 
 
   `ntp.conf:`
@@ -291,12 +296,11 @@ since the default configuration is tailored to the specific setup of our testbed
 
 ## Installation Procedure
 
-### CentOS Installation
+### CentOS
 
-The installation scripts have been tested with CentOS
-6.3^[[http://www.centos.org/](http://www.centos.org/)], which has been installed on all the hosts.
-The CentOS installation mainly follows the standard process described in detail in the Red Hat
-Enterprise Linux 6 Installation Guide [@redhat2012installation]. The steps of the installation
+The installation scripts have been tested with CentOS 6.3, which has been installed on all the
+hosts. The CentOS installation mainly follows the standard process described in detail in the Red
+Hat Enterprise Linux 6 Installation Guide [@redhat2012installation]. The steps of the installation
 process that differ from the standard are discussed in this section.
 
 
@@ -312,27 +316,27 @@ from enabling the "Connect Automatically" option, it is necessary to configure I
 address and netmask. According to the configuration defined in the `hosts` file described above, we
 assign 192.168.0.1/24 to the gateway.
 
-One difference in the network configuration of the other compute hosts (`compute2`, `compute3`, and
-`compute4`) from the gateway is that eth0 should be kept disabled, as it is unused. The eth1
-interface should be enabled by turning on the "Connect Automatically" option. The IP address and
-netmask for eth1 should be set to 192.168.0.*X*/24, where *X* is replaced by the compute host
-number. The gateway for the compute hosts should be set to 192.168.0.1, which the IP address of the
-gateway host. The controller is configured similarly to the compute hosts with the only difference
-that the configuration should be done for eth0 instead of eth1, since the controller has only one
-network interface.
+One of the differences in the network configuration of the other compute hosts (`compute2`,
+`compute3`, and `compute4`) from the gateway is that eth0 should be kept disabled, as it is unused.
+The eth1 interface should be enabled by turning on the "Connect Automatically" option. The IP
+address and netmask for eth1 should be set to 192.168.0.*X*/24, where *X* is replaced by the compute
+host number. The gateway for the compute hosts should be set to 192.168.0.1, which the IP address of
+the gateway. The controller is configured similarly to the compute hosts with the only
+difference that the configuration should be done for eth0 instead of eth1, since the controller has
+only one network interface.
 
 
 #### Hard Drive Partitioning.
 
 The hard drive partitioning scheme is the same for all the compute hosts, but differs for the
 controller. Table 1 shows the partitioning scheme for the compute hosts. `vg_base` is a volume group
-comprising the standard Operating System (OS) partitions: `lv_root`, `lv_home` and `lv_swap`.
-`vg_gluster` is a special volume group containing a single `lv_gluster` partition, which is
-dedicated to serve as a GlusterFS brick. The `lv_gluster` logical volume is formatted using the
+comprising the standard OS partitions: `lv_root`, `lv_home` and `lv_swap`. `vg_gluster` is a special
+volume group containing a single `lv_gluster` partition, which is dedicated to serve as a GlusterFS
+brick. The `lv_gluster` logical volume is formatted using the
 XFS^[[http://en.wikipedia.org/wiki/XFS](http://en.wikipedia.org/wiki/XFS)] file system, as
 recommended for GlusterFS bricks.
 
-Table: Partitioning scheme for the compute hosts
+Table: The partitioning scheme for the compute hosts
 
 +---------------------+----------+--------------------+---------+
 |Device               |Size\ (MB)|Mount Point / Volume|Type     |
@@ -372,7 +376,7 @@ group and its `lv_images` logical volume are devoted for storing VM images by Op
 The mount point for `lv_images` is `/var/lib/glance/images`, which is the default directory used by
 Glance to store VM image files.
 
-Table: Partitioning scheme for the controller
+Table: The partitioning scheme for the controller
 
 +-------------------+----------+----------------------+---------+
 |Device             |Size\ (MB)|Mount Point / Volume  |Type     |
@@ -419,37 +423,39 @@ is available on the gateway itself. If the Internet is not available, the proble
 configuration of eth0, the network interface connected to the public network in our setup.
 
 In all the following steps, it is assumed that the user logged in is `root`. If the Internet is
-available on the gateway, it is necessary to install
-Git^[[http://git-scm.com/](http://git-scm.com/)] to be able to clone the repository containing the
-installation scripts. This can be done using yum, the default package manager in CentOS, as follows:
+available on the gateway, it is necessary to install the
+Git^[[http://git-scm.com/](http://git-scm.com/)] version control client to be able to clone the
+repository containing the installation scripts. This can be done using `yum`, the default package
+manager in CentOS, as follows:
 
 ```Bash
 yum install -y git
 ```
 
-Next, the repository can be clone using the following command:
+Next, the repository can be cloned using the following command:
 
 ```Bash
 git clone \
    https://github.com/beloglazov/openstack-centos-kvm-glusterfs.git
 ```
 
-Then, we can proceed to continue the configuration using the scripts contained in the cloned Git
-repository. As described above, the starting point is the directory called `01-network-gateway`.
+Now, we can continue the installation using the scripts contained in the cloned Git repository. As
+described above, the starting point is the directory called `01-network-gateway`.
 
 ```Bash
 cd openstack-centos-kvm-glusterfs/01-network-gateway
 ```
 
-All the scripts described below can be run by executing `./<script name>.sh` on the command line.
+All the scripts described below can be run by executing `./<script name>.sh` in the command line.
 
 
 (@) `01-iptables-nat.sh`
 
-This script flushes all the default `iptables` rules to open all ports. This is acceptable for
+This script flushes all the default `iptables` rules to open all the ports. This is acceptable for
 testing; however, it is not recommended for production environments due to security concerns. Then,
 the script sets up NAT using `iptables` by forwarding packets from eth1 (the local network
-interface) through eth0. The last stage is saving the defined `iptables` rules restarting the service.
+interface) through eth0. The last stage is saving the defined `iptables` rules and restarting the
+service.
 
 ```Bash
 # Flush the iptables rules.
@@ -485,11 +491,11 @@ service network restart
 (@) `03-copy-hosts.sh`
 
 This script copies the `hosts` file from the `config` directory to `/etc` locally, as well to all
-the other hosts: the remaining compute hosts and the controller. The `hosts` files defines a mapping
+the other hosts: the remaining compute hosts and the controller. The `hosts` file defines a mapping
 between the IP addresses of the hosts and host names. For convenience, prior to copying you may use
-the `ssh-copy-id` program to copy the public key to the other hosts for password-less SSH access.
-Once the `hosts` file is copied to all the hosts, they can be accessed by using their respective
-host names instead of the IP addresses.
+the `ssh-copy-id` program to copy the public key to the other hosts for password-less SSH
+connections. Once the `hosts` file is copied to all the hosts, they can be accessed by using their
+respective host names instead of the IP addresses.
 
 ```Bash
 # Copy the hosts file into the local configuration
@@ -510,16 +516,21 @@ From this point, all the installation steps on any host can be performed remotel
 
 In this section, we describe how to set up distributed replicated storage using GlusterFS.
 
-#### 02-glusterfs-all (all nodes)
+#### 02-glusterfs-all (all nodes).
 
 The steps discussed in this section need to be run on all the hosts. The easiest way to manage
 multi-node installation is to SSH into all the hosts from another machine using separate terminals.
-This way the hosts can be conveniently managed from a single machine. Before applying further
-installation, it is necessary to run the following commands:
+This way the hosts can be conveniently managed from a single machine simultaneously. Before applying
+further installation scripts, it is necessary to run the following commands:
 
 ```Bash
+# Update the OS packages
 yum update -y
+
+# Install Git
 yum install -y git
+
+# Clone the repository
 git clone \
    https://github.com/beloglazov/openstack-centos-kvm-glusterfs.git
 
@@ -533,7 +544,7 @@ It is optional but might be useful to install other programs on all the hosts, s
 
 This script flushes all the default `iptables` rules to allow connections through all the ports. As
 mentioned above, this is insecure and not recommended for production environments. For production it
-is recommended to open the specific required ports.
+is recommended to open only the required ports.
 
 ```Bash
 # Flush the iptables rules.
@@ -588,7 +599,7 @@ service glusterd restart
 chkconfig glusterd on
 ```
 
-#### 03-glusterfs-controller (controller)
+#### 03-glusterfs-controller (controller).
 
 The scripts described in this section need to be run only on the controller.
 
@@ -608,13 +619,13 @@ gluster peer probe compute4
 
 (@) `02-glusterfs-create-volume.sh`
 
-This scripts creates a GlusterFS volume out of bricks exported by the compute hosts mounted to
+This scripts creates a GlusterFS volume out of the bricks exported by the compute hosts mounted to
 `/export/gluster` for storing VM instances. The created GlusterFS volume is replicated across all
 the 4 compute hosts. Such replication provides fault tolerance, as if any of the compute hosts fail,
-the VM instance data will be available from the remaining replicas. Compared to a Network File System
-(NFS) exported by a single server, the complete replication provided by GlusterFS improves the read
-performance, since all the read operations are local. This is important to enable efficient live
-migration of VMs.
+the VM instance data will be available from the remaining replicas. Compared to a Network File
+System (NFS) exported by a single server, the complete replication provided by GlusterFS improves
+the read performance, since all the read operations are local. This is important to enable efficient
+live migration of VMs.
 
 ```Bash
 # Create a GlusterFS volume replicated over 4 gluster hosts
@@ -627,7 +638,7 @@ gluster volume start vm-instances
 ```
 
 
-#### 04-glusterfs-all (all nodes)
+#### 04-glusterfs-all (all nodes).
 
 The script described in this section needs to be run on all the hosts.
 
@@ -637,7 +648,7 @@ The script described in this section needs to be run on all the hosts.
 This scripts adds a line to the `/etc/fstab` configuration file to automatically mount the GlusterFS
 volume during the system start up to the `/var/lib/nova/instances` directory. The
 `/var/lib/nova/instances` directory is the default location where OpenStack Nova stores the VM
-instances related data. This directory must be mounted and shared by the controller and all the
+instance related data. This directory must be mounted and shared by the controller and all the
 compute hosts to enable live migration of VMs. Even though the controller does not manage the data
 of VM instances, it is still necessary for it to have the access to the VM instance data directory
 to enable live migration. The reason is that the controller coordinates live migration by writing
@@ -668,9 +679,10 @@ command can be used:
 grep -E 'vmx|svm' /proc/cpuinfo
 ```
 
-If the command returns any output, it means that the supports hardware-assisted virtualization. The
-`vmx` processor feature flag represents an Intel VT chipset, whereas the `svm` flag represents
-AMD-V. Depending on the flag returned, you need to modify the `02-kvm-modprobe.sh` script.
+If the command returns any output, it means that the system supports hardware-assisted
+virtualization. The `vmx` processor feature flag represents an Intel VT chipset, whereas the `svm`
+flag represents AMD-V. Depending on the flag returned, you need to modify the `02-kvm-modprobe.sh`
+script.
 
 
 (@) `01-kvm-install.sh`
@@ -713,15 +725,15 @@ chmod +x /etc/sysconfig/modules/kvm.modules
 
 This script installs Libvirt^[[http://libvirt.org/](http://libvirt.org/)], its dependencies and the
 related tools. Libvirt provides an abstraction and a common Application Programming Interface (API)
-over various hypervisors. It is used by OpenStack to provide support for multiple hypervisors. After
-the installation, the script starts the `messagebus` and `avahi-daemon` services, which are
-prerequisites of Libvirt.
+over various hypervisors. It is used by OpenStack to provide support for multiple hypervisors
+including KVM and Xen. After the installation, the script starts the `messagebus` and `avahi-daemon`
+services, which are prerequisites of Libvirt.
 
 ```Bash
-# Install libvirt and its dependencies
+# Install Libvirt and its dependencies
 yum -y install libvirt libvirt-python python-virtinst avahi dmidecode
 
-# Start the services required by libvirt
+# Start the services required by Libvirt
 service messagebus restart
 service avahi-daemon restart
 
@@ -733,13 +745,12 @@ chkconfig avahi-daemon on
 
 (@) `04-libvirt-config.sh`
 
-This script modifies the Libvirt configuration to enable communication over TCP. This is required by
-OpenStack to enable live migration of VM instances.
+This script modifies the Libvirt configuration to enable communication over TCP without
+authentication. This is required by OpenStack to enable live migration of VM instances.
 
 ```Bash
-# Enable the communication with libvirt over TCP without
-# authentication. This configuration is required to enable live
-# migration through OpenStack.
+# Enable the communication with Libvirt
+# over TCP without authentication.
 sed -i 's/#listen_tls = 0/listen_tls = 0/g' \
    /etc/libvirt/libvirtd.conf
 sed -i 's/#listen_tcp = 1/listen_tcp = 1/g' \
@@ -756,7 +767,7 @@ sed -i 's/#LIBVIRTD_ARGS="--listen"/LIBVIRTD_ARGS="--listen"/g' \
 This script starts the `libvirtd` service and sets it to automatically start during the system start up.
 
 ```Bash
-# Start the libvirt service
+# Start the Libvirt service
 service libvirtd restart
 chkconfig libvirtd on
 ```
@@ -766,7 +777,7 @@ chkconfig libvirtd on
 
 This section contains a few subsection describing different phases of OpenStack installation.
 
-#### 06-openstack-all (all nodes)
+#### 06-openstack-all (all nodes).
 
 The scripts described in this section need to be executed on all the hosts.
 
@@ -827,7 +838,7 @@ chkconfig ntpdate on
 ```
 
 
-#### 07-openstack-controller (controller)
+#### 07-openstack-controller (controller).
 
 The scripts described in this section need to be run only on the controller host.
 
@@ -861,7 +872,7 @@ yum install -y mysql mysql-server
 
 (@) `03-mysql-start.sh`
 
-This script start the MySQL service and initializes the password of the `root` MySQL user using the
+This script start the MySQL service and initializes the password of the `root` MySQL user using a
 variable from the `configrc` file called `$MYSQL_ROOT_PASSWORD`.
 
 ```Bash
@@ -892,8 +903,8 @@ yum install -y openstack-utils openstack-keystone
 (@) `05-keystone-create-db.sh`
 
 This script creates a MySQL database for Keystone called `keystone`, which is used to store various
-identity data. The script also creates a `keystone` user and grants full permissions to the
-`keystone` database to this user.
+identity data. The script also creates a `keystone` user and grants the user with full permissions
+to the `keystone` database.
 
 ```Bash
 # Create a database for Keystone
@@ -914,14 +925,17 @@ etc:
 1. Using an admin token and `admin_port` (35357), e.g.:
 
     ```Bash
-    keystone --token=<admin token> \
+    keystone \
+	   --token=<admin token> \
        --endpoint=http://controller:35357/v2.0 user-list
     ```
 
 2. Using an admin user and `public_port` (5000), e.g.:
 
     ```Bash
-    keystone --os_username=admin --os_tenant_name=admin \
+    keystone \
+	   --os_username=admin \
+	   --os_tenant_name=admin \
 	   --os_password=<password> \
 	   --os_auth_url=http://controller:5000/v2.0 user-list
     ```
@@ -935,12 +949,14 @@ tenant.
 Here is an example of the password-based authenication for nova:
 
 ```Bash
-    nova --os_username=nova --os_password=<password> \
+    nova \
+	   --os_username=nova \
+	   --os_password=<password> \
 	   --os_tenant_name=service \
        --os_auth_url=http://controller:5000/v2.0 list
 ```
 
-One of two sets of authentication parameters are required to be specified in
+One of two sets of authentication parameters is required to be specified in
 `/etc/nova/api-paste.ini`. The first option is to set up the token-based authentication, like the
 following:
 
@@ -1047,7 +1063,7 @@ automate the process. The *keystone-init* project allows one to create a configu
 "YAML Ain't Markup
 Language"^[[http://en.wikipedia.org/wiki/YAML](http://en.wikipedia.org/wiki/YAML)] (YAML) data
 format defining the required OpenStack user accounts. Then, according the defined configuration, the
-required database are automatically created.
+required database records are automatically created.
 
 Our script first installs a dependency of *keystone-init* and clones the project's repository. Then,
 the script modifies the default configuration file provided with the *keystone-init* project by
@@ -1199,7 +1215,7 @@ chown -R glance:glance /var/lib/glance
 
 (@) `17-glance-start.sh`
 
-This script starts the Glance services: both API and Registry. The script sets the services to
+This script starts the Glance services: API and Registry. The script sets the services to
 automatically start during the system start up.
 
 ```Bash
@@ -1216,7 +1232,7 @@ chkconfig openstack-glance-api on
 
 This script downloads the Cirros VM
 image^[[https://launchpad.net/cirros/](https://launchpad.net/cirros/)] and imports it into Glance.
-This image is very simplistic: its size is just 9.4 MB; however, it is sufficient for testing
+This image is very simplistic: its size is just 9.4 MB. However, it is sufficient for testing
 OpenStack.
 
 ```Bash
@@ -1261,7 +1277,7 @@ rm -rf /tmp/images
 
 (@) `20-nova-install.sh`
 
-This script install Nova -- the OpenStack compute service, as well as the Qpid AMQP message broker.
+This script installs Nova -- the OpenStack compute service, as well as the Qpid AMQP message broker.
 The message broker is required by the OpenStack services to communicate with each other.
 
 ```Bash
@@ -1316,7 +1332,7 @@ Compute, as well as on the controller, which runs the other Nova services. Moreo
 the configuration file should be the same on the controller and compute hosts. Therefore, a script
 that modifies the Nova configuration is placed in the `lib` directory and is shared by the
 corresponding installation scripts of the controller and compute hosts. The `23-nova-config.sh`
-scripts invokes the Nova configuration script provided in the `lib` directory.
+script invokes the Nova configuration script provided in the `lib` directory.
 
 ```Bash
 # Run the Nova configuration script
@@ -1408,7 +1424,7 @@ Apart from user credentials, the script configures a few other important options
 - the Glance service host name -- controller;
 - the VNC server host name -- controller;
 - the IP address of the host running VNC proxies (they must be run on the host that can be accessed
-  from outside; in our setup it is gateway) -- `$PUBLIC_IP_ADDRESS`;
+  from outside; in our setup it is the gateway) -- `$PUBLIC_IP_ADDRESS`;
 - the Nova metadata service host name -- controller.
 
 
@@ -1456,7 +1472,7 @@ chkconfig openstack-nova-volume on
 ```
 
 
-#### 08-openstack-compute (compute nodes)
+#### 08-openstack-compute (compute nodes).
 
 The scripts described in this section should be run on the compute hosts.
 
@@ -1531,39 +1547,47 @@ First, this script restarts the Libvirt service since its configuration has been
 script starts Nova compute service and sets it to automatically start during the system start up.
 
 ```Bash
-# Start the libvirt and Nova services
+# Start the Libvirt and Nova services
 service libvirtd restart
 service openstack-nova-compute restart
 chkconfig openstack-nova-compute on
 ```
 
 
-#### 09-openstack-gateway (network gateway)
+#### 09-openstack-gateway (network gateway).
 
 The scripts described in this section need to be run only on the gateway.
 
 Nova supports three network configuration modes:
 
-1. Flat Mode: public IP addresses from a specified range are assigned to VM instances on launch.
-This only works on Linux systems that keep their network configuration in `/etc/network/interfaces`.
-To enable this mode, the following option should be specified in `nova.conf`:
+1. Flat Mode: public IP addresses from a specified range are assigned and injected into VM instances
+on launch. This only works on Linux systems that keep their network configuration in
+`/etc/network/interfaces`. To enable this mode, the following option should be specified in
+`nova.conf`:
 
+    ```Bash
     network_manager=nova.network.manager.FlatManager
+	```
 
-2. Flat DHCP Mode: Nova runs a Dnsmasq server listening to a created network bridge that assigns
-public IP addresses to VM instances. This is the mode we use in this work. There must be only one
-host running the `openstack-nova-network` service. The `network_host` option in `nova.conf`
-specifies wich host the `openstack-nova-network` service is running on. The network bridge name is
-specified using the `flat_network_bridge` option. To enable this mode, the following option should
-be specified in `nova.conf`:
+2. Flat DHCP Mode: Nova runs a
+Dnsmasq^[[http://en.wikipedia.org/wiki/Dnsmasq](http://en.wikipedia.org/wiki/Dnsmasq)] server
+listening to a created network bridge that assigns public IP addresses to VM instances. This is the
+mode we use in this work. There must be only one host running the `openstack-nova-network` service.
+The `network_host` option in `nova.conf` specifies which host the `openstack-nova-network` service is
+running on. The network bridge name is specified using the `flat_network_bridge` option. To enable
+this mode, the following option should be specified in `nova.conf`:
 
+    ```Bash
     network_manager=nova.network.manager.FlatDHCPManager
+	```
 
 3. VLAN Mode: VM instances are assigned private IP addresses from networks created for each tenant /
 project. Instances are accessed through a special VPN VM instance. To enable this mode, the
 following option should be specified in `nova.conf`:
 
+    ```Bash
     network_manager=nova.network.manager.VlanManager
+	```
 
 Nova runs a metadata service on http://169.254.169.254 that is queried by VM instances to obtain SSH
 keys and other user data. The `openstack-nova-network` service automatically configures `iptables`
@@ -1596,14 +1620,13 @@ It is assumed that the gateway host is one of the compute hosts; therefore, the 
 service has already been configured and is running. This scripts starts 3 additional Nova services
 that are specific to the gateway host: `openstack-nova-network`, `openstack-nova-novncproxy`, and
 `openstack-nova-xvpvncproxy`. The `openstack-nova-network` service is responsible for bridging VM
-instances into the physical network, and configuring the
-Dnsmasq^[[http://en.wikipedia.org/wiki/Dnsmasq](http://en.wikipedia.org/wiki/Dnsmasq)] service for
-assigning IP addresses to the VMs. The VNC proxy services enable VNC connections to VM instances
-from the outside network; therefore, they must be run on a machine that has access to the public
-network, which is the gateway in our case.
+instances into the physical network, and configuring the Dnsmasq service for assigning IP addresses
+to the VMs. The VNC proxy services enable VNC connections to VM instances from the outside network;
+therefore, they must be run on a machine that has access to the public network, which is the gateway
+in our case.
 
 ```Bash
-# Start the libvirt and Nova services
+# Start the Libvirt and Nova services
 # (network, compute and VNC proxies)
 service libvirtd restart
 service openstack-nova-network restart
@@ -1637,7 +1660,7 @@ nova-manage network create --label=public \
 
 This script adds two rules to the default OpenStack security group. The first rule enables the
 Internet Control Message Protocol (ICMP) for VM instances (the ping command). The second rule
-enables TCP connection via the 22 port, which is used by SSH.
+enables TCP connections via the 22 port, which is used by SSH.
 
 ```Bash
 # Enable ping for VMs
@@ -1683,8 +1706,8 @@ sed -i "s/OPENSTACK_KEYSTONE_DEFAULT_ROLE = \"Member\"/\
 
 (@) `07-dashboard-start.sh`
 
-This script starts the httpd service, which is a web server configured to serve the OpenStack
-dashboard. The script also sets the httpd service to start automatically during the system start up.
+This script starts the `httpd` service, which is a web server configured to serve the OpenStack
+dashboard. The script also sets the `httpd` service to start automatically during the system start up.
 Once the service is started, the dashboard will be available at `http://localhost/dashboard`, where
 'localhost' should be replaced by the public IP address of the gateway host for accessing the
 dashboard from the outside network.
@@ -1695,11 +1718,11 @@ service httpd restart
 chkconfig httpd on
 ```
 
-At this point the installation of OpenStack can be considered completed. The next steps are only for
-testing the environment.
+At this point the installation of OpenStack can be considered completed. The next steps are only
+intended for testing the environment.
 
 
-#### 10-openstack-controller (controller)
+#### 10-openstack-controller (controller).
 
 This section describes commands and scripts that can be used to test the OpenStack installation
 obtained by following the steps above. The testing should start from the identity management
@@ -1757,9 +1780,9 @@ Table: The expected output of the `nova-manage service list` command
 +----------------+----------+----+-------+-----+--------+
 
 If the value of any cell in the `State` column is `XXX` instead of `:-)`, it means that the
-corresponding service for failed to start. The first place to start troubleshooting is
-the log files of the failed service. The log files are located in the `/var/log/<service>`
-directory, where `<service>` is replaced with the name of the service.
+corresponding service failed to start. The first place to start troubleshooting is the log files of
+the failed service. The log files are located in the `/var/log/<service>` directory, where
+`<service>` is replaced with the name of the service.
 
 Another service to test is the OpenStack dashboard, which should be available at
 `http://$PUBLIC_IP_ADDRESS/dashboard`. This URL should open a login page prompting the user to enter
@@ -1884,7 +1907,7 @@ nova volume-create --display_name myvolume 2
 
 This script shows how to attached a volume to a VM instance. The script accepts two arguments: (1)
 the name of the VM instance to attach the volume to; and (2) the ID of the volume to attach to the
-VM instance. Once attached, the volume will be available inside the VM instance as the `/dev/vdc/
+VM instance. Once attached, the volume will be available inside the VM instance as the `/dev/vdc/`
 device. The volume is provided as a block storage, which means it has be formatted before it can be
 used.
 
@@ -1905,26 +1928,26 @@ nova volume-attach $1 $2 /dev/vdc
 
 ## OpenStack Troubleshooting
 
-This section a list of some problem encountered by the authors during the installation process and
-their solutions. The following general procedure can be used to resolve problems with OpenStack:
+This section lists some of the problems encountered by the authors during the installation process
+and their solutions. The following general procedure can be used to resolve problems with OpenStack:
 
 1. Run the `nova-manage service list` command to find out if any of the services failed. A service
-failed if in the corresponding row of the table the `State` column contains `XXX` instead of `:-)`.
+failed if the corresponding row of the table the `State` column contains `XXX` instead of `:-)`.
 2. From the same service status table, the host running the failed service can be identified by
 looking at the `Host` column.
-3. Once the problematic service and host are determined, the respective log files. To do this, it is
-necessary to open an SSH connection with the host and find the log file that corresponds to the
-failed service. The default location of the log files is `/var/log/<service name>`, where `<service
-name>` is one of: `keystone`, `glance`, `nova`, etc.
+3. Once the problematic service and host are determined, the respective log files should be
+examined. To do this, it is necessary to open an SSH connection with the host and find the log file
+that corresponds to the failed service. The default location of the log files is `/var/log/<service
+name>`, where `<service name>` is one of: `keystone`, `glance`, `nova`, etc.
 
 
 ### Glance
 
-Sometimes the Glance Registry service fails to start during the OS start up. This results failing of
-various requests of the OpenStack service to Glance. The problem can be identified by running the
-`glance index` commands, which should not fail in a normal case. The reason might be the fact that
-the Glance Registry service starts before the MySQL server. The solution to this problem is to
-restart the Glance services as follows:
+Sometimes the Glance Registry service fails to start during the OS start up. This results in failing
+of various requests of the OpenStack services to Glance. The problem can be identified by running
+the `glance index` command, which should not fail in a normal case. The reason of a failure might be
+the fact that the Glance Registry service starts before the MySQL server. The solution to this
+problem is to restart the Glance services as follows:
 
 ```Bash
 service openstack-glance-registry restart
@@ -1934,7 +1957,7 @@ service openstack-glance-api restart
 
 ### Nova Compute
 
-The libvirtd service may fail with errors, such the following:
+The `libvirtd` service may fail with errors, such the following:
 
 
 ```Bash
@@ -1973,9 +1996,9 @@ chown -R nova:nova /var/lib/libvirt
 
 ### Nova Network
 
-If after the start up the `openstack-nova-network` service hangs with the following last message in
-the log file: 'Attempting to grab file lock "iptables" for method "apply"', the solution
-is^[[https://answers.launchpad.net/nova/+question/200985](https://answers.launchpad.net/nova/+question/200985)]:
+If after a start up, the `openstack-nova-network` service hangs with the following last message in
+the log file: 'Attempting to grab file lock "iptables" for method "apply"', the solution is the
+following^[[https://answers.launchpad.net/nova/+question/200985](https://answers.launchpad.net/nova/+question/200985)]:
 
 ```Bash
 rm /var/lib/nova/tmp/nova-iptables.lock
