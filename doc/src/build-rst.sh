@@ -1,6 +1,7 @@
 #!/bin/sh
 
 pandoc \
+    --smart \
     --bibliography=bibliography.bib --csl=ieee.csl \
     --output=../openstack-centos-kvm-glusterfs-guide.rst \
     readme-intro.md \

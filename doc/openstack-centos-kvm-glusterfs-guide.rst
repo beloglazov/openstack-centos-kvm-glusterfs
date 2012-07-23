@@ -62,10 +62,9 @@ service models:
    Examples of SaaS are Salesforce.com [5]_ and applications from the
    Amazon Web Services Marketplace [6]_.
 
-In this work, we focus on the low level service model -- IaaS. Apart
-from the service models, Cloud computing services are distinguished
-according to their deployment models. There are three basic deployment
-models:
+In this work, we focus on the low level service model – IaaS. Apart from
+the service models, Cloud computing services are distinguished according
+to their deployment models. There are three basic deployment models:
 
 -  *Public Cloud*: computing resources are provided publicly over the
    Internet based on a pay-per-use model.
@@ -131,11 +130,11 @@ process of the following software:
 -  OpenStack [11]_: free open source IaaS Cloud computing software
    originally released by Rackspace and NASA under the Apache 2.0
    License in July 2010. The OpenStack project is currently lead and
-   managed by the OpenStack Foundation, which is "an independent body
+   managed by the OpenStack Foundation, which is “an independent body
    providing shared resources to help achieve the OpenStack Mission by
    Protecting, Empowering, and Promoting OpenStack software and the
    community around it, including users, developers and the entire
-   ecosystem". [12]_
+   ecosystem”. [12]_
 
 In the next section we give an overview of the OpenStack software, its
 features, main components, and their interaction. In Section 3, we
@@ -274,7 +273,7 @@ following hardware:
 The Dell Optiplex 745 machine has been chosen to serve as a management
 host running all the major OpenStack services. The management host is
 referred to as the *controller* further in the text. The 4 IBM System
-x3200 M3 servers are used as *compute hosts*, i.e. for hosting VM
+x3200 M3 servers are used as *compute hosts*, i.e. for hosting VM
 instances.
 
 Due to the specifics of our setup, the only one machine connected to the
@@ -311,10 +310,10 @@ dash) specifies the host, on which the scripts from this directory
 should be executed. There are 4 possible values of the target host
 prefix:
 
--  *all* -- execute the scripts on all the hosts;
--  *compute* -- execute the scripts on all the compute hosts;
--  *controller* -- execute the scripts on the controller;
--  *gateway* -- execute the scripts on the gateway.
+-  *all* – execute the scripts on all the hosts;
+-  *compute* – execute the scripts on all the compute hosts;
+-  *controller* – execute the scripts on the controller;
+-  *gateway* – execute the scripts on the gateway.
 
 For example, the first directory is named ``01-network-gateway``, which
 means that (1) the scripts from this directory must be executed in the
@@ -339,9 +338,9 @@ described below.
 
 ``configrc:``
     This file contains a number of environmental variables defining
-    various aspects of OpenStack's configuration, such as administration
+    various aspects of OpenStack’s configuration, such as administration
     and service account credentials, as well as access points. The file
-    must be "sourced" to export the variables into the current shell
+    must be “sourced” to export the variables into the current shell
     session. The file can be sourced directly by running:
     ``. configrc``, or using the scripts described later. A simple test
     to check whether the variables have been correctly exported is to
@@ -394,9 +393,9 @@ two networks: to the public network through the eth0 interface; and to
 the local network through the eth1 interface. Since in our setup the
 public network configuration can be obtain from a DHCP server, in the
 configuration of the eth0 interface it is only required to enable
-automatic connection by enabling the "Connect Automatically" option. We
+automatic connection by enabling the “Connect Automatically” option. We
 use static configuration for the local network; therefore, eth1 has be
-configured manually. Apart from enabling the "Connect Automatically"
+configured manually. Apart from enabling the “Connect Automatically”
 option, it is necessary to configure IPv4 by adding an IP address and
 netmask. According to the configuration defined in the ``hosts`` file
 described above, we assign 192.168.0.1/24 to the gateway.
@@ -404,7 +403,7 @@ described above, we assign 192.168.0.1/24 to the gateway.
 One of the differences in the network configuration of the other compute
 hosts (``compute2``, ``compute3``, and ``compute4``) from the gateway is
 that eth0 should be kept disabled, as it is unused. The eth1 interface
-should be enabled by turning on the "Connect Automatically" option. The
+should be enabled by turning on the “Connect Automatically” option. The
 IP address and netmask for eth1 should be set to 192.168.0.\ *X*/24,
 where *X* is replaced by the compute host number. The gateway for the
 compute hosts should be set to 192.168.0.1, which the IP address of the
@@ -949,7 +948,7 @@ controller host.
 
 (20) ``01-source-configrc.sh``
 
-This scripts is mainly used to remind of the necessity to "source" the
+This scripts is mainly used to remind of the necessity to “source” the
 ``configrc`` file prior to continuing, since some scripts in this
 directory use the environmental variable defined in ``configrc``. To
 source the file, it is necessary to run the following command:
@@ -1082,8 +1081,8 @@ follows:
     admin_password = <password>
 
 The password-based authentication might be preferable, since it uses
-Keystone's database backend to store user credentials. Therefore, it is
-possible to update user credentials, for example, using Keystone's
+Keystone’s database backend to store user credentials. Therefore, it is
+possible to update user credentials, for example, using Keystone’s
 command line tools without the necessity to re-generate the admin token
 and update the configuration files.
 
@@ -1167,20 +1166,20 @@ service: Keystone, Glance, and Nova. Since the process is complicated
 when done manually (it is necessary to define relations between database
 records), we use the *keystone-init* project [22]_ to automate the
 process. The *keystone-init* project allows one to create a
-configuration file in the "YAML Ain't Markup Language" [23]_ (YAML) data
+configuration file in the “YAML Ain’t Markup Language” [23]_ (YAML) data
 format defining the required OpenStack user accounts. Then, according
 the defined configuration, the required database records are
 automatically created.
 
 Our script first installs a dependency of *keystone-init* and clones the
-project's repository. Then, the script modifies the default
+project’s repository. Then, the script modifies the default
 configuration file provided with the *keystone-init* project by
 populating it with the values defined by the environmental variables
 defined in ``configrc``. The last step of the script is to invoke
 *keystone-init*. The script does not remove the *keystone-init*
-repository to allow one to browse the generated configuration file, e.g.
-to check the correctness. When the repository is not required anymore,
-it can be removed by executing ``rm -rf keystone-init``.
+repository to allow one to browse the generated configuration file,
+e.g. to check the correctness. When the repository is not required
+anymore, it can be removed by executing ``rm -rf keystone-init``.
 
 ::
 
@@ -1223,7 +1222,7 @@ it can be removed by executing ``rm -rf keystone-init``.
 
 (31) ``12-glance-install.sh``
 
-This script install Glance -- the OpenStack VM image management service.
+This script install Glance – the OpenStack VM image management service.
 
 ::
 
@@ -1382,7 +1381,7 @@ Openstack, Amazon EC2, and LXC.
 
 (39) ``20-nova-install.sh``
 
-This script installs Nova -- the OpenStack compute service, as well as
+This script installs Nova – the OpenStack compute service, as well as
 the Qpid AMQP message broker. The message broker is required by the
 OpenStack services to communicate with each other.
 
@@ -1524,19 +1523,19 @@ The content of the ``nova-config.sh`` script is given below:
 Apart from user credentials, the script configures a few other important
 options:
 
--  the identity management service -- Keystone;
--  the Qpid server host name -- controller;
--  the host running the Nova network service -- compute1 (i.e. gateway);
--  the network used for VMs -- 10.0.0.0/24;
--  the network interface used to bridge VMs to -- eth1;
--  the Linux bridge used by VMs -- br100;
--  the public network interface -- eth1;
--  the Glance service host name -- controller;
--  the VNC server host name -- controller;
+-  the identity management service – Keystone;
+-  the Qpid server host name – controller;
+-  the host running the Nova network service – compute1 (i.e. gateway);
+-  the network used for VMs – 10.0.0.0/24;
+-  the network interface used to bridge VMs to – eth1;
+-  the Linux bridge used by VMs – br100;
+-  the public network interface – eth1;
+-  the Glance service host name – controller;
+-  the VNC server host name – controller;
 -  the IP address of the host running VNC proxies (they must be run on
    the host that can be accessed from outside; in our setup it is the
-   gateway) -- ``$PUBLIC_IP_ADDRESS``;
--  the Nova metadata service host name -- controller.
+   gateway) – ``$PUBLIC_IP_ADDRESS``;
+-  the Nova metadata service host name – controller.
 
 (43) ``24-nova-init-db.sh``
 
@@ -1590,7 +1589,7 @@ hosts.
 
 (45) ``01-source-configrc.sh``
 
-This scripts is mainly used to remind of the necessity to "source" the
+This scripts is mainly used to remind of the necessity to “source” the
 ``configrc`` file prior to continuing, since some scripts in this
 directory use the environmental variable defined in ``configrc``. To
 source the file, it is necessary to run the following command:
@@ -1718,7 +1717,7 @@ point to the IP address of ``openstack-nova-metadata-api``.
 
 (50) ``01-source-configrc.sh``
 
-This scripts is mainly used to remind of the necessity to "source" the
+This scripts is mainly used to remind of the necessity to “source” the
 ``configrc`` file prior to continuing, since some scripts in this
 directory use the environmental variable defined in ``configrc``. To
 source the file, it is necessary to run the following command:
@@ -1831,7 +1830,7 @@ This script starts the ``httpd`` service, which is a web server
 configured to serve the OpenStack dashboard. The script also sets the
 ``httpd`` service to start automatically during the system start up.
 Once the service is started, the dashboard will be available at
-``http://localhost/dashboard``, where 'localhost' should be replaced by
+``http://localhost/dashboard``, where ‘localhost’ should be replaced by
 the public IP address of the gateway host for accessing the dashboard
 from the outside network.
 
@@ -1851,7 +1850,7 @@ This section describes commands and scripts that can be used to test the
 OpenStack installation obtained by following the steps above. The
 testing should start from the identity management service, Keystone,
 since it coordinates all the other OpenStack services. To use the
-command line programs provided by OpenStack, it is necessary to "source"
+command line programs provided by OpenStack, it is necessary to “source”
 the ``configrc``. This can be done by executing the following command:
 ``. config/configrc``. The check whether Keystone is properly
 initialized and the authorization works, the following command can be
@@ -1931,7 +1930,7 @@ directory.
 
 (57) ``01-source-configrc.sh``
 
-This scripts is mainly used to remind of the necessity to "source" the
+This scripts is mainly used to remind of the necessity to “source” the
 ``configrc`` file prior to continuing, since some scripts in this
 directory use the environmental variable defined in ``configrc``. To
 source the file, it is necessary to run the following command:
@@ -2142,8 +2141,8 @@ Nova Network
 ~~~~~~~~~~~~
 
 If after a start up, the ``openstack-nova-network`` service hangs with
-the following last message in the log file: 'Attempting to grab file
-lock "iptables" for method "apply"', the solution is the
+the following last message in the log file: ‘Attempting to grab file
+lock “iptables” for method “apply”’, the solution is the
 following [28]_:
 
 ::
