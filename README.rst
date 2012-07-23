@@ -149,7 +149,7 @@ paper with a summary and discussion of future directions.
 Overview of the OpenStack Cloud Platform
 ========================================
 
-.. figure:: ../../../raw/master/doc/src/openstack-software-diagram.png
+.. figure:: ../../raw/master/doc/src/openstack-software-diagram.png
    :align: center
    :alt: A high level view of the OpenStack service interaction [3]
 
