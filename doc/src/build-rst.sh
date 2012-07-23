@@ -8,5 +8,5 @@ pandoc \
     abstract.txt \
     openstack-centos-kvm-glusterfs-guide.md
 
-sed -i 's/openstack-software-diagram.png/raw\/master\/doc\/src\/openstack-software-diagram.png/g' \
+sed -i 's/openstack-software-diagram.png/\/beloglazov\/openstack-centos-kvm-glusterfs\/raw\/master\/doc\/src\/openstack-software-diagram.png/g' \
     ../../README.rst
