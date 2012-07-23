@@ -10,7 +10,7 @@ Cloud computing resources are delivered to the users through three major service
 * _Platform as a Service (PaaS)_: the access to the resources is provided in the form of an Application Programming Interface (API) that is used for application development and deployment. In this model, the user does not have a direct access to the system resources, rather the resource allocation to applications is automatically managed by the platform. Examples of PaaS are Google App Engine[3] and Microsoft Azure[4].
 * _Software as a Service (SaaS)_: application-level software services are provided to the users on a subscription bases over the Internet. Examples of SaaS are Salesforce.com[5] and applications from the Amazon Web Services Marketplace[6].
 
-In this work, we focus on the low level service model  -  IaaS. Apart from the service models, Cloud computing services are distinguished according to their deployment models. There are three basic deployment models:
+In this work, we focus on the low level service model -- IaaS. Apart from the service models, Cloud computing services are distinguished according to their deployment models. There are three basic deployment models:
 
 * _Public Cloud_: computing resources are provided publicly over the Internet based on a pay-per-use model.
 * _Private Cloud_: the Cloud infrastructure is owned by an organization, and hosted and operated internally.
@@ -25,7 +25,7 @@ In summary, this paper discusses and guides through the installation process of 
 * CentOS[8]: a free Linux Operating System (OS) distribution derived from the Red Hat Enterprise Linux (RHEL) distribution.
 * GlusterFS[9]: a distributed file system providing shared replicated storage across multiple servers over Ethernet or Infiniband. Having a storage shared between the compute nodes is a requirement for enabling live migration of VM instances. However, having a centralized shared storage service, such as NAS limits the scalability and leads to a single point of failure. In contrast, the advantages of a distributed file system solution, such as GlusterFS, are: (1) no single point of failure, which means even if a server fails, the storage and data will remain available due to automatic replication over multiple servers; (2) higher scalability, as Input/Output (I/O) operations are distributed across multiple servers; and (3) due to the data replication over multiple servers, if a data replica is available on the host, VM instances access the data locally rather than remotely over network improving the I/O performance.
 * KVM[10]: a hypervisor providing full virtualization for Linux leveraging hardware-assisted virtualization support of the Intel VT and AMD-V chipsets. The kernel component of KVM is included in the Linux kernel since the 2.6.20 version.
-* OpenStack[11]: free open source IaaS Cloud computing software originally released by Rackspace and NASA under the Apache 2.0 License in July 2010. The OpenStack project is currently lead and managed by the OpenStack Foundation, which is "an independent body providing shared resources to help achieve the OpenStack Mission by Protecting, Empowering, and Promoting OpenStack software and the community around it, including users, developers and the entire ecosystem".[12]
+* OpenStack[11]: free open source IaaS Cloud computing software originally released by Rackspace and NASA under the Apache 2.0 License in July 2010. The OpenStack project is currently lead and managed by the OpenStack Foundation, which is &quot;an independent body providing shared resources to help achieve the OpenStack Mission by Protecting, Empowering, and Promoting OpenStack software and the community around it, including users, developers and the entire ecosystem&quot;.[12]
 
 In the next section we give an overview of the OpenStack software, its features, main components, and their interaction. In Section 3, we briefly compare 4 open source Cloud computing platforms, namely OpenStack, Eucalyptus, CloudStack, and OpenNebula. In Section 4, we discuss the existing tools for automated installation of OpenStack and the differences from our approach. In Section 5 we provide a detailed description and discussion of the steps required to install OpenStack on top of CentOS using KVM and GlusterFS. In Section 6, we conclude the paper with a summary and discussion of future directions.
 
@@ -83,7 +83,7 @@ The testbed used for testing the installation scripts consists of the following 
 ** Dual Gigabit Ethernet (2 x Intel 82574L Ethernet Controller)
 * 1 x Netgear ProSafe 16-Port 10/100 Desktop Switch FS116
 
-The Dell Optiplex 745 machine has been chosen to serve as a management host running all the major OpenStack services. The management host is referred to as the _controller_ further in the text. The 4 IBM System x3200 M3 servers are used as _compute hosts_, i.e. for hosting VM instances.
+The Dell Optiplex 745 machine has been chosen to serve as a management host running all the major OpenStack services. The management host is referred to as the _controller_ further in the text. The 4 IBM System x3200 M3 servers are used as _compute hosts_, i.e. for hosting VM instances.
 
 Due to the specifics of our setup, the only one machine connected to the public network and the Internet is one of the IBM System x3200 M3 servers. This server is refereed to as the _gateway_. The gateway is connected to the public network via the eth0 network interface.
 
@@ -95,10 +95,10 @@ The project contains a number of directories, whose organization is explained in
 
 The remaining directories directly include the step-by-step installation scripts. The names of these directories have a specific format. The prefix (before the first dash) is the number denoting the order of execution. For example, the scripts from the directory with the prefix _01_ must be executed first, followed by the scripts from the directory with the prefix _02_, etc. The middle part of a directory name denotes the purpose of the scripts in this directory. The suffix (after the last dash) specifies the host, on which the scripts from this directory should be executed. There are 4 possible values of the target host prefix:
 
-* _all_  -  execute the scripts on all the hosts;
-* _compute_  -  execute the scripts on all the compute hosts;
-* _controller_  -  execute the scripts on the controller;
-* _gateway_  -  execute the scripts on the gateway.
+* _all_ -- execute the scripts on all the hosts;
+* _compute_ -- execute the scripts on all the compute hosts;
+* _controller_ -- execute the scripts on the controller;
+* _gateway_ -- execute the scripts on the gateway.
 
 For example, the first directory is named @01-network-gateway@, which means that (1) the scripts from this directory must be executed in the first place; (2) the scripts are supposed to do a network set up; and (3) the scripts must be executed only on the gateway. The name @02-glusterfs-all@ means: (1) the scripts from this directory must be executed after the scripts from @01-network-gateway@; (2) the scripts set up GlusterFS; and (3) the scripts must be executed on all the hosts.
 
@@ -110,7 +110,7 @@ The @lib@ directory contains configuration files used by the installation script
 
 <dl>
 <dt>@configrc:@</dt>
-<dd><p>This file contains a number of environmental variables defining various aspects of OpenStack's configuration, such as administration and service account credentials, as well as access points. The file must be "sourced" to export the variables into the current shell session. The file can be sourced directly by running: @. configrc@, or using the scripts described later. A simple test to check whether the variables have been correctly exported is to @echo@ any of the variables. For example, @echo $OS_USERNAME@ must output @admin@ for the default configuration.</p></dd>
+<dd><p>This file contains a number of environmental variables defining various aspects of OpenStack's configuration, such as administration and service account credentials, as well as access points. The file must be &quot;sourced&quot; to export the variables into the current shell session. The file can be sourced directly by running: @. configrc@, or using the scripts described later. A simple test to check whether the variables have been correctly exported is to @echo@ any of the variables. For example, @echo $OS_USERNAME@ must output @admin@ for the default configuration.</p></dd>
 <dt>@hosts:@</dt>
 <dd><p>This files contains a mapping between the IP addresses of the hosts in the local network and their host names. We apply the following host name convention: the compute hosts are named _computeX_, where _X_ is replaced by the number of the host. According the described hardware setup, the default configuration defines 4 compute hosts: @compute1@ (192.168.0.1), @compute2@ (192.168.0.2), @compute3@ (192.168.0.3), @compute4@ (192.168.0.4); and 1 @controller@ (192.168.0.5). As mentioned above, in our setup one of the compute hosts is connected to the public network and acts as a gateway. We assign to this host the host name @compute1@, and also alias it as @gateway@.</p></dd>
 <dt>@ntp.conf:@</dt>
@@ -127,9 +127,9 @@ The installation scripts have been tested with CentOS 6.3, which has been instal
 
 h4. Network Configuration.
 
-The simplest way to configure network is during the OS installation process. As mentioned above, in our setup, the gateway is connected to two networks: to the public network through the eth0 interface; and to the local network through the eth1 interface. Since in our setup the public network configuration can be obtain from a DHCP server, in the configuration of the eth0 interface it is only required to enable automatic connection by enabling the "Connect Automatically" option. We use static configuration for the local network; therefore, eth1 has be configured manually. Apart from enabling the "Connect Automatically" option, it is necessary to configure IPv4 by adding an IP address and netmask. According to the configuration defined in the @hosts@ file described above, we assign 192.168.0.1/24 to the gateway.
+The simplest way to configure network is during the OS installation process. As mentioned above, in our setup, the gateway is connected to two networks: to the public network through the eth0 interface; and to the local network through the eth1 interface. Since in our setup the public network configuration can be obtain from a DHCP server, in the configuration of the eth0 interface it is only required to enable automatic connection by enabling the &quot;Connect Automatically&quot; option. We use static configuration for the local network; therefore, eth1 has be configured manually. Apart from enabling the &quot;Connect Automatically&quot; option, it is necessary to configure IPv4 by adding an IP address and netmask. According to the configuration defined in the @hosts@ file described above, we assign 192.168.0.1/24 to the gateway.
 
-One of the differences in the network configuration of the other compute hosts (@compute2@, @compute3@, and @compute4@) from the gateway is that eth0 should be kept disabled, as it is unused. The eth1 interface should be enabled by turning on the "Connect Automatically" option. The IP address and netmask for eth1 should be set to 192.168.0._X_/24, where _X_ is replaced by the compute host number. The gateway for the compute hosts should be set to 192.168.0.1, which the IP address of the gateway. The controller is configured similarly to the compute hosts with the only difference that the configuration should be done for eth0 instead of eth1, since the controller has only one network interface.
+One of the differences in the network configuration of the other compute hosts (@compute2@, @compute3@, and @compute4@) from the gateway is that eth0 should be kept disabled, as it is unused. The eth1 interface should be enabled by turning on the &quot;Connect Automatically&quot; option. The IP address and netmask for eth1 should be set to 192.168.0._X_/24, where _X_ is replaced by the compute host number. The gateway for the compute hosts should be set to 192.168.0.1, which the IP address of the gateway. The controller is configured similarly to the compute hosts with the only difference that the configuration should be done for eth0 instead of eth1, since the controller has only one network interface.
 
 h4. Hard Drive Partitioning.
 
@@ -740,7 +740,7 @@ The scripts described in this section need to be run only on the controller host
 <li>@01-source-configrc.sh@</li>
 </ol>
 
-This scripts is mainly used to remind of the necessity to "source" the @configrc@ file prior to continuing, since some scripts in this directory use the environmental variable defined in @configrc@. To source the file, it is necessary to run the following command: @. 01-source-configrc.sh@.
+This scripts is mainly used to remind of the necessity to &quot;source&quot; the @configrc@ file prior to continuing, since some scripts in this directory use the environmental variable defined in @configrc@. To source the file, it is necessary to run the following command: @. 01-source-configrc.sh@.
 
 <pre class="Bash">
 echo &quot;To make the environmental variables available \
@@ -924,9 +924,9 @@ chkconfig openstack-keystone on
 <li>@11-keystone-create-users.sh@</li>
 </ol>
 
-The purpose of this script is to create user accounts, roles and tenants in Keystone for the admin user and service accounts for each OpenStack service: Keystone, Glance, and Nova. Since the process is complicated when done manually (it is necessary to define relations between database records), we use the _keystone-init_ project[22] to automate the process. The _keystone-init_ project allows one to create a configuration file in the "YAML Ain't Markup Language"[23] (YAML) data format defining the required OpenStack user accounts. Then, according the defined configuration, the required database records are automatically created.
+The purpose of this script is to create user accounts, roles and tenants in Keystone for the admin user and service accounts for each OpenStack service: Keystone, Glance, and Nova. Since the process is complicated when done manually (it is necessary to define relations between database records), we use the _keystone-init_ project[22] to automate the process. The _keystone-init_ project allows one to create a configuration file in the &quot;YAML Ain't Markup Language&quot;[23] (YAML) data format defining the required OpenStack user accounts. Then, according the defined configuration, the required database records are automatically created.
 
-Our script first installs a dependency of _keystone-init_ and clones the project's repository. Then, the script modifies the default configuration file provided with the _keystone-init_ project by populating it with the values defined by the environmental variables defined in @configrc@. The last step of the script is to invoke _keystone-init_. The script does not remove the _keystone-init_ repository to allow one to browse the generated configuration file, e.g. to check the correctness. When the repository is not required anymore, it can be removed by executing @rm -rf keystone-init@.
+Our script first installs a dependency of _keystone-init_ and clones the project's repository. Then, the script modifies the default configuration file provided with the _keystone-init_ project by populating it with the values defined by the environmental variables defined in @configrc@. The last step of the script is to invoke _keystone-init_. The script does not remove the _keystone-init_ repository to allow one to browse the generated configuration file, e.g. to check the correctness. When the repository is not required anymore, it can be removed by executing @rm -rf keystone-init@.
 
 <pre class="Bash">
 # Install PyYAML, a YAML Python library
@@ -971,7 +971,7 @@ echo &quot;You may do 'rm -rf keystone-init' to remove \
 <li>@12-glance-install.sh@</li>
 </ol>
 
-This script install Glance  -  the OpenStack VM image management service.
+This script install Glance -- the OpenStack VM image management service.
 
 bc(Bash). # Install OpenStack Glance, an image management service
 yum install -y openstack-glance
@@ -1127,7 +1127,7 @@ rm -rf /tmp/images
 <li>@20-nova-install.sh@</li>
 </ol>
 
-This script installs Nova  -  the OpenStack compute service, as well as the Qpid AMQP message broker. The message broker is required by the OpenStack services to communicate with each other.
+This script installs Nova -- the OpenStack compute service, as well as the Qpid AMQP message broker. The message broker is required by the OpenStack services to communicate with each other.
 
 bc(Bash). # Install OpenStack Nova (compute service)
 # and the Qpid AMQP message broker
@@ -1255,17 +1255,17 @@ openstack-config --set /etc/nova/nova.conf \
 
 Apart from user credentials, the script configures a few other important options:
 
-* the identity management service  -  Keystone;
-* the Qpid server host name  -  controller;
-* the host running the Nova network service  -  compute1 (i.e. gateway);
-* the network used for VMs  -  10.0.0.0/24;
-* the network interface used to bridge VMs to  -  eth1;
-* the Linux bridge used by VMs  -  br100;
-* the public network interface  -  eth1;
-* the Glance service host name  -  controller;
-* the VNC server host name  -  controller;
-* the IP address of the host running VNC proxies (they must be run on the host that can be accessed from outside; in our setup it is the gateway)  -  @$PUBLIC_IP_ADDRESS@;
-* the Nova metadata service host name  -  controller.
+* the identity management service -- Keystone;
+* the Qpid server host name -- controller;
+* the host running the Nova network service -- compute1 (i.e. gateway);
+* the network used for VMs -- 10.0.0.0/24;
+* the network interface used to bridge VMs to -- eth1;
+* the Linux bridge used by VMs -- br100;
+* the public network interface -- eth1;
+* the Glance service host name -- controller;
+* the VNC server host name -- controller;
+* the IP address of the host running VNC proxies (they must be run on the host that can be accessed from outside; in our setup it is the gateway) -- @$PUBLIC_IP_ADDRESS@;
+* the Nova metadata service host name -- controller.
 
 <ol start="43" style="list-style-type: example;">
 <li>@24-nova-init-db.sh@</li>
@@ -1319,7 +1319,7 @@ The scripts described in this section should be run on the compute hosts.
 <li>@01-source-configrc.sh@</li>
 </ol>
 
-This scripts is mainly used to remind of the necessity to "source" the @configrc@ file prior to continuing, since some scripts in this directory use the environmental variable defined in @configrc@. To source the file, it is necessary to run the following command: @. 01-source-configrc.sh@.
+This scripts is mainly used to remind of the necessity to &quot;source&quot; the @configrc@ file prior to continuing, since some scripts in this directory use the environmental variable defined in @configrc@. To source the file, it is necessary to run the following command: @. 01-source-configrc.sh@.
 
 <pre class="Bash">
 echo &quot;To make the environmental variables available \
@@ -1412,7 +1412,7 @@ Nova runs a metadata service on http://169.254.169.254 that is queried by VM ins
 <li>@01-source-configrc.sh@</li>
 </ol>
 
-This scripts is mainly used to remind of the necessity to "source" the @configrc@ file prior to continuing, since some scripts in this directory use the environmental variable defined in @configrc@. To source the file, it is necessary to run the following command: @. 01-source-configrc.sh@.
+This scripts is mainly used to remind of the necessity to &quot;source&quot; the @configrc@ file prior to continuing, since some scripts in this directory use the environmental variable defined in @configrc@. To source the file, it is necessary to run the following command: @. 01-source-configrc.sh@.
 
 <pre class="Bash">
 echo &quot;To make the environmental variables available \
@@ -1514,7 +1514,7 @@ At this point the installation of OpenStack can be considered completed. The nex
 
 h4. 10-openstack-controller (controller).
 
-This section describes commands and scripts that can be used to test the OpenStack installation obtained by following the steps above. The testing should start from the identity management service, Keystone, since it coordinates all the other OpenStack services. To use the command line programs provided by OpenStack, it is necessary to "source" the @configrc@. This can be done by executing the following command: @. config/configrc@. The check whether Keystone is properly initialized and the authorization works, the following command can be used:
+This section describes commands and scripts that can be used to test the OpenStack installation obtained by following the steps above. The testing should start from the identity management service, Keystone, since it coordinates all the other OpenStack services. To use the command line programs provided by OpenStack, it is necessary to &quot;source&quot; the @configrc@. This can be done by executing the following command: @. config/configrc@. The check whether Keystone is properly initialized and the authorization works, the following command can be used:
 
 bc(Bash). keystone user-list
 
@@ -1639,7 +1639,7 @@ Once the initial testing steps are successfully passed, we can go on to test the
 <li>@01-source-configrc.sh@</li>
 </ol>
 
-This scripts is mainly used to remind of the necessity to "source" the @configrc@ file prior to continuing, since some scripts in this directory use the environmental variable defined in @configrc@. To source the file, it is necessary to run the following command: @. 01-source-configrc.sh@.
+This scripts is mainly used to remind of the necessity to &quot;source&quot; the @configrc@ file prior to continuing, since some scripts in this directory use the environmental variable defined in @configrc@. To source the file, it is necessary to run the following command: @. 01-source-configrc.sh@.
 
 <pre class="Bash">
 echo &quot;To make the environmental variables available \
@@ -1796,7 +1796,7 @@ chown -R nova:nova /var/lib/libvirt
 
 h3. Nova Network
 
-If after a start up, the @openstack-nova-network@ service hangs with the following last message in the log file: 'Attempting to grab file lock "iptables" for method "apply"', the solution is the following[28]:
+If after a start up, the @openstack-nova-network@ service hangs with the following last message in the log file: 'Attempting to grab file lock &quot;iptables&quot; for method &quot;apply&quot;', the solution is the following[28]:
 
 bc(Bash). rm /var/lib/nova/tmp/nova-iptables.lock
 
@@ -1889,5 +1889,6 @@ fn26. QEMU. "http://en.wikipedia.org/wiki/QEMU":http://en.wikipedia.org/wiki/QEM
 fn27. <p>Dnsmasq. "http://en.wikipedia.org/wiki/Dnsmasq":http://en.wikipedia.org/wiki/Dnsmasq.</p>
 
 fn28. OpenStack Compute Questions. "https://answers.launchpad.net/nova/+question/200985":https://answers.launchpad.net/nova/+question/200985.
+
 
 
