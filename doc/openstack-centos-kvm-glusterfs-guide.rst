@@ -1,3 +1,35 @@
+A Step-by-Step Guide to Installing OpenStack on CentOS Using the KVM Hypervisor and GlusterFS Distributed File System
+=====================================================================================================================
+
+This guide is also available in the following formats:
+
+-  `PDF <https://github.com/beloglazov/openstack-centos-kvm-glusterfs/raw/master/doc/openstack-centos-kvm-glusterfs-guide.pdf>`_
+-  `EPUB <https://github.com/beloglazov/openstack-centos-kvm-glusterfs/raw/master/doc/openstack-centos-kvm-glusterfs-guide.epub>`_
+-  `HTML <https://raw.github.com/beloglazov/openstack-centos-kvm-glusterfs/master/doc/openstack-centos-kvm-glusterfs-guide.html>`_
+
+Cloud computing has proven to be a successful distributed computing
+model as demostrated by its wide spread industrial adoption. Apart from
+public Cloud, such as Amazon EC2, private and hybrid Cloud deployments
+are important for organizations of all scales. The availability of free
+open source Cloud platforms is essential to further drive the
+proliferation of private and hybrid Cloud computing environments.
+OpenStack is free open source Cloud computing software originally
+released by Rackspace and NASA, which strives to close the gap in the
+lack of a comprehensive Cloud platform with a fast pace of development
+and innovation, and supported by both an active community of people and
+large companies. In this work, we go through and discuss the steps
+required to come from bare hardware to a fully operational multi-node
+OpenStack installation. Every step discussed in this paper is
+implemented as a separate shell script making it easy to understand the
+intricate details of the installation process. The full set of
+installation scripts is reseased under the Apache 2.0 License and is
+publicly available online.
+
+% A Step-by-Step Guide to Installing OpenStack on CentOS Using the KVM
+Hypervisor and GlusterFS Distributed File System % Anton Beloglazov;
+Sareh Fotuhi Piraghaj; Mohammed Alrokayan; Rajkumar Buyya % 23rd of July
+2012
+
 Introduction
 ============
 
