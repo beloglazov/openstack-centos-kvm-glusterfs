@@ -5,6 +5,5 @@ pandoc \
     --output=../openstack-centos-kvm-glusterfs-guide.rst \
     openstack-centos-kvm-glusterfs-guide.md
 
-
-    # --standalone \
-    # --smart \
+sed -i 's/openstack-software-diagram.png/src\/openstack-software-diagram.png/g' \
+    ../openstack-centos-kvm-glusterfs-guide.rst
