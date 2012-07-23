@@ -370,7 +370,7 @@ group is used by OpenStack Nova to allocated volumes for VM instances. This volu
 by Nova; therefore, there is not need to create logical volumes manually. The `vg_images` volume
 group and its `lv_images` logical volume are devoted for storing VM images by OpenStack Glance.
 The mount point for `lv_images` is `/var/lib/glance/images`, which is the default directory used by
-Glance to store image files.
+Glance to store VM image files.
 
 Table: Partitioning scheme for the controller
 
@@ -633,9 +633,12 @@ The script described in this section needs to be run on all the hosts.
 This scripts adds a line to the `/etc/fstab` configuration file to automatically mount the GlusterFS
 volume during the system start up to the `/var/lib/nova/instances` directory. The
 `/var/lib/nova/instances` directory is the default location where OpenStack Nova stores the VM
-instances related data. This directory must be shared be all the compute hosts to enable live
-migration of VMs. The `mount -a` command re-mounts everything from the config file after it has been
-modified.
+instances related data. This directory must be mounted and shared by the controller and all the
+compute hosts to enable live migration of VMs. Even though the controller does not manage the data
+of VM instances, it is still necessary for it to have the access to the VM instance data directory
+to enable live migration. The reason is that the controller coordinates live migration by writing
+some temporary data to the shared directory. The `mount -a` command re-mounts everything from the
+config file after it has been modified.
 
 ```Bash
 # Mount the GlusterFS volume
@@ -900,8 +903,69 @@ identity data. The script also creates a `keystone` user and grants full permiss
 
 (@) `06-keystone-generate-admin-token.sh`
 
-This script generates a random token used to authorize the Keystone admin account. The generated
-token is stored in the `./keystone-admin-token` file.
+Keystone allows two types of authentication for administrative action like creating users, tenants,
+etc:
+
+1. Using an admin token and `admin_port` (35357), e.g.:
+
+    ```Bash
+    keystone --token=<admin token> \
+        --endpoint=http://controller:35357/v2.0 user-list
+    ```
+
+2. Using an admin user and `public_port` (5000), e.g.:
+
+    ```Bash
+    keystone --os_username=admin --os_tenant_name=admin --os_password=<password> \
+        --os_auth_url=http://controller:5000/v2.0 user-list
+    ```
+
+Services, such as Glance and Nova, can also authenticate in Keystone using one of two ways. One way
+is to share the admin token among the services and authenticate using the token. However, it is also
+possible to use special users created in Keystone for each service. By default, these users are
+nova, glance, etc. The service users are assigned to the service tenant and admin role in that
+tenant.
+
+Here is an example of the password-based authenication for nova:
+
+```Bash
+    nova --os_username=nova --os_password=<password> --os_tenant_name=service \
+        --os_auth_url=http://controller:5000/v2.0 list
+```
+
+One of two sets of authentication parameters are required to be specified in
+`/etc/nova/api-paste.ini`. The first option is to set up the token-based authentication, like the
+following:
+
+```Bash
+auth_host = controller
+auth_protocol = http
+admin_token = <admin token>
+````
+
+The second option is to set up the password-based authentication, as follows:
+
+```Bash
+auth_host = controller
+auth_protocol = http
+admin_tenant_name = service
+admin_user = nova
+admin_password = <password>
+```
+
+The password-based authentication might be preferable, since it uses Keystone's database
+backend to store user credentials. Therefore, it is possible to update user credentials, for example, using
+Keystone's command line tools without the necessity to re-generate the admin token and update the
+configuration files.
+
+Even though, the user name and password are specified in the config file, it is still necessary to
+provide these data when using the command line tools. One way to do this is to directly provide the
+credentials in the form of command line arguments, as shown above. Another approach, which we apply
+in this work, is to set corresponding environmental variables that will be automatically used by the
+command line tools.
+
+The `06-keystone-generate-admin-token.sh` script generates a random token used to authorize the
+Keystone admin account. The generated token is stored in the `./keystone-admin-token` file.
 
 ```Bash
 # Generate an admin token for Keystone and save it into
@@ -1235,8 +1299,12 @@ chown -R nova:nova /var/lib/nova
 
 (@) `23-nova-config.sh`
 
-This scripts invokes the Nova configuration script provided in the `lib` directory, since it is
-shared by the scripts setting up Nova on all the controller, and the compute hosts.
+The `/etc/nova/nova.conf` configuration file should be present on all the compute hosts running Nova
+Compute, as well as on the controller, which runs the other Nova services. Moreover, the content of
+the configuration file should be the same on the controller and compute hosts. Therefore, a script
+that modifies the Nova configuration is placed in the `lib` directory and is shared by the
+corresponding installation scripts of the controller and compute hosts. The `23-nova-config.sh`
+scripts invokes the Nova configuration script provided in the `lib` directory.
 
 ```Bash
 # Run the Nova configuration script
@@ -1457,7 +1525,38 @@ chkconfig openstack-nova-compute on
 
 #### 09-openstack-gateway (network gateway)
 
-This scripts described in this section need to be run only on the gateway.
+The scripts described in this section need to be run only on the gateway.
+
+Nova supports three network configuration modes:
+
+1. Flat Mode: public IP addresses from a specified range are assigned to VM instances on launch.
+This only works on Linux systems that keep their network configuration in `/etc/network/interfaces`.
+To enable this mode, the following option should be specified in `nova.conf`:
+
+    network_manager=nova.network.manager.FlatManager
+
+2. Flat DHCP Mode: Nova runs a Dnsmasq server listening to a created network bridge that assigns
+public IP addresses to VM instances. This is the mode we use in this work. There must be only one
+host running the `openstack-nova-network` service. The `network_host` option in `nova.conf`
+specifies wich host the `openstack-nova-network` service is running on. The network bridge name is
+specified using the `flat_network_bridge` option. To enable this mode, the following option should
+be specified in `nova.conf`:
+
+    network_manager=nova.network.manager.FlatDHCPManager
+
+3. VLAN Mode: VM instances are assigned private IP addresses from networks created for each tenant /
+project. Instances are accessed through a special VPN VM instance. To enable this mode, the
+following option should be specified in `nova.conf`:
+
+    network_manager=nova.network.manager.VlanManager
+
+Nova runs a metadata service on http://169.254.169.254 that is queried by VM instances to obtain SSH
+keys and other user data. The `openstack-nova-network` service automatically configures `iptables`
+to NAT the port 80 of 169.254.169.254 to the IP address specified in the `metadata_host` option and
+the port specified in the `metadata_port` option configured in `nova.conf` (the defaults are the IP
+address of the `openstack-nova-network` service and 8775). If the `openstack-nova-metadata-api` and
+`openstack-nova-network` services are running on different hosts, the `metadata_host` option should
+point to the IP address of `openstack-nova-metadata-api`.
 
 
 (@) `01-source-configrc.sh`
@@ -1709,8 +1808,9 @@ nova delete cirros
 
 (@) `03-keypair-add.sh`
 
-This script creates a key pair, which is injected by OpenStack into VMs to allow password-less SSH
-connections. The generated private key is save into the `../config/test.pem` file.
+Nova supports injection of SSH keys into VM instances for password-less authentication. This script
+creates a key pair, which can be used by Nova to inject into VMs. The generated public key is stored
+internally by Nova, whereas, the private key is saved into the specified `../config/test.pem` file.
 
 ```Bash
 # Create a key pair
@@ -1753,7 +1853,8 @@ ssh -i ../config/test.pem -l test $1
 (@) `06-nova-volume-create.sh`
 
 This script shows how to create a 2 GB Nova volume called `myvolume`. Once created, the volume can
-be dynamically attached to a VM instance, as shown in the next script.
+be dynamically attached to a VM instance, as shown in the next script. A volume can only be attached
+to one instance at a time.
 
 ```Bash
 # Create a 2GB volume called myvolume
