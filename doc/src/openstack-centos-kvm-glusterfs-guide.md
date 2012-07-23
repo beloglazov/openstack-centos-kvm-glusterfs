@@ -420,9 +420,8 @@ configuration of eth0, the network interface connected to the public network in 
 
 In all the following steps, it is assumed that the user logged in is `root`. If the Internet is
 available on the gateway, it is necessary to install
-Git^[[http://en.wikipedia.org/wiki/Git_(software)](http://en.wikipedia.org/wiki/Git_(software))] to
-be able to clone the repository containing the installation scripts. This can be done using yum, the
-default package manager in CentOS, as follows:
+Git^[[http://git-scm.com/](http://git-scm.com/)] to be able to clone the repository containing the
+installation scripts. This can be done using yum, the default package manager in CentOS, as follows:
 
 ```Bash
 yum install -y git
@@ -431,7 +430,8 @@ yum install -y git
 Next, the repository can be clone using the following command:
 
 ```Bash
-git clone https://github.com/beloglazov/openstack-centos-kvm-glusterfs.git
+git clone \
+   https://github.com/beloglazov/openstack-centos-kvm-glusterfs.git
 ```
 
 Then, we can proceed to continue the configuration using the scripts contained in the cloned Git
@@ -476,7 +476,7 @@ as follows:
 ```Bash
 # Enable IP packet forwarding
 sed -i 's/net.ipv4.ip_forward = 0/net.ipv4.ip_forward = 1/g' \
-    /etc/sysctl.conf
+   /etc/sysctl.conf
 
 # Restart the network service
 service network restart
@@ -520,7 +520,8 @@ installation, it is necessary to run the following commands:
 ```Bash
 yum update -y
 yum install -y git
-git clone https://github.com/beloglazov/openstack-centos-kvm-glusterfs.git
+git clone \
+   https://github.com/beloglazov/openstack-centos-kvm-glusterfs.git
 
 ```
 
@@ -567,10 +568,13 @@ This script installs GlusterFS services and their dependencies.
 ```Bash
 # Install GlusterFS and its dependencies
 yum -y install \
-    openssh-server wget fuse fuse-libs openib libibverbs \
-	http://download.gluster.org/pub/gluster/glusterfs/LATEST/CentOS/glusterfs-3.3.0-1.el6.x86_64.rpm \
-	http://download.gluster.org/pub/gluster/glusterfs/LATEST/CentOS/glusterfs-fuse-3.3.0-1.el6.x86_64.rpm \
-	http://download.gluster.org/pub/gluster/glusterfs/LATEST/CentOS/glusterfs-server-3.3.0-1.el6.x86_64.rpm
+   openssh-server wget fuse fuse-libs openib libibverbs \
+   http://download.gluster.org/pub/gluster/glusterfs/LATEST/\
+      CentOS/glusterfs-3.3.0-1.el6.x86_64.rpm \
+   http://download.gluster.org/pub/gluster/glusterfs/LATEST/\
+      CentOS/glusterfs-fuse-3.3.0-1.el6.x86_64.rpm \
+   http://download.gluster.org/pub/gluster/glusterfs/LATEST/\
+      CentOS/glusterfs-server-3.3.0-1.el6.x86_64.rpm
 ```
 
 
@@ -615,8 +619,8 @@ migration of VMs.
 ```Bash
 # Create a GlusterFS volume replicated over 4 gluster hosts
 gluster volume create vm-instances replica 4 \
-    compute1:/export/gluster compute2:/export/gluster \
-	compute3:/export/gluster compute4:/export/gluster
+   compute1:/export/gluster compute2:/export/gluster \
+   compute3:/export/gluster compute4:/export/gluster
 
 # Start the created volume
 gluster volume start vm-instances
@@ -643,8 +647,8 @@ config file after it has been modified.
 ```Bash
 # Mount the GlusterFS volume
 mkdir -p /var/lib/nova/instances
-echo "localhost:/vm-instances /var/lib/nova/instances glusterfs defaults 0 0" \
-    >> /etc/fstab
+echo "localhost:/vm-instances /var/lib/nova/instances \
+   glusterfs defaults 0 0" >> /etc/fstab
 mount -a
 ```
 
@@ -737,13 +741,13 @@ OpenStack to enable live migration of VM instances.
 # authentication. This configuration is required to enable live
 # migration through OpenStack.
 sed -i 's/#listen_tls = 0/listen_tls = 0/g' \
-    /etc/libvirt/libvirtd.conf
+   /etc/libvirt/libvirtd.conf
 sed -i 's/#listen_tcp = 1/listen_tcp = 1/g' \
-    /etc/libvirt/libvirtd.conf
+   /etc/libvirt/libvirtd.conf
 sed -i 's/#auth_tcp = "sasl"/auth_tcp = "none"/g' \
-    /etc/libvirt/libvirtd.conf
+   /etc/libvirt/libvirtd.conf
 sed -i 's/#LIBVIRTD_ARGS="--listen"/LIBVIRTD_ARGS="--listen"/g' \
-    /etc/sysconfig/libvirtd
+   /etc/sysconfig/libvirtd
 ```
 
 
@@ -775,8 +779,8 @@ which contains the OpenStack related packages.
 
 ```Bash
 # Add the EPEL repo: http://fedoraproject.org/wiki/EPEL
-yum install -y \
-    http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-7.noarch.rpm
+yum install -y http://dl.fedoraproject.org/pub/epel/6/i386/\
+   epel-release-6-7.noarch.rpm
 ```
 
 
@@ -836,7 +840,7 @@ continuing, since some scripts in this directory use the environmental variable 
 
 ```Bash
 echo "To make the environmental variables available \
-    in the current session, run: "
+   in the current session, run: "
 echo ". 01-source-configrc.sh"
 
 # Export the variables defined in ../config/configrc
@@ -870,7 +874,7 @@ mysqladmin -u root password $MYSQL_ROOT_PASSWORD
 
 echo ""
 echo "The MySQL root password has been set \
-    to the value of $MYSQL_ROOT_PASSWORD: \"$MYSQL_ROOT_PASSWORD\""
+   to the value of $MYSQL_ROOT_PASSWORD: \"$MYSQL_ROOT_PASSWORD\""
 ```
 
 
@@ -880,7 +884,7 @@ This script installs Keystone - the OpenStack identity management service, and o
 command line utilities.
 
 ```Bash
-# Install OpenStack utils and Keystone - the identity management service
+# Install OpenStack utils and Keystone, the identity management service
 yum install -y openstack-utils openstack-keystone
 ```
 
@@ -895,9 +899,10 @@ identity data. The script also creates a `keystone` user and grants full permiss
 # Create a database for Keystone
 ../lib/mysqlq.sh "CREATE DATABASE keystone;"
 
-# Create a keystone user and grant all privileges to the keystone database
+# Create a keystone user and grant all privileges
+# to the keystone database
 ../lib/mysqlq.sh "GRANT ALL ON keystone.* TO 'keystone'@'controller' \
-    IDENTIFIED BY '$KEYSTONE_MYSQL_PASSWORD';"
+   IDENTIFIED BY '$KEYSTONE_MYSQL_PASSWORD';"
 ```
 
 
@@ -910,14 +915,15 @@ etc:
 
     ```Bash
     keystone --token=<admin token> \
-        --endpoint=http://controller:35357/v2.0 user-list
+       --endpoint=http://controller:35357/v2.0 user-list
     ```
 
 2. Using an admin user and `public_port` (5000), e.g.:
 
     ```Bash
-    keystone --os_username=admin --os_tenant_name=admin --os_password=<password> \
-        --os_auth_url=http://controller:5000/v2.0 user-list
+    keystone --os_username=admin --os_tenant_name=admin \
+	   --os_password=<password> \
+	   --os_auth_url=http://controller:5000/v2.0 user-list
     ```
 
 Services, such as Glance and Nova, can also authenticate in Keystone using one of two ways. One way
@@ -929,8 +935,9 @@ tenant.
 Here is an example of the password-based authenication for nova:
 
 ```Bash
-    nova --os_username=nova --os_password=<password> --os_tenant_name=service \
-        --os_auth_url=http://controller:5000/v2.0 list
+    nova --os_username=nova --os_password=<password> \
+	   --os_tenant_name=service \
+       --os_auth_url=http://controller:5000/v2.0 list
 ```
 
 One of two sets of authentication parameters are required to be specified in
@@ -982,11 +989,11 @@ generated admin token and the MySQL connection configuration using the variables
 ```Bash
 # Set the generated admin token in the Keystone configuration
 openstack-config --set /etc/keystone/keystone.conf DEFAULT \
-    admin_token `cat keystone-admin-token`
+   admin_token `cat keystone-admin-token`
 
 # Set the connection to the MySQL server
-openstack-config --set /etc/keystone/keystone.conf sql \
-    connection mysql://keystone:$KEYSTONE_MYSQL_PASSWORD@controller/keystone
+openstack-config --set /etc/keystone/keystone.conf sql connection \
+   mysql://keystone:$KEYSTONE_MYSQL_PASSWORD@controller/keystone
 
 ```
 
@@ -1059,25 +1066,25 @@ git clone https://github.com/nimbis/keystone-init.git
 # Replace the default configuration with the values defined be the
 # environmental variables in configrc
 sed -i "s/192.168.206.130/controller/g" \
-    keystone-init/config.yaml
+   keystone-init/config.yaml
 sed -i "s/012345SECRET99TOKEN012345/`cat keystone-admin-token`/g" \
-    keystone-init/config.yaml
+   keystone-init/config.yaml
 sed -i "s/name:        openstackDemo/name:        $OS_TENANT_NAME/g" \
-    keystone-init/config.yaml
+   keystone-init/config.yaml
 sed -i "s/name:     adminUser/name:     $OS_USERNAME/g" \
-    keystone-init/config.yaml
+   keystone-init/config.yaml
 sed -i "s/password: secretword/password: $OS_PASSWORD/g" \
-    keystone-init/config.yaml
+   keystone-init/config.yaml
 sed -i "s/name:     glance/name:     $GLANCE_SERVICE_USERNAME/g" \
-    keystone-init/config.yaml
+   keystone-init/config.yaml
 sed -i "s/password: glance/password: $GLANCE_SERVICE_PASSWORD/g" \
-    keystone-init/config.yaml
+   keystone-init/config.yaml
 sed -i "s/name:     nova/name:     $NOVA_SERVICE_USERNAME/g" \
-    keystone-init/config.yaml
+   keystone-init/config.yaml
 sed -i "s/password: nova/password: $NOVA_SERVICE_PASSWORD/g" \
-    keystone-init/config.yaml
+   keystone-init/config.yaml
 sed -i "s/RegionOne/$OS_REGION_NAME/g" \
-    keystone-init/config.yaml
+   keystone-init/config.yaml
 
 # Run the Keystone initialization script
 ./keystone-init/keystone-init.py ./keystone-init/config.yaml
@@ -1085,7 +1092,7 @@ sed -i "s/RegionOne/$OS_REGION_NAME/g" \
 echo ""
 echo "The applied config file is keystone-init/config.yaml"
 echo "You may do 'rm -rf keystone-init' to remove \
-    the no more needed keystone-init directory"
+   the no more needed keystone-init directory"
 ```
 
 
@@ -1094,7 +1101,7 @@ echo "You may do 'rm -rf keystone-init' to remove \
 This script install Glance -- the OpenStack VM image management service.
 
 ```Bash
-# Install OpenStack Glance -- an image management service
+# Install OpenStack Glance, an image management service
 yum install -y openstack-glance
 ```
 
@@ -1112,7 +1119,7 @@ database to this user.
 # Create a glance user and grant all privileges
 # to the glance database
 ../lib/mysqlq.sh "GRANT ALL ON glance.* TO 'glance'@'controller' \
-    IDENTIFIED BY '$GLANCE_MYSQL_PASSWORD';"
+   IDENTIFIED BY '$GLANCE_MYSQL_PASSWORD';"
 ```
 
 
@@ -1124,40 +1131,42 @@ management service used by Glance.
 
 ```Bash
 # Make Glance API use Keystone as the identity management service
-openstack-config --set /etc/glance/glance-api.conf paste_deploy \
-    flavor keystone
+openstack-config --set /etc/glance/glance-api.conf \
+   paste_deploy flavor keystone
 
 # Set Glance API user credentials
-openstack-config --set /etc/glance/glance-api-paste.ini filter:authtoken \
-    admin_tenant_name $GLANCE_SERVICE_TENANT
-openstack-config --set /etc/glance/glance-api-paste.ini filter:authtoken \
-    admin_user $GLANCE_SERVICE_USERNAME
-openstack-config --set /etc/glance/glance-api-paste.ini filter:authtoken \
-    admin_password $GLANCE_SERVICE_PASSWORD
+openstack-config --set /etc/glance/glance-api-paste.ini \
+   filter:authtoken admin_tenant_name $GLANCE_SERVICE_TENANT
+openstack-config --set /etc/glance/glance-api-paste.ini \
+   filter:authtoken admin_user $GLANCE_SERVICE_USERNAME
+openstack-config --set /etc/glance/glance-api-paste.ini \
+   filter:authtoken admin_password $GLANCE_SERVICE_PASSWORD
 
 # Set Glance Cache user credentials
-openstack-config --set /etc/glance/glance-cache.conf DEFAULT \
-    admin_tenant_name $GLANCE_SERVICE_TENANT
-openstack-config --set /etc/glance/glance-cache.conf DEFAULT \
-    admin_user $GLANCE_SERVICE_USERNAME
-openstack-config --set /etc/glance/glance-cache.conf DEFAULT \
-    admin_password $GLANCE_SERVICE_PASSWORD
+openstack-config --set /etc/glance/glance-cache.conf \
+   DEFAULT admin_tenant_name $GLANCE_SERVICE_TENANT
+openstack-config --set /etc/glance/glance-cache.conf \
+   DEFAULT admin_user $GLANCE_SERVICE_USERNAME
+openstack-config --set /etc/glance/glance-cache.conf \
+   DEFAULT admin_password $GLANCE_SERVICE_PASSWORD
 
-# Make Glance Registry use Keystone as the identity management service
-openstack-config --set /etc/glance/glance-registry.conf paste_deploy \
-    flavor keystone
+# Set Glance Registry to use Keystone
+# as the identity management service
+openstack-config --set /etc/glance/glance-registry.conf \
+   paste_deploy flavor keystone
 
 # Set the connection to the MySQL server
-openstack-config --set /etc/glance/glance-registry.conf DEFAULT \
-    sql_connection mysql://glance:$GLANCE_MYSQL_PASSWORD@controller/glance
+openstack-config --set /etc/glance/glance-registry.conf \
+   DEFAULT sql_connection \
+      mysql://glance:$GLANCE_MYSQL_PASSWORD@controller/glance
 
 # Set Glance Registry user credentials
-openstack-config --set /etc/glance/glance-registry-paste.ini filter:authtoken \
-    admin_tenant_name $GLANCE_SERVICE_TENANT
-openstack-config --set /etc/glance/glance-registry-paste.ini filter:authtoken \
-    admin_user $GLANCE_SERVICE_USERNAME
-openstack-config --set /etc/glance/glance-registry-paste.ini filter:authtoken \
-    admin_password $GLANCE_SERVICE_PASSWORD
+openstack-config --set /etc/glance/glance-registry-paste.ini \
+   filter:authtoken admin_tenant_name $GLANCE_SERVICE_TENANT
+openstack-config --set /etc/glance/glance-registry-paste.ini \
+   filter:authtoken admin_user $GLANCE_SERVICE_USERNAME
+openstack-config --set /etc/glance/glance-registry-paste.ini \
+   filter:authtoken admin_password $GLANCE_SERVICE_PASSWORD
 ```
 
 
@@ -1214,11 +1223,13 @@ OpenStack.
 # Download the Cirros VM image
 mkdir /tmp/images
 cd /tmp/images
-wget https://launchpad.net/cirros/trunk/0.3.0/+download/cirros-0.3.0-x86_64-disk.img
+wget https://launchpad.net/cirros/trunk/0.3.0/+download/\
+   cirros-0.3.0-x86_64-disk.img
 
 # Add the downloaded image to Glance
 glance add name="cirros-0.3.0-x86_64" is_public=true \
-    disk_format=qcow2 container_format=bare < cirros-0.3.0-x86_64-disk.img
+   disk_format=qcow2 container_format=bare \
+   < cirros-0.3.0-x86_64-disk.img
 
 # Remove the temporary directory
 rm -rf /tmp/images
@@ -1236,11 +1247,12 @@ to run on cloud-platforms such as Openstack, Amazon EC2, and LXC.
 # Download an Ubuntu Cloud image
 mkdir /tmp/images
 cd /tmp/images
-wget http://uec-images.ubuntu.com/precise/current/precise-server-cloudimg-amd64-disk1.img
+wget http://uec-images.ubuntu.com/precise/current/\
+   precise-server-cloudimg-amd64-disk1.img
 
 # Add the downloaded image to Glance
 glance add name="ubuntu" is_public=true disk_format=qcow2 \
-    container_format=bare < precise-server-cloudimg-amd64-disk1.img
+   container_format=bare < precise-server-cloudimg-amd64-disk1.img
 
 # Remove the temporary directory
 rm -rf /tmp/images
@@ -1272,12 +1284,12 @@ to this user. The script also enables the access to the database from hosts othe
 # Create a nova user and grant all privileges
 # to the nova database
 ../lib/mysqlq.sh "GRANT ALL ON nova.* TO 'nova'@'controller' \
-    IDENTIFIED BY '$NOVA_MYSQL_PASSWORD';"
+   IDENTIFIED BY '$NOVA_MYSQL_PASSWORD';"
 
 # The following is need to allow access
 # from Nova services running on other hosts
 ../lib/mysqlq.sh "GRANT ALL ON nova.* TO 'nova'@'%' \
-    IDENTIFIED BY '$NOVA_MYSQL_PASSWORD';"
+   IDENTIFIED BY '$NOVA_MYSQL_PASSWORD';"
 ```
 
 
@@ -1319,66 +1331,69 @@ The content of the `nova-config.sh` script is given below:
 # by the compute hosts, gateway and controller
 
 # Enable verbose output
-openstack-config --set /etc/nova/nova.conf DEFAULT \
-    verbose True
+openstack-config --set /etc/nova/nova.conf \
+   DEFAULT verbose True
 
 # Set the connection to the MySQL server
-openstack-config --set /etc/nova/nova.conf DEFAULT \
-    sql_connection mysql://nova:$NOVA_MYSQL_PASSWORD@controller/nova
+openstack-config --set /etc/nova/nova.conf \
+   DEFAULT sql_connection \
+      mysql://nova:$NOVA_MYSQL_PASSWORD@controller/nova
 
 # Make Nova use Keystone as the identity management service
-openstack-config --set /etc/nova/nova.conf DEFAULT \
-    auth_strategy keystone
+openstack-config --set /etc/nova/nova.conf \
+   DEFAULT auth_strategy keystone
 
 # Set the host name of the Qpid AMQP message broker
-openstack-config --set /etc/nova/nova.conf DEFAULT \
-    qpid_hostname controller
+openstack-config --set /etc/nova/nova.conf \
+   DEFAULT qpid_hostname controller
 
 # Set Nova user credentials
-openstack-config --set /etc/nova/api-paste.ini filter:authtoken \
-    admin_tenant_name $NOVA_SERVICE_TENANT
-openstack-config --set /etc/nova/api-paste.ini filter:authtoken \
-    admin_user $NOVA_SERVICE_USERNAME
-openstack-config --set /etc/nova/api-paste.ini filter:authtoken \
-    admin_password $NOVA_SERVICE_PASSWORD
-openstack-config --set /etc/nova/api-paste.ini filter:authtoken \
-    auth_uri $NOVA_OS_AUTH_URL
+openstack-config --set /etc/nova/api-paste.ini \
+   filter:authtoken admin_tenant_name $NOVA_SERVICE_TENANT
+openstack-config --set /etc/nova/api-paste.ini \
+   filter:authtoken admin_user $NOVA_SERVICE_USERNAME
+openstack-config --set /etc/nova/api-paste.ini \
+   filter:authtoken admin_password $NOVA_SERVICE_PASSWORD
+openstack-config --set /etc/nova/api-paste.ini \
+   filter:authtoken auth_uri $NOVA_OS_AUTH_URL
 
 # Set the network configuration
-openstack-config --set /etc/nova/nova.conf DEFAULT \
-    network_host compute1
-openstack-config --set /etc/nova/nova.conf DEFAULT \
-    fixed_range 10.0.0.0/24
-openstack-config --set /etc/nova/nova.conf DEFAULT \
-    flat_interface eth1
-openstack-config --set /etc/nova/nova.conf DEFAULT \
-    flat_network_bridge br100
-openstack-config --set /etc/nova/nova.conf DEFAULT \
-    public_interface eth1
+openstack-config --set /etc/nova/nova.conf \
+   DEFAULT network_host compute1
+openstack-config --set /etc/nova/nova.conf \
+   DEFAULT fixed_range 10.0.0.0/24
+openstack-config --set /etc/nova/nova.conf \
+   DEFAULT flat_interface eth1
+openstack-config --set /etc/nova/nova.conf \
+   DEFAULT flat_network_bridge br100
+openstack-config --set /etc/nova/nova.conf \
+   DEFAULT public_interface eth1
 
 # Set the Glance host name
-openstack-config --set /etc/nova/nova.conf DEFAULT \
-    glance_host controller
+openstack-config --set /etc/nova/nova.conf \
+   DEFAULT glance_host controller
 
 # Set the VNC configuration
-openstack-config --set /etc/nova/nova.conf DEFAULT \
-    vncserver_listen 0.0.0.0
-openstack-config --set /etc/nova/nova.conf DEFAULT \
-    vncserver_proxyclient_address controller
+openstack-config --set /etc/nova/nova.conf \
+   DEFAULT vncserver_listen 0.0.0.0
+openstack-config --set /etc/nova/nova.conf \
+   DEFAULT vncserver_proxyclient_address controller
 
 # This is the host accessible from outside,
 # where novncproxy is running on
-openstack-config --set /etc/nova/nova.conf DEFAULT \
-    novncproxy_base_url http://$PUBLIC_IP_ADDRESS:6080/vnc_auto.html
+openstack-config --set /etc/nova/nova.conf \
+   DEFAULT novncproxy_base_url \
+      http://$PUBLIC_IP_ADDRESS:6080/vnc_auto.html
 
 # This is the host accessible from outside,
 # where xvpvncproxy is running on
-openstack-config --set /etc/nova/nova.conf DEFAULT \
-    xvpvncproxy_base_url http://$PUBLIC_IP_ADDRESS:6081/console
+openstack-config --set /etc/nova/nova.conf \
+   DEFAULT xvpvncproxy_base_url \
+      http://$PUBLIC_IP_ADDRESS:6081/console
 
 # Set the host name of the metadata service
-openstack-config --set /etc/nova/nova.conf DEFAULT \
-    metadata_host $METADATA_HOST
+openstack-config --set /etc/nova/nova.conf \
+   DEFAULT metadata_host $METADATA_HOST
 ```
 
 Apart from user credentials, the script configures a few other important options:
@@ -1453,7 +1468,7 @@ continuing, since some scripts in this directory use the environmental variable 
 
 ```Bash
 echo "To make the environmental variables available \
-    in the current session, run: "
+   in the current session, run: "
 echo ". 01-source-configrc.sh"
 
 # Export the variables defined in ../config/configrc
@@ -1567,7 +1582,7 @@ continuing, since some scripts in this directory use the environmental variable 
 
 ```Bash
 echo "To make the environmental variables available \
-    in the current session, run: "
+   in the current session, run: "
 echo ". 01-source-configrc.sh"
 
 # Export the variables defined in ../config/configrc
@@ -1612,8 +1627,9 @@ connect VM instances to the physical network.
 
 ```Bash
 # Create a Nova network for VM instances: 10.0.0.0/24
-nova-manage network create --label=public --fixed_range_v4=10.0.0.0/24 \
-    --num_networks=1 --network_size=256 --bridge=br100
+nova-manage network create --label=public \
+   --fixed_range_v4=10.0.0.0/24 --num_networks=1 \
+   --network_size=256 --bridge=br100
 ```
 
 
@@ -1654,12 +1670,14 @@ variable.
 
 ```Bash
 # Set the OpenStack management host
-sed -i 's/OPENSTACK_HOST = "127.0.0.1"/OPENSTACK_HOST = "controller"/g' \
-    /etc/openstack-dashboard/local_settings
+sed -i 's/OPENSTACK_HOST = "127.0.0.1"/\
+   OPENSTACK_HOST = "controller"/g' \
+   /etc/openstack-dashboard/local_settings
 
 # Set the Keystone default role
-sed -i "s/OPENSTACK_KEYSTONE_DEFAULT_ROLE = \"Member\"/OPENSTACK_KEYSTONE_DEFAULT_ROLE = \"$OS_TENANT_NAME\"/g" \
-    /etc/openstack-dashboard/local_settings
+sed -i "s/OPENSTACK_KEYSTONE_DEFAULT_ROLE = \"Member\"/\
+   OPENSTACK_KEYSTONE_DEFAULT_ROLE = \"$OS_TENANT_NAME\"/g" \
+   /etc/openstack-dashboard/local_settings
 ```
 
 
@@ -1763,7 +1781,7 @@ continuing, since some scripts in this directory use the environmental variable 
 
 ```Bash
 echo "To make the environmental variables available \
-    in the current session, run: "
+   in the current session, run: "
 echo ". 01-source-configrc.sh"
 
 # Export the variables defined in ../config/configrc
@@ -1842,7 +1860,7 @@ generated `test` key. The script accepts one argument: the IP address of the VM 
 if [ $# -ne 1 ]
 then
     echo "You must specify one arguments - \
-	    the IP address of the VM instance"
+	   the IP address of the VM instance"
     exit 1
 fi
 
@@ -1921,23 +1939,24 @@ The libvirtd service may fail with errors, such the following:
 
 ```Bash
 15391: error : qemuProcessReadLogOutput:1005 : \
-    internal error Process exited while reading console \
-	log output: chardev: opening backend "file" failed
+   internal error Process exited while reading console \
+   log output: chardev: opening backend "file" failed
 ```
 
 And such as:
 
 ```Bash
 error : qemuProcessReadLogOutput:1005 : internal error \
-    Process exited while reading console log output: \
-	char device redirected to /dev/pts/3
+   Process exited while reading console log output: \
+   char device redirected to /dev/pts/3
 qemu-kvm: -drive file=/var/lib/nova/instances/instance-00000015/ \
-    disk,if=none,id=drive-virtio-disk0,format=qcow2,cache=none: \
-	could not open disk image /var/lib/nova/instances/ \
-	instance-00000015/disk: Permission denied
+   disk,if=none,id=drive-virtio-disk0,format=qcow2,cache=none: \
+   could not open disk image /var/lib/nova/instances/ \
+   instance-00000015/disk: Permission denied
 ```
 
-Both the problems can be resolved by setting the user and group in `/etc/libvirt/libvirtd.conf` as follows:
+Both the problems can be resolved by setting the user and group in the `/etc/libvirt/libvirtd.conf`
+configuration file as follows:
 
 ```
 user = "nova"
