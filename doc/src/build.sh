@@ -1,5 +1,6 @@
 #!/bin/sh
 
-./build-pdf.sh
-./build-html.sh
 ./build-rst.sh
+./build-pdf.sh
+./build-epub.sh
+./build-html.sh
