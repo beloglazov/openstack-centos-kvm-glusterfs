@@ -92,7 +92,7 @@ software:
   "an independent body providing shared resources to help achieve the OpenStack Mission by
   Protecting, Empowering, and Promoting OpenStack software and the community around it, including
   users, developers and the entire ecosystem"
-  ^[The OpenStack Foundation structure. [http://wiki.openstack.org/Governance/Foundation/Structure](http://wiki.openstack.org/Governance/Foundation/Structure)].
+  ^[The OpenStack Foundation. [http://wiki.openstack.org/Governance/Foundation/Structure](http://wiki.openstack.org/Governance/Foundation/Structure)].
 
 In the next section we give an overview of the OpenStack software, its features, main components,
 and their interaction. In Section 3, we briefly compare 4 open source Cloud computing platforms,
