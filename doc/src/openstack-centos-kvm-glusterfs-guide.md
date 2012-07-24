@@ -164,6 +164,7 @@ OpenStack with the other major open source Cloud platforms.
 - Eucalyptus
 - CloudStack
 - OpenNebula
+- Discuss the level of implementation of the Open Cloud Computing Interface (OCCI)^[[http://occi-wg.org/about/](http://occi-wg.org/about/)]
 
 
 # Existing OpenStack Installation Tools
