@@ -170,6 +170,7 @@ OpenStack with the other major open source Cloud platforms.
 
 - DevStack^[[http://devstack.org/](http://devstack.org/)]
 - Puppet / Chef^[http://docs.openstack.org/trunk/openstack-compute/admin/content/openstack-compute-deployment-tool-with-puppet.html]
+- How to get OpenStack^[[http://wiki.openstack.org/GetOpenStack](http://wiki.openstack.org/GetOpenStack)]
 - Difference From our Approach
 - The purpose is not just having an up and running OpenStack installation, but also learning the steps
   required to perform the installation from the ground up and understanding the responsibilities and
