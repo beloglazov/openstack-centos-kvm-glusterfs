@@ -170,13 +170,23 @@ OpenStack with the other major open source Cloud platforms.
 # Existing OpenStack Installation Tools
 
 - DevStack^[[http://devstack.org/](http://devstack.org/)]
-- Puppet / Chef^[http://docs.openstack.org/trunk/openstack-compute/admin/content/openstack-compute-deployment-tool-with-puppet.html]
-- How to get OpenStack^[[http://wiki.openstack.org/GetOpenStack](http://wiki.openstack.org/GetOpenStack)]
-- Difference From our Approach
-- The purpose is not just having an up and running OpenStack installation, but also learning the steps
-  required to perform the installation from the ground up and understanding the responsibilities and
-  interaction of the OpenStack components.
+   DevStack is a shell scrip to build complete OpenStack development enviroment. Their approch is almost the same as what
+   we are doing except that they based their installtion on specific version of spesific operating systems, Ubuntu Precise (12.04) or Fedora 16.
+   All the installation steps will be executed by running one shell script. The drawback here is that in case of error, you have to go through
+  the whole script file to fix this error.
 
+- Puppet / Chef^[http://docs.openstack.org/trunk/openstack-compute/admin/content/openstack-compute-deployment-tool-with-puppet.html]
+   Puppet is also for Ubuntu Precise (12.04). Puppet and Chef are for system administrators to automat the
+   instllation of a set of scripts.
+
+- How to get OpenStack^[[http://wiki.openstack.org/GetOpenStack](http://wiki.openstack.org/GetOpenStack)]
+   OpenStack offers set of automated tools to install OpenStack. Those tools are exeutable packages to run on
+   specific operating systems.
+  
+- Difference From our Approach
+   The purpose is not just having an up and running OpenStack installation, but also learning the steps
+   required to perform the installation from the ground up and understanding the responsibilities and
+   interaction of the OpenStack components.
 
 # Step-by-Step OpenStack Installation
 
