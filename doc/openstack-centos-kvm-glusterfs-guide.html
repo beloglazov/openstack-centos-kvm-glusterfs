@@ -125,16 +125,18 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li>Eucalyptus</li>
 <li>CloudStack</li>
 <li>OpenNebula</li>
+<li>Discuss the level of implementation of the Open Cloud Computing Interface (OCCI)<sup><a href="#fn14" class="footnoteRef" id="fnref14">14</a></sup></li>
 </ul>
 <h1 id="existing-openstack-installation-tools"><a href="#TOC"><span class="header-section-number">4</span> Existing OpenStack Installation Tools</a></h1>
 <ul>
-<li>DevStack<sup><a href="#fn14" class="footnoteRef" id="fnref14">14</a></sup></li>
-<li>Puppet / Chef<sup><a href="#fn15" class="footnoteRef" id="fnref15">15</a></sup></li>
+<li>DevStack<sup><a href="#fn15" class="footnoteRef" id="fnref15">15</a></sup></li>
+<li>Puppet / Chef<sup><a href="#fn16" class="footnoteRef" id="fnref16">16</a></sup></li>
+<li>How to get OpenStack<sup><a href="#fn17" class="footnoteRef" id="fnref17">17</a></sup></li>
 <li>Difference From our Approach</li>
 <li>The purpose is not just having an up and running OpenStack installation, but also learning the steps required to perform the installation from the ground up and understanding the responsibilities and interaction of the OpenStack components.</li>
 </ul>
 <h1 id="step-by-step-openstack-installation"><a href="#TOC"><span class="header-section-number">5</span> Step-by-Step OpenStack Installation</a></h1>
-<p>As mentioned earlier, the aim of this work is to detail the steps required to perform a complete installation of OpenStack on multiple nodes. We split the installation process into multiple subsequent logical steps and provide a shell script for each of the steps. In this section, we explain and discuss every step needed to be followed to obtain a fully operational OpenStack installation on our testbed consisting of 1 controller and 4 compute nodes. The source code of the shell scripts described in this paper is released under the Apache 2.0 License and is publicly available online<sup><a href="#fn16" class="footnoteRef" id="fnref16">16</a></sup>.</p>
+<p>As mentioned earlier, the aim of this work is to detail the steps required to perform a complete installation of OpenStack on multiple nodes. We split the installation process into multiple subsequent logical steps and provide a shell script for each of the steps. In this section, we explain and discuss every step needed to be followed to obtain a fully operational OpenStack installation on our testbed consisting of 1 controller and 4 compute nodes. The source code of the shell scripts described in this paper is released under the Apache 2.0 License and is publicly available online<sup><a href="#fn18" class="footnoteRef" id="fnref18">18</a></sup>.</p>
 <h2 id="hardware-setup"><a href="#TOC"><span class="header-section-number">5.1</span> Hardware Setup</a></h2>
 <p>The testbed used for testing the installation scripts consists of the following hardware:</p>
 <ul>
@@ -189,7 +191,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>The simplest way to configure network is during the OS installation process. As mentioned above, in our setup, the gateway is connected to two networks: to the public network through the eth0 interface; and to the local network through the eth1 interface. Since in our setup the public network configuration can be obtain from a DHCP server, in the configuration of the eth0 interface it is only required to enable automatic connection by enabling the “Connect Automatically” option. We use static configuration for the local network; therefore, eth1 has be configured manually. Apart from enabling the “Connect Automatically” option, it is necessary to configure IPv4 by adding an IP address and netmask. According to the configuration defined in the <code>hosts</code> file described above, we assign 192.168.0.1/24 to the gateway.</p>
 <p>One of the differences in the network configuration of the other compute hosts (<code>compute2</code>, <code>compute3</code>, and <code>compute4</code>) from the gateway is that eth0 should be kept disabled, as it is unused. The eth1 interface should be enabled by turning on the “Connect Automatically” option. The IP address and netmask for eth1 should be set to 192.168.0.<em>X</em>/24, where <em>X</em> is replaced by the compute host number. The gateway for the compute hosts should be set to 192.168.0.1, which the IP address of the gateway. The controller is configured similarly to the compute hosts with the only difference that the configuration should be done for eth0 instead of eth1, since the controller has only one network interface.</p>
 <h4 id="hard-drive-partitioning."><a href="#TOC"><span class="header-section-number">5.4.1.2</span> Hard Drive Partitioning.</a></h4>
-<p>The hard drive partitioning scheme is the same for all the compute hosts, but differs for the controller. Table 1 shows the partitioning scheme for the compute hosts. <code>vg_base</code> is a volume group comprising the standard OS partitions: <code>lv_root</code>, <code>lv_home</code> and <code>lv_swap</code>. <code>vg_gluster</code> is a special volume group containing a single <code>lv_gluster</code> partition, which is dedicated to serve as a GlusterFS brick. The <code>lv_gluster</code> logical volume is formatted using the XFS<sup><a href="#fn17" class="footnoteRef" id="fnref17">17</a></sup> file system, as recommended for GlusterFS bricks.</p>
+<p>The hard drive partitioning scheme is the same for all the compute hosts, but differs for the controller. Table 1 shows the partitioning scheme for the compute hosts. <code>vg_base</code> is a volume group comprising the standard OS partitions: <code>lv_root</code>, <code>lv_home</code> and <code>lv_swap</code>. <code>vg_gluster</code> is a special volume group containing a single <code>lv_gluster</code> partition, which is dedicated to serve as a GlusterFS brick. The <code>lv_gluster</code> logical volume is formatted using the XFS<sup><a href="#fn19" class="footnoteRef" id="fnref19">19</a></sup> file system, as recommended for GlusterFS bricks.</p>
 <table>
 <caption>The partitioning scheme for the compute hosts</caption>
 <col width="30%"></col>
@@ -428,7 +430,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </table>
 <h3 id="network-gateway"><a href="#TOC"><span class="header-section-number">5.4.2</span> Network Gateway</a></h3>
 <p>Once CentOS is installed on all the machines, the next step is to configure NAT on the gateway to enable the Internet access on all the hosts. First, it is necessary to check whether the Internet is available on the gateway itself. If the Internet is not available, the problem might be in the configuration of eth0, the network interface connected to the public network in our setup.</p>
-<p>In all the following steps, it is assumed that the user logged in is <code>root</code>. If the Internet is available on the gateway, it is necessary to install the Git<sup><a href="#fn18" class="footnoteRef" id="fnref18">18</a></sup> version control client to be able to clone the repository containing the installation scripts. This can be done using <code>yum</code>, the default package manager in CentOS, as follows:</p>
+<p>In all the following steps, it is assumed that the user logged in is <code>root</code>. If the Internet is available on the gateway, it is necessary to install the Git<sup><a href="#fn20" class="footnoteRef" id="fnref20">20</a></sup> version control client to be able to clone the repository containing the installation scripts. This can be done using <code>yum</code>, the default package manager in CentOS, as follows:</p>
 <pre class="sourceCode Bash"><code class="sourceCode bash">yum <span class="kw">install</span> -y git</code></pre>
 <p>Next, the repository can be cloned using the following command:</p>
 <pre class="sourceCode Bash"><code class="sourceCode bash">git clone <span class="kw">\</span>
@@ -503,7 +505,7 @@ service iptables restart</code></pre>
 <ol start="5" style="list-style-type: example">
 <li><code>02-selinux-permissive.sh</code></li>
 </ol>
-<p>This script switches SELinux<sup><a href="#fn19" class="footnoteRef" id="fnref19">19</a></sup> into the permissive mode. By default, SELinux blocks certain operations, such as VM migrations. Switching SELinux into the permissive mode is not recommended for production environments, but is acceptable for testing purposes.</p>
+<p>This script switches SELinux<sup><a href="#fn21" class="footnoteRef" id="fnref21">21</a></sup> into the permissive mode. By default, SELinux blocks certain operations, such as VM migrations. Switching SELinux into the permissive mode is not recommended for production environments, but is acceptable for testing purposes.</p>
 <pre class="sourceCode Bash"><code class="sourceCode bash"><span class="co"># Set SELinux into the permissive mode</span>
 <span class="kw">sed</span> -i <span class="st">'s/SELINUX=enforcing/SELINUX=permissive/g'</span> /etc/selinux/config
 <span class="kw">echo</span> 0 <span class="kw">&gt;</span> /selinux/enforce</code></pre>
@@ -593,7 +595,7 @@ yum -y <span class="kw">install</span> kvm qemu-kvm qemu-kvm-tools</code></pre>
 <ol start="13" style="list-style-type: example">
 <li><code>03-libvirt-install.sh</code></li>
 </ol>
-<p>This script installs Libvirt<sup><a href="#fn20" class="footnoteRef" id="fnref20">20</a></sup>, its dependencies and the related tools. Libvirt provides an abstraction and a common Application Programming Interface (API) over various hypervisors. It is used by OpenStack to provide support for multiple hypervisors including KVM and Xen. After the installation, the script starts the <code>messagebus</code> and <code>avahi-daemon</code> services, which are prerequisites of Libvirt.</p>
+<p>This script installs Libvirt<sup><a href="#fn22" class="footnoteRef" id="fnref22">22</a></sup>, its dependencies and the related tools. Libvirt provides an abstraction and a common Application Programming Interface (API) over various hypervisors. It is used by OpenStack to provide support for multiple hypervisors including KVM and Xen. After the installation, the script starts the <code>messagebus</code> and <code>avahi-daemon</code> services, which are prerequisites of Libvirt.</p>
 <pre class="sourceCode Bash"><code class="sourceCode bash"><span class="co"># Install Libvirt and its dependencies</span>
 yum -y <span class="kw">install</span> libvirt libvirt-python python-virtinst avahi dmidecode
 
@@ -632,7 +634,7 @@ chkconfig libvirtd on</code></pre>
 <ol start="16" style="list-style-type: example">
 <li><code>01-epel-add-repo.sh</code></li>
 </ol>
-<p>This scripts adds the Extra Packages for Enterprise Linux<sup><a href="#fn21" class="footnoteRef" id="fnref21">21</a></sup> (EPEL) repository, which contains the OpenStack related packages.</p>
+<p>This scripts adds the Extra Packages for Enterprise Linux<sup><a href="#fn23" class="footnoteRef" id="fnref23">23</a></sup> (EPEL) repository, which contains the OpenStack related packages.</p>
 <pre class="sourceCode Bash"><code class="sourceCode bash"><span class="co"># Add the EPEL repo: http://fedoraproject.org/wiki/EPEL</span>
 yum <span class="kw">install</span> -y http://dl.fedoraproject.org/pub/epel/6/i386/<span class="kw">\</span>
    epel-release-6-7.noarch.rpm</code></pre>
@@ -787,7 +789,7 @@ chkconfig openstack-keystone on</code></pre>
 <ol start="30" style="list-style-type: example">
 <li><code>11-keystone-create-users.sh</code></li>
 </ol>
-<p>The purpose of this script is to create user accounts, roles and tenants in Keystone for the admin user and service accounts for each OpenStack service: Keystone, Glance, and Nova. Since the process is complicated when done manually (it is necessary to define relations between database records), we use the <em>keystone-init</em> project<sup><a href="#fn22" class="footnoteRef" id="fnref22">22</a></sup> to automate the process. The <em>keystone-init</em> project allows one to create a configuration file in the “YAML Ain’t Markup Language”<sup><a href="#fn23" class="footnoteRef" id="fnref23">23</a></sup> (YAML) data format defining the required OpenStack user accounts. Then, according the defined configuration, the required database records are automatically created.</p>
+<p>The purpose of this script is to create user accounts, roles and tenants in Keystone for the admin user and service accounts for each OpenStack service: Keystone, Glance, and Nova. Since the process is complicated when done manually (it is necessary to define relations between database records), we use the <em>keystone-init</em> project<sup><a href="#fn24" class="footnoteRef" id="fnref24">24</a></sup> to automate the process. The <em>keystone-init</em> project allows one to create a configuration file in the “YAML Ain’t Markup Language”<sup><a href="#fn25" class="footnoteRef" id="fnref25">25</a></sup> (YAML) data format defining the required OpenStack user accounts. Then, according the defined configuration, the required database records are automatically created.</p>
 <p>Our script first installs a dependency of <em>keystone-init</em> and clones the project’s repository. Then, the script modifies the default configuration file provided with the <em>keystone-init</em> project by populating it with the values defined by the environmental variables defined in <code>configrc</code>. The last step of the script is to invoke <em>keystone-init</em>. The script does not remove the <em>keystone-init</em> repository to allow one to browse the generated configuration file, e.g. to check the correctness. When the repository is not required anymore, it can be removed by executing <code>rm -rf keystone-init</code>.</p>
 <pre class="sourceCode Bash"><code class="sourceCode bash"><span class="co"># Install PyYAML, a YAML Python library</span>
 yum <span class="kw">install</span> -y PyYAML
@@ -913,7 +915,7 @@ chkconfig openstack-glance-api on</code></pre>
 <ol start="37" style="list-style-type: example">
 <li><code>18-add-cirros.sh</code></li>
 </ol>
-<p>This script downloads the CirrOS VM image<sup><a href="#fn24" class="footnoteRef" id="fnref24">24</a></sup> and imports it into Glance. This image contains a pre-installed CirrOS, a Tiny OS specialized for running in a Cloud. The image is very simplistic: its size is just 9.4 MB. However, it is sufficient for testing OpenStack.</p>
+<p>This script downloads the CirrOS VM image<sup><a href="#fn26" class="footnoteRef" id="fnref26">26</a></sup> and imports it into Glance. This image contains a pre-installed CirrOS, a Tiny OS specialized for running in a Cloud. The image is very simplistic: its size is just 9.4 MB. However, it is sufficient for testing OpenStack.</p>
 <pre class="sourceCode Bash"><code class="sourceCode bash"><span class="co"># Download the CirrOS VM image</span>
 <span class="kw">mkdir</span> /tmp/images
 <span class="kw">cd</span> /tmp/images
@@ -930,7 +932,7 @@ glance add <span class="ot">name=</span><span class="st">&quot;cirros-0.3.0-x86_
 <ol start="38" style="list-style-type: example">
 <li><code>19-add-ubuntu.sh</code></li>
 </ol>
-<p>This script downloads the Ubuntu Cloud Image<sup><a href="#fn25" class="footnoteRef" id="fnref25">25</a></sup> and imports it into Glance. This is a VM image with a pre-installed version of Ubuntu that is customized by Ubuntu engineering to run on Cloud platforms such as Openstack, Amazon EC2, and LXC.</p>
+<p>This script downloads the Ubuntu Cloud Image<sup><a href="#fn27" class="footnoteRef" id="fnref27">27</a></sup> and imports it into Glance. This is a VM image with a pre-installed version of Ubuntu that is customized by Ubuntu engineering to run on Cloud platforms such as Openstack, Amazon EC2, and LXC.</p>
 <pre class="sourceCode Bash"><code class="sourceCode bash"><span class="co"># Download an Ubuntu Cloud image</span>
 <span class="kw">mkdir</span> /tmp/images
 <span class="kw">cd</span> /tmp/images
@@ -1121,7 +1123,7 @@ yum <span class="kw">install</span> -y openstack-nova* openstack-utils</code></p
 <ol start="47" style="list-style-type: example">
 <li><code>03-nova-permissions.sh</code></li>
 </ol>
-<p>This script sets restrictive permissions (640) on the Nova configuration file, since it contains sensitive information, such as user credentials. Then, the script sets the ownership on the Nova and Libvirt related directories to the <code>nova</code> user and <code>nova</code> group. The script also sets the user and group used by the Quick EMUlator<sup><a href="#fn26" class="footnoteRef" id="fnref26">26</a></sup> (QEMU) service to <code>nova</code>. This is required since a number of directories need to accessed by both Nova using the <code>nova</code> user and <code>nova</code> group, and QEMU.</p>
+<p>This script sets restrictive permissions (640) on the Nova configuration file, since it contains sensitive information, such as user credentials. Then, the script sets the ownership on the Nova and Libvirt related directories to the <code>nova</code> user and <code>nova</code> group. The script also sets the user and group used by the Quick EMUlator<sup><a href="#fn28" class="footnoteRef" id="fnref28">28</a></sup> (QEMU) service to <code>nova</code>. This is required since a number of directories need to accessed by both Nova using the <code>nova</code> user and <code>nova</code> group, and QEMU.</p>
 <pre class="sourceCode Bash"><code class="sourceCode bash"><span class="co"># Set restrictive permissions for the Nova config file</span>
 <span class="kw">chmod</span> 640 /etc/nova/nova.conf
 
@@ -1156,7 +1158,7 @@ chkconfig openstack-nova-compute on</code></pre>
 <ol style="list-style-type: decimal">
 <li><p>Flat Mode: public IP addresses from a specified range are assigned and injected into VM instances on launch. This only works on Linux systems that keep their network configuration in <code>/etc/network/interfaces</code>. To enable this mode, the following option should be specified in <code>nova.conf</code>:</p>
 <pre class="sourceCode Bash"><code class="sourceCode bash"><span class="ot">network_manager=</span>nova.network.manager.FlatManager</code></pre></li>
-<li><p>Flat DHCP Mode: Nova runs a Dnsmasq<sup><a href="#fn27" class="footnoteRef" id="fnref27">27</a></sup> server listening to a created network bridge that assigns public IP addresses to VM instances. This is the mode we use in this work. There must be only one host running the <code>openstack-nova-network</code> service. The <code>network_host</code> option in <code>nova.conf</code> specifies which host the <code>openstack-nova-network</code> service is running on. The network bridge name is specified using the <code>flat_network_bridge</code> option. To enable this mode, the following option should be specified in <code>nova.conf</code>:</p>
+<li><p>Flat DHCP Mode: Nova runs a Dnsmasq<sup><a href="#fn29" class="footnoteRef" id="fnref29">29</a></sup> server listening to a created network bridge that assigns public IP addresses to VM instances. This is the mode we use in this work. There must be only one host running the <code>openstack-nova-network</code> service. The <code>network_host</code> option in <code>nova.conf</code> specifies which host the <code>openstack-nova-network</code> service is running on. The network bridge name is specified using the <code>flat_network_bridge</code> option. To enable this mode, the following option should be specified in <code>nova.conf</code>:</p>
 <pre class="sourceCode Bash"><code class="sourceCode bash"><span class="ot">network_manager=</span>nova.network.manager.FlatDHCPManager</code></pre></li>
 <li><p>VLAN Mode: VM instances are assigned private IP addresses from networks created for each tenant / project. Instances are accessed through a special VPN VM instance. To enable this mode, the following option should be specified in <code>nova.conf</code>:</p>
 <pre class="sourceCode Bash"><code class="sourceCode bash"><span class="ot">network_manager=</span>nova.network.manager.VlanManager</code></pre></li>
@@ -1441,7 +1443,7 @@ group = &quot;nova&quot;</code></pre>
 chown -R nova:nova /var/run/libvirt
 chown -R nova:nova /var/lib/libvirt</code></pre>
 <h3 id="nova-network"><a href="#TOC"><span class="header-section-number">5.5.3</span> Nova Network</a></h3>
-<p>If after a start up, the <code>openstack-nova-network</code> service hangs with the following last message in the log file: ‘Attempting to grab file lock “iptables” for method “apply”’, the solution is the following<sup><a href="#fn28" class="footnoteRef" id="fnref28">28</a></sup>:</p>
+<p>If after a start up, the <code>openstack-nova-network</code> service hangs with the following last message in the log file: ‘Attempting to grab file lock “iptables” for method “apply”’, the solution is the following<sup><a href="#fn30" class="footnoteRef" id="fnref30">30</a></sup>:</p>
 <pre class="sourceCode Bash"><code class="sourceCode bash"><span class="kw">rm</span> /var/lib/nova/tmp/nova-iptables.lock</code></pre>
 <h1 id="conclusion"><a href="#TOC"><span class="header-section-number">6</span> Conclusion</a></h1>
 <p>We have gone through and discussed all the steps required to get from bare hardware to a fully operating OpenStack infrastructure. We have started from notes on installing CentOS on the nodes, continued through setting up a network gateway, distributed replicated storage using GlusterFS, KVM hypervisor, and all the main OpenStack services. We have concluded with steps to test the OpenStack installation, suggestions on ways of finding problem sources and resolving them, and a discussion of solutions to a number of problems that may be encountered during the installation process.</p>
@@ -1469,21 +1471,23 @@ chown -R nova:nova /var/lib/libvirt</code></pre>
 <li id="fn11"><p>OpenStack. <a href="http://openstack.org/">http://openstack.org/</a>.<a href="#fnref11">↩</a></p></li>
 <li id="fn12"><p>The OpenStack Foundation. <a href="http://wiki.openstack.org/Governance/Foundation/Structure">http://wiki.openstack.org/Governance/Foundation/Structure</a>.<a href="#fnref12">↩</a></p></li>
 <li id="fn13"><p>Libvirt. <a href="http://libvirt.org/">http://libvirt.org/</a>.<a href="#fnref13">↩</a></p></li>
-<li id="fn14"><p><a href="http://devstack.org/">Http://devstack.org/</a>.<a href="#fnref14">↩</a></p></li>
-<li id="fn15"><p>Http://docs.openstack.org/trunk/openstack-compute/admin/content/openstack-compute-deployment-tool-with-puppet.html.<a href="#fnref15">↩</a></p></li>
-<li id="fn16"><p>The project repository. <a href="https://github.com/beloglazov/openstack-centos-kvm-glusterfs">https://github.com/beloglazov/openstack-centos-kvm-glusterfs</a>.<a href="#fnref16">↩</a></p></li>
-<li id="fn17"><p>XFS. <a href="http://en.wikipedia.org/wiki/XFS">http://en.wikipedia.org/wiki/XFS</a>.<a href="#fnref17">↩</a></p></li>
-<li id="fn18"><p>Git. <a href="http://git-scm.com/">http://git-scm.com/</a>.<a href="#fnref18">↩</a></p></li>
-<li id="fn19"><p>SELinux. <a href="http://en.wikipedia.org/wiki/Security-Enhanced_Linux">http://en.wikipedia.org/wiki/Security-Enhanced_Linux</a>.<a href="#fnref19">↩</a></p></li>
-<li id="fn20"><p>Libvirt. <a href="http://libvirt.org/">http://libvirt.org/</a>.<a href="#fnref20">↩</a></p></li>
-<li id="fn21"><p>The EPEL repository. <a href="http://fedoraproject.org/wiki/EPEL">http://fedoraproject.org/wiki/EPEL</a>.<a href="#fnref21">↩</a></p></li>
-<li id="fn22"><p>The <em>keystone-init</em> project. <a href="https://github.com/nimbis/keystone-init">https://github.com/nimbis/keystone-init</a>.<a href="#fnref22">↩</a></p></li>
-<li id="fn23"><p>YAML. <a href="http://en.wikipedia.org/wiki/YAML">http://en.wikipedia.org/wiki/YAML</a>.<a href="#fnref23">↩</a></p></li>
-<li id="fn24"><p>CirrOS. <a href="https://launchpad.net/cirros/">https://launchpad.net/cirros/</a>.<a href="#fnref24">↩</a></p></li>
-<li id="fn25"><p>Ubuntu Cloud Images. <a href="http://uec-images.ubuntu.com/">http://uec-images.ubuntu.com/</a>.<a href="#fnref25">↩</a></p></li>
-<li id="fn26"><p>QEMU. <a href="http://en.wikipedia.org/wiki/QEMU">http://en.wikipedia.org/wiki/QEMU</a>.<a href="#fnref26">↩</a></p></li>
-<li id="fn27"><p>Dnsmasq. <a href="http://en.wikipedia.org/wiki/Dnsmasq">http://en.wikipedia.org/wiki/Dnsmasq</a>.<a href="#fnref27">↩</a></p></li>
-<li id="fn28"><p>OpenStack Compute Questions. <a href="https://answers.launchpad.net/nova/+question/200985">https://answers.launchpad.net/nova/+question/200985</a>.<a href="#fnref28">↩</a></p></li>
+<li id="fn14"><p><a href="http://occi-wg.org/about/">Http://occi-wg.org/about/</a>.<a href="#fnref14">↩</a></p></li>
+<li id="fn15"><p><a href="http://devstack.org/">Http://devstack.org/</a>.<a href="#fnref15">↩</a></p></li>
+<li id="fn16"><p>Http://docs.openstack.org/trunk/openstack-compute/admin/content/openstack-compute-deployment-tool-with-puppet.html.<a href="#fnref16">↩</a></p></li>
+<li id="fn17"><p><a href="http://wiki.openstack.org/GetOpenStack">Http://wiki.openstack.org/GetOpenStack</a>.<a href="#fnref17">↩</a></p></li>
+<li id="fn18"><p>The project repository. <a href="https://github.com/beloglazov/openstack-centos-kvm-glusterfs">https://github.com/beloglazov/openstack-centos-kvm-glusterfs</a>.<a href="#fnref18">↩</a></p></li>
+<li id="fn19"><p>XFS. <a href="http://en.wikipedia.org/wiki/XFS">http://en.wikipedia.org/wiki/XFS</a>.<a href="#fnref19">↩</a></p></li>
+<li id="fn20"><p>Git. <a href="http://git-scm.com/">http://git-scm.com/</a>.<a href="#fnref20">↩</a></p></li>
+<li id="fn21"><p>SELinux. <a href="http://en.wikipedia.org/wiki/Security-Enhanced_Linux">http://en.wikipedia.org/wiki/Security-Enhanced_Linux</a>.<a href="#fnref21">↩</a></p></li>
+<li id="fn22"><p>Libvirt. <a href="http://libvirt.org/">http://libvirt.org/</a>.<a href="#fnref22">↩</a></p></li>
+<li id="fn23"><p>The EPEL repository. <a href="http://fedoraproject.org/wiki/EPEL">http://fedoraproject.org/wiki/EPEL</a>.<a href="#fnref23">↩</a></p></li>
+<li id="fn24"><p>The <em>keystone-init</em> project. <a href="https://github.com/nimbis/keystone-init">https://github.com/nimbis/keystone-init</a>.<a href="#fnref24">↩</a></p></li>
+<li id="fn25"><p>YAML. <a href="http://en.wikipedia.org/wiki/YAML">http://en.wikipedia.org/wiki/YAML</a>.<a href="#fnref25">↩</a></p></li>
+<li id="fn26"><p>CirrOS. <a href="https://launchpad.net/cirros/">https://launchpad.net/cirros/</a>.<a href="#fnref26">↩</a></p></li>
+<li id="fn27"><p>Ubuntu Cloud Images. <a href="http://uec-images.ubuntu.com/">http://uec-images.ubuntu.com/</a>.<a href="#fnref27">↩</a></p></li>
+<li id="fn28"><p>QEMU. <a href="http://en.wikipedia.org/wiki/QEMU">http://en.wikipedia.org/wiki/QEMU</a>.<a href="#fnref28">↩</a></p></li>
+<li id="fn29"><p>Dnsmasq. <a href="http://en.wikipedia.org/wiki/Dnsmasq">http://en.wikipedia.org/wiki/Dnsmasq</a>.<a href="#fnref29">↩</a></p></li>
+<li id="fn30"><p>OpenStack Compute Questions. <a href="https://answers.launchpad.net/nova/+question/200985">https://answers.launchpad.net/nova/+question/200985</a>.<a href="#fnref30">↩</a></p></li>
 </ol>
 </div>
 </body>

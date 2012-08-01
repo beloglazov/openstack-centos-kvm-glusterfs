@@ -223,12 +223,15 @@ Comparison of Open Source Cloud Platforms
 -  Eucalyptus
 -  CloudStack
 -  OpenNebula
+-  Discuss the level of implementation of the Open Cloud Computing
+   Interface (OCCI) [14]_
 
 Existing OpenStack Installation Tools
 =====================================
 
--  DevStack [14]_
--  Puppet / Chef [15]_
+-  DevStack [15]_
+-  Puppet / Chef [16]_
+-  How to get OpenStack [17]_
 -  Difference From our Approach
 -  The purpose is not just having an up and running OpenStack
    installation, but also learning the steps required to perform the
@@ -246,7 +249,7 @@ section, we explain and discuss every step needed to be followed to
 obtain a fully operational OpenStack installation on our testbed
 consisting of 1 controller and 4 compute nodes. The source code of the
 shell scripts described in this paper is released under the Apache 2.0
-License and is publicly available online [16]_.
+License and is publicly available online [18]_.
 
 Hardware Setup
 --------------
@@ -421,7 +424,7 @@ the standard OS partitions: ``lv_root``, ``lv_home`` and ``lv_swap``.
 ``vg_gluster`` is a special volume group containing a single
 ``lv_gluster`` partition, which is dedicated to serve as a GlusterFS
 brick. The ``lv_gluster`` logical volume is formatted using the
-XFS [17]_ file system, as recommended for GlusterFS bricks.
+XFS [19]_ file system, as recommended for GlusterFS bricks.
 
 +------------------------+-------------+-----------------------+------------+
 | Device                 | Size (MB)   | Mount Point / Volume  | Type       |
@@ -515,7 +518,7 @@ to the public network in our setup.
 
 In all the following steps, it is assumed that the user logged in is
 ``root``. If the Internet is available on the gateway, it is necessary
-to install the Git [18]_ version control client to be able to clone the
+to install the Git [20]_ version control client to be able to clone the
 repository containing the installation scripts. This can be done using
 ``yum``, the default package manager in CentOS, as follows:
 
@@ -657,7 +660,7 @@ recommended to open only the required ports.
 
 (5) ``02-selinux-permissive.sh``
 
-This script switches SELinux [19]_ into the permissive mode. By default,
+This script switches SELinux [21]_ into the permissive mode. By default,
 SELinux blocks certain operations, such as VM migrations. Switching
 SELinux into the permissive mode is not recommended for production
 environments, but is acceptable for testing purposes.
@@ -825,7 +828,7 @@ to comment the ``modprobe kvm-intel`` line and uncomment the
 
 (13) ``03-libvirt-install.sh``
 
-This script installs Libvirt [20]_, its dependencies and the related
+This script installs Libvirt [22]_, its dependencies and the related
 tools. Libvirt provides an abstraction and a common Application
 Programming Interface (API) over various hypervisors. It is used by
 OpenStack to provide support for multiple hypervisors including KVM and
@@ -889,7 +892,7 @@ hosts.
 
 (16) ``01-epel-add-repo.sh``
 
-This scripts adds the Extra Packages for Enterprise Linux [21]_ (EPEL)
+This scripts adds the Extra Packages for Enterprise Linux [23]_ (EPEL)
 repository, which contains the OpenStack related packages.
 
 ::
@@ -1164,9 +1167,9 @@ The purpose of this script is to create user accounts, roles and tenants
 in Keystone for the admin user and service accounts for each OpenStack
 service: Keystone, Glance, and Nova. Since the process is complicated
 when done manually (it is necessary to define relations between database
-records), we use the *keystone-init* project [22]_ to automate the
+records), we use the *keystone-init* project [24]_ to automate the
 process. The *keystone-init* project allows one to create a
-configuration file in the “YAML Ain’t Markup Language” [23]_ (YAML) data
+configuration file in the “YAML Ain’t Markup Language” [25]_ (YAML) data
 format defining the required OpenStack user accounts. Then, according
 the defined configuration, the required database records are
 automatically created.
@@ -1336,7 +1339,7 @@ sets the services to automatically start during the system start up.
 
 (37) ``18-add-cirros.sh``
 
-This script downloads the CirrOS VM image [24]_ and imports it into
+This script downloads the CirrOS VM image [26]_ and imports it into
 Glance. This image contains a pre-installed CirrOS, a Tiny OS
 specialized for running in a Cloud. The image is very simplistic: its
 size is just 9.4 MB. However, it is sufficient for testing OpenStack.
@@ -1359,7 +1362,7 @@ size is just 9.4 MB. However, it is sufficient for testing OpenStack.
 
 (38) ``19-add-ubuntu.sh``
 
-This script downloads the Ubuntu Cloud Image [25]_ and imports it into
+This script downloads the Ubuntu Cloud Image [27]_ and imports it into
 Glance. This is a VM image with a pre-installed version of Ubuntu that
 is customized by Ubuntu engineering to run on Cloud platforms such as
 Openstack, Amazon EC2, and LXC.
@@ -1619,7 +1622,7 @@ This script sets restrictive permissions (640) on the Nova configuration
 file, since it contains sensitive information, such as user credentials.
 Then, the script sets the ownership on the Nova and Libvirt related
 directories to the ``nova`` user and ``nova`` group. The script also
-sets the user and group used by the Quick EMUlator [26]_ (QEMU) service
+sets the user and group used by the Quick EMUlator [28]_ (QEMU) service
 to ``nova``. This is required since a number of directories need to
 accessed by both Nova using the ``nova`` user and ``nova`` group, and
 QEMU.
@@ -1682,7 +1685,7 @@ Nova supports three network configuration modes:
 
        network_manager=nova.network.manager.FlatManager
 
-2. Flat DHCP Mode: Nova runs a Dnsmasq [27]_ server listening to a
+2. Flat DHCP Mode: Nova runs a Dnsmasq [29]_ server listening to a
    created network bridge that assigns public IP addresses to VM
    instances. This is the mode we use in this work. There must be only
    one host running the ``openstack-nova-network`` service. The
@@ -2143,7 +2146,7 @@ Nova Network
 If after a start up, the ``openstack-nova-network`` service hangs with
 the following last message in the log file: ‘Attempting to grab file
 lock “iptables” for method “apply”’, the solution is the
-following [28]_:
+following [30]_:
 
 ::
 
@@ -2247,57 +2250,63 @@ Hat Enterprise Linux 6 Installation Guide,” 2012.
    Libvirt. `http://libvirt.org/ <http://libvirt.org/>`_.
 
 .. [14]
-   `Http://devstack.org/ <http://devstack.org/>`_.
+   `Http://occi-wg.org/about/ <http://occi-wg.org/about/>`_.
 
 .. [15]
-   Http://docs.openstack.org/trunk/openstack-compute/admin/content/openstack-compute-deployment-tool-with-puppet.html.
+   `Http://devstack.org/ <http://devstack.org/>`_.
 
 .. [16]
+   Http://docs.openstack.org/trunk/openstack-compute/admin/content/openstack-compute-deployment-tool-with-puppet.html.
+
+.. [17]
+   `Http://wiki.openstack.org/GetOpenStack <http://wiki.openstack.org/GetOpenStack>`_.
+
+.. [18]
    The project repository.
    `https://github.com/beloglazov/openstack-centos-kvm-glusterfs <https://github.com/beloglazov/openstack-centos-kvm-glusterfs>`_.
 
-.. [17]
+.. [19]
    XFS.
    `http://en.wikipedia.org/wiki/XFS <http://en.wikipedia.org/wiki/XFS>`_.
 
-.. [18]
+.. [20]
    Git. `http://git-scm.com/ <http://git-scm.com/>`_.
 
-.. [19]
+.. [21]
    SELinux.
    `http://en.wikipedia.org/wiki/Security-Enhanced\_Linux <http://en.wikipedia.org/wiki/Security-Enhanced_Linux>`_.
 
-.. [20]
+.. [22]
    Libvirt. `http://libvirt.org/ <http://libvirt.org/>`_.
 
-.. [21]
+.. [23]
    The EPEL repository.
    `http://fedoraproject.org/wiki/EPEL <http://fedoraproject.org/wiki/EPEL>`_.
 
-.. [22]
+.. [24]
    The *keystone-init* project.
    `https://github.com/nimbis/keystone-init <https://github.com/nimbis/keystone-init>`_.
 
-.. [23]
+.. [25]
    YAML.
    `http://en.wikipedia.org/wiki/YAML <http://en.wikipedia.org/wiki/YAML>`_.
 
-.. [24]
+.. [26]
    CirrOS.
    `https://launchpad.net/cirros/ <https://launchpad.net/cirros/>`_.
 
-.. [25]
+.. [27]
    Ubuntu Cloud Images.
    `http://uec-images.ubuntu.com/ <http://uec-images.ubuntu.com/>`_.
 
-.. [26]
+.. [28]
    QEMU.
    `http://en.wikipedia.org/wiki/QEMU <http://en.wikipedia.org/wiki/QEMU>`_.
 
-.. [27]
+.. [29]
    Dnsmasq.
    `http://en.wikipedia.org/wiki/Dnsmasq <http://en.wikipedia.org/wiki/Dnsmasq>`_.
 
-.. [28]
+.. [30]
    OpenStack Compute Questions.
    `https://answers.launchpad.net/nova/+question/200985 <https://answers.launchpad.net/nova/+question/200985>`_.
