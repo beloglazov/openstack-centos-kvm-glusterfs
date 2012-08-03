@@ -189,31 +189,31 @@ OpenStack with the other major open source Cloud platforms.
    DevStack sounds pretty straight forwards at the begging, but it got complicated when the Multi-Node
    configurations added. Also, it does not install GlusterFS Distributed File System^[We don not recommand to
    follow the steps in this report to install GlusterFS on Ubuntu or Fedora as the steps may vary], you have to install it
-   separately, and of course you have to do so before using DevStack script(s). One of the drawbacks
+   separately, and of course you have to do so before using the DevStack script(s). One of the drawbacks
    with this approach is that in case of an error, you have to go through the whole script file, which is not short,
    to fix this error.
    
    Our approche is to install OpenStack on CentOS not Ubuntu or Fedora.
    Also, In our approche each step is reprsented in a file, so you can follow the instllation steps
-   one-by-one. That will make it easier to trace back the errors, and to customize the files.
+   one-by-one. That will make it easier to trace back the errors, and to customize your installation.
 - dodai-deploy: Deployment Tool for OpenStack using Puppet^[dodai-deploy: [http://docs.openstack.org/trunk/openstack-compute/admin/content/openstack-compute-deployment-tool-with-puppet.html](http://docs.openstack.org/trunk/openstack-compute/admin/content/openstack-compute-deployment-tool-with-puppet.html)]
    dodai-deploy is a Puppet service running on all OpenStack nodes for remote and automotive configuration.
-   It is for Ubuntu Precise (12.04) only. Several steps has to be executed to configure dodai-deploy server
+   It is for Ubuntu Precise (12.04) only. Several steps have to be run to configure dodai-deploy server
    and make it up and running. dodai-deploy server shell script can be found at this repository:
    ```Bash
    https://github.com/nii-cloud/dodai-deploy.git
    ```
-   Once you start the service on the head node and the compute nodes you can operate and configure OpenStack from
+   Once you start the service on the head node and all the compute nodes you can operate and configure OpenStack from
    a web UI or a REST API.
    
    dodai-deploy does not install GlusterFS Distributed File System, you have to install it separately. GlusterFS has
    to be installed before setting up the storage device for Swift, which is executing `setup-storage-for-swift.sh` script.
-   Our approach is to install OpenStack on CentOS not Ubuntu. Also, Our approach does not require any extra
-   running services, which may add some extra memory overhead and/or security vulnerabilities.
-- How to get OpenStack^[[http://wiki.openstack.org/GetOpenStack](http://wiki.openstack.org/GetOpenStack)]
-   OpenStack offers a set of automated tools to install OpenStack. Those tools are exeutable packages to run on
-   specific operating systems.
-
+   Our approach is to install OpenStack on CentOS not Ubuntu. Also, our approach does not require any extra
+   running services, which may add extra memory overhead and/or security vulnerabilities.
+- OpenStack Offical Documentation^[OpenStack Offical Documentation: [http://docs.openstack.org/](http://docs.openstack.org/)]
+   All core OpenStack Essex components are officially supported and available in Debian, but
+   you may require to add an extra repository or download external packages for other Linux distributions.
+   In OpenStack documentation they mainly focused on Ubuntu leaving the installation guide for CentOS 6.x incomplete.
    
 
 # Step-by-Step OpenStack Installation
