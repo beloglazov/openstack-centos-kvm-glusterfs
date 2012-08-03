@@ -168,25 +168,53 @@ OpenStack with the other major open source Cloud platforms.
 
 
 # Existing OpenStack Installation Tools
-
-- DevStack^[[http://devstack.org/](http://devstack.org/)]
-   DevStack is a shell scrip to build complete OpenStack development enviroment. Their approch is almost the same as what
-   we are doing except that they based their installtion on specific version of spesific operating systems, Ubuntu Precise (12.04) or Fedora 16.
-   All the installation steps will be executed by running one shell script. The drawback here is that in case of error, you have to go through
-  the whole script file to fix this error.
-
-- Puppet / Chef^[http://docs.openstack.org/trunk/openstack-compute/admin/content/openstack-compute-deployment-tool-with-puppet.html]
-   Puppet is also for Ubuntu Precise (12.04). Puppet and Chef are for system administrators to automat the
-   instllation of a set of scripts.
-
-- How to get OpenStack^[[http://wiki.openstack.org/GetOpenStack](http://wiki.openstack.org/GetOpenStack)]
-   OpenStack offers set of automated tools to install OpenStack. Those tools are exeutable packages to run on
-   specific operating systems.
-  
-- Difference From our Approach
+   Several installation methods exist beside ours. Those methods require less steps, but they make you
+   less understand of how OpenStack works and the interrelationship between its different components.
    The purpose is not just having an up and running OpenStack installation, but also learning the steps
    required to perform the installation from the ground up and understanding the responsibilities and
-   interaction of the OpenStack components.
+   interaction of the OpenStack components. In this section we summaries three different approaches and tools
+   as follows:
+- DevStack^[DevStack: [http://devstack.org/](http://devstack.org/)]
+   DevStack is a single shell scrip (`stack.sh`) to build a complete OpenStack development enviroment.
+   This shell script can be found at this repository:
+   ```Bash
+   https://github.com/openstack-dev/devstack.git
+   ```
+   Their approch is almost similar to what we are doing except that they based their installtion to work
+   only on Ubuntu Precise (12.04) or Fedora 16. They have two guides, one to install OpenStack on a VM,
+   while the other one is on a physical machine (aka hardware). They have a more sophisticated installtion guide
+   to install OpenStack on multiple nodes where you will use other shell scrips beside `stack.sh`. Also, you have
+   to configure the cluster controller (aka 'head node') and the compute nodes with two diffrent set of configurations.
+
+   DevStack sounds pretty straight forwards at the begging, but it got complicated when the Multi-Node
+   configurations added. Also, it does not install GlusterFS Distributed File System^[We don not recommand to
+   follow the steps in this report to install GlusterFS on Ubuntu or Fedora as the steps may vary], you have to install it
+   separately, and of course you have to do so before using DevStack script(s). One of the drawbacks
+   with this approach is that in case of an error, you have to go through the whole script file, which is not short,
+   to fix this error.
+   
+   Our approche is to install OpenStack on CentOS not Ubuntu or Fedora.
+   Also, In our approche each step is reprsented in a file, so you can follow the instllation steps
+   one-by-one. That will make it easier to trace back the errors, and to customize the files.
+- dodai-deploy: Deployment Tool for OpenStack using Puppet^[dodai-deploy: [http://docs.openstack.org/trunk/openstack-compute/admin/content/openstack-compute-deployment-tool-with-puppet.html](http://docs.openstack.org/trunk/openstack-compute/admin/content/openstack-compute-deployment-tool-with-puppet.html)]
+   dodai-deploy is a Puppet service running on all OpenStack nodes for remote and automotive configuration.
+   It is for Ubuntu Precise (12.04) only. Several steps has to be executed to configure dodai-deploy server
+   and make it up and running. dodai-deploy server shell script can be found at this repository:
+   ```Bash
+   https://github.com/nii-cloud/dodai-deploy.git
+   ```
+   Once you start the service on the head node and the compute nodes you can operate and configure OpenStack from
+   a web UI or a REST API.
+   
+   dodai-deploy does not install GlusterFS Distributed File System, you have to install it separately. GlusterFS has
+   to be installed before setting up the storage device for Swift, which is executing `setup-storage-for-swift.sh` script.
+   Our approach is to install OpenStack on CentOS not Ubuntu. Also, Our approach does not require any extra
+   running services, which may add some extra memory overhead and/or security vulnerabilities.
+- How to get OpenStack^[[http://wiki.openstack.org/GetOpenStack](http://wiki.openstack.org/GetOpenStack)]
+   OpenStack offers a set of automated tools to install OpenStack. Those tools are exeutable packages to run on
+   specific operating systems.
+
+   
 
 # Step-by-Step OpenStack Installation
 
