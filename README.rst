@@ -318,10 +318,10 @@ A comparison of the discussed Cloud platforms is summarized in Table 1.
 | Initial        | October 2010 | May 2010    | March 2008  | May 2010    |
 | Release        |              |             |             |             |
 +----------------+--------------+-------------+-------------+-------------+
-| OCCI           | +            | -           | +           | -           |
+| OCCI           | Yes          | No          | Yes         | No          |
 | Compatibility  |              |             |             |             |
 +----------------+--------------+-------------+-------------+-------------+
-| AWS            | +            | +           | +           | +           |
+| AWS            | Yes          | Yes         | Yes         | Yes         |
 | Compatibility  |              |             |             |             |
 +----------------+--------------+-------------+-------------+-------------+
 | Hypervisors    | Xen, KVM,    | Xen, KVM,   | Xen, KVM,   | Xen, KVM,   |
