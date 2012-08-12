@@ -160,7 +160,9 @@ OpenStack controls and manages compute, storage, and network resource
 aggregated from multiple servers in a data center. The system provides a
 web interface (dashboard) and APIs compatible with Amazon EC2 to the
 administrators and users that allow flexible on-demand provisioning of
-the resources.
+the resources. OpenStack also supports the Open Cloud Computing
+Interface (OCCI) [13]_, which is an emerging standard defining IaaS
+APIs, and delivered through the Open Grid Forum (OGF) [14]_.
 
 In April 2012, the project lead and management functions have been
 transferred to a newly formed OpenStack Foundation. The goals of the
@@ -177,7 +179,7 @@ capabilities. The main services include the following:
 -  *OpenStack Compute (Nova)*: manages the life cycle of VM instances
    from scheduling and resource provisioning to live migration and
    security rules. By leveraging the virtualization API provided by
-   Libvirt [13]_, OpenStack Compute supports multiple hypervisors, such
+   Libvirt [15]_, OpenStack Compute supports multiple hypervisors, such
    as KVM and Xen.
 -  *OpenStack Storage*: provides block and object storage to use by VM
    instances. The block storage system allows the uses to create block
@@ -219,12 +221,118 @@ with the other major open source Cloud platforms.
 Comparison of Open Source Cloud Platforms
 =========================================
 
--  OpenStack
--  Eucalyptus
--  CloudStack
--  OpenNebula
--  Discuss the level of implementation of the Open Cloud Computing
-   Interface (OCCI) [14]_
+In this section, we briefly discuss and compare OpenStack with three
+other major open source Cloud platforms, namely Eucalyptus, OpenNebula,
+and CloudStack.
+
+Eucalyptus [16]_ is an open source IaaS Cloud platform developed by
+Eucalyptus Systems and released in March 2008 under the GPL v3 license.
+Eucalyptus is an acronym for “Elastic Utility Computing Architecture for
+Linking Your Programs To Useful Systems”. Prior to version 3.1,
+Eucalyptus had two editions: open source, and enterprise, which included
+extra features and commercial support. As of version 3.1, both the
+editions have been merged into a single open source project. In March
+2012, Eucalyptus and Amazon Web Services (AWS) announced a partnership
+aimed at bringing and maintaining additional API compatibility between
+the Eucalyptus platform and AWS, which will enable simpler workload
+migration and deployment of hybrid Cloud environments [17]_. The
+Eucalyptus platform is composed of the following 5 high-level
+components, each of which is implemented as a standalone web service:
+
+-  *Cloud Controller*: manages the underlying virtualized resources
+   (servers, network, and storage) and provides a web interface and API
+   compatible with Amazon EC2.
+-  *Cluster Controller*: controls VMs running on multiple physical nodes
+   and manages the virtual networking between VMs, and between VMs and
+   external users.
+-  *Walrus*: implements object storage accessible through an API
+   compatible with Amazon S3.
+-  *Storage Controller*: provides block storage that can be dynamically
+   attached to VMs, which is managed via an API compatible with Amazon
+   Elastic Block Storage (EBS).
+-  *Node Controller*: controls the life cycle of VMs within a physical
+   nodes using the functionality provided by the hypervisor.
+
+OpenNebula [18]_ is an open source IaaS Cloud platform originally
+established as a research project back in 2005 by Ignacio M. Llorente
+and Rubén S. Montero. The software was first publicly released in March
+2008 under the Apache 2.0 license. In March 2010, the authors of
+OpenNebula founded C12G Labs, an organization aiming to provide
+commercial support and services for the OpenNebula software. Currently,
+the OpenNebula project is managed by C12G Labs. OpenNebula supports
+several standard APIs, such as EC2 Query, OGF OCCI, and vCLoud.
+OpenNebula provides the following features and components:
+
+-  *Users and Groups*: OpenNebula supports multiple user accounts and
+   groups, various authentication and authorization mechanisms, as well
+   as Access Control Lists (ACL) allowing fine grained permission
+   management.
+-  *Virtualization Subsystem*: communicates with the hypervisor
+   installed in a physical host enabling the management and monitoring
+   of the life cycle of VMs.
+-  *Network Subsystem*: manages virtual networking provided to
+   interconnect VMs, supports VLANs and Open vSwitch.
+-  *Storage Subsystem*: supports several types of data stores for
+   storing VM images.
+-  *Clusters*: are pools of hosts that share data stores and virtual
+   networks, they can be used for load balancing, high availability, and
+   high performance computing.
+
+CloudStack [19]_ is an open source IaaS Cloud platform originally
+developed by Cloud.com. In May 2010, most of the software was released
+under the GPL v3 license, while 5% of the code were kept proprietary. In
+July 2011, Citrix purchased Cloud.com and in August 2011 released the
+remaining code of CloudStack under the GPL v3 license. In April 2012,
+Citrix donated CloudStack to the Apache Software Foundation, while
+changing the license to Apache 2.0. CloudStack implements the Amazon EC2
+and S3 APIs, as well as the vCloud API, in addition to its own API.
+CloudStack has a hierarchical structure, which enables management of
+multiple physical hosts from a single interface. The structure includes
+the following components:
+
+-  *Availability Zones*: represent geographical locations, which are
+   used in the allocation of VM instances in data storage. An
+   Availability Zone consists of at least one Pod, and Secondary
+   Storage, which is shared by all Pods in the Zone.
+-  *Pods*: are collections of hardware configured to form Clusters. A
+   pod can contain one or more Clusters, and a Layer 2 switch
+   architecture, which is shared by all Clusters in that Pod.
+-  *Clusters*: are groups of identical physical hosts running the same
+   hypervisor. A Cluster has a dedicated Primary Storage device, where
+   the VM instances are hosted.
+-  *Primary Storage*: is unique to each Cluster and is used to host VM
+   instances.
+-  *Secondary Storage*: is used to store VM images and snapshots.
+
+A comparison of the discussed Cloud platforms is summarized in Table 1.
+
++----------------+--------------+-------------+-------------+-------------+
+|                | OpenStack    | Eucalyptus  | OpenNebula  | CloudStack  |
++================+==============+=============+=============+=============+
+| Managed By     | OpenStack    | Eucalyptus  | C12G Labs   | Apache      |
+|                | Foundation   | Systems     |             | Software    |
+|                |              |             |             | Foundation  |
++----------------+--------------+-------------+-------------+-------------+
+| License        | Apache 2.0   | GPL v3      | Apache 2.0  | Apache 2.0  |
++----------------+--------------+-------------+-------------+-------------+
+| Initial        | October 2010 | May 2010    | March 2008  | May 2010    |
+| Release        |              |             |             |             |
++----------------+--------------+-------------+-------------+-------------+
+| OCCI           | +            | -           | +           | -           |
+| Compatibility  |              |             |             |             |
++----------------+--------------+-------------+-------------+-------------+
+| AWS            | +            | +           | +           | +           |
+| Compatibility  |              |             |             |             |
++----------------+--------------+-------------+-------------+-------------+
+| Hypervisors    | Xen, KVM,    | Xen, KVM,   | Xen, KVM,   | Xen, KVM,   |
+|                | VMware       | VMware      | VMware      | VMware,     |
+|                |              |             |             | Oracle VM   |
++----------------+--------------+-------------+-------------+-------------+
+| Programming    | Python       | Java, C     | C, C++,     | Java        |
+| Language       |              |             | Ruby, Java  |             |
++----------------+--------------+-------------+-------------+-------------+
+
+Table: Comparison of OpenStack, Eucalyptus, OpenNebula, and CloudStack
 
 Existing OpenStack Installation Tools
 =====================================
@@ -243,7 +351,7 @@ be considered to be an example of how OpenStack can be deployed on a
 real-world multi-node testbed.
 
 One of the existing tools for automated installation of OpenStack is
-DevStack [15]_. DevStack is distributed in the form of a single shell
+DevStack [20]_. DevStack is distributed in the form of a single shell
 script, which installs a complete OpenStack development environment. The
 officially supported Linux distributions are Ubuntu 12.04 (Precise) and
 Fedora 16. DevStack also comes with guides to installing OpenStack in a
@@ -254,8 +362,8 @@ during the installation process, it is required to start installation
 from the beginning instead of just fixing the current step.
 
 Another tool for automated installation of OpenStack is
-dodai-deploy [16]_, which is described in the OpenStack Compute
-Administration Manual [4]. dodai-deploy is a Puppet [17]_ service
+dodai-deploy [21]_, which is described in the OpenStack Compute
+Administration Manual [4]. dodai-deploy is a Puppet [22]_ service
 running on all the nodes and providing a web interface for automated
 installation of OpenStack. The service is developed and maintained to be
 run on Ubuntu. Several steps are required to install and configure the
@@ -290,7 +398,7 @@ section, we explain and discuss every step needed to be followed to
 obtain a fully operational OpenStack installation on our testbed
 consisting of 1 controller and 4 compute nodes. The source code of the
 shell scripts described in this paper is released under the Apache 2.0
-License and is publicly available online [18]_.
+License and is publicly available online [23]_.
 
 Hardware Setup
 --------------
@@ -459,13 +567,13 @@ Hard Drive Partitioning.
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 The hard drive partitioning scheme is the same for all the compute
-hosts, but differs for the controller. Table 1 shows the partitioning
+hosts, but differs for the controller. Table 2 shows the partitioning
 scheme for the compute hosts. ``vg_base`` is a volume group comprising
 the standard OS partitions: ``lv_root``, ``lv_home`` and ``lv_swap``.
 ``vg_gluster`` is a special volume group containing a single
 ``lv_gluster`` partition, which is dedicated to serve as a GlusterFS
 brick. The ``lv_gluster`` logical volume is formatted using the
-XFS [19]_ file system, as recommended for GlusterFS bricks.
+XFS [24]_ file system, as recommended for GlusterFS bricks.
 
 +------------------------+-------------+-----------------------+------------+
 | Device                 | Size (MB)   | Mount Point / Volume  | Type       |
@@ -497,7 +605,7 @@ XFS [19]_ file system, as recommended for GlusterFS bricks.
 
 Table: The partitioning scheme for the compute hosts
 
-Table 2 shows the partitioning scheme for the controller. It does not
+Table 3 shows the partitioning scheme for the controller. It does not
 include a ``vg_gluster`` volume group since the controller is not going
 to be a part of the GlusterFS volume. However, the scheme includes two
 new important volume groups: ``nova-volumes`` and ``vg_images``. The
@@ -559,7 +667,7 @@ to the public network in our setup.
 
 In all the following steps, it is assumed that the user logged in is
 ``root``. If the Internet is available on the gateway, it is necessary
-to install the Git [20]_ version control client to be able to clone the
+to install the Git [25]_ version control client to be able to clone the
 repository containing the installation scripts. This can be done using
 ``yum``, the default package manager in CentOS, as follows:
 
@@ -701,7 +809,7 @@ recommended to open only the required ports.
 
 (5) ``02-selinux-permissive.sh``
 
-This script switches SELinux [21]_ into the permissive mode. By default,
+This script switches SELinux [26]_ into the permissive mode. By default,
 SELinux blocks certain operations, such as VM migrations. Switching
 SELinux into the permissive mode is not recommended for production
 environments, but is acceptable for testing purposes.
@@ -869,7 +977,7 @@ to comment the ``modprobe kvm-intel`` line and uncomment the
 
 (13) ``03-libvirt-install.sh``
 
-This script installs Libvirt [22]_, its dependencies and the related
+This script installs Libvirt [27]_, its dependencies and the related
 tools. Libvirt provides an abstraction and a common Application
 Programming Interface (API) over various hypervisors. It is used by
 OpenStack to provide support for multiple hypervisors including KVM and
@@ -933,7 +1041,7 @@ hosts.
 
 (16) ``01-epel-add-repo.sh``
 
-This scripts adds the Extra Packages for Enterprise Linux [23]_ (EPEL)
+This scripts adds the Extra Packages for Enterprise Linux [28]_ (EPEL)
 repository, which contains the OpenStack related packages.
 
 ::
@@ -1208,9 +1316,9 @@ The purpose of this script is to create user accounts, roles and tenants
 in Keystone for the admin user and service accounts for each OpenStack
 service: Keystone, Glance, and Nova. Since the process is complicated
 when done manually (it is necessary to define relations between database
-records), we use the *keystone-init* project [24]_ to automate the
+records), we use the *keystone-init* project [29]_ to automate the
 process. The *keystone-init* project allows one to create a
-configuration file in the “YAML Ain’t Markup Language” [25]_ (YAML) data
+configuration file in the “YAML Ain’t Markup Language” [30]_ (YAML) data
 format defining the required OpenStack user accounts. Then, according
 the defined configuration, the required database records are
 automatically created.
@@ -1380,7 +1488,7 @@ sets the services to automatically start during the system start up.
 
 (37) ``18-add-cirros.sh``
 
-This script downloads the CirrOS VM image [26]_ and imports it into
+This script downloads the CirrOS VM image [31]_ and imports it into
 Glance. This image contains a pre-installed CirrOS, a Tiny OS
 specialized for running in a Cloud. The image is very simplistic: its
 size is just 9.4 MB. However, it is sufficient for testing OpenStack.
@@ -1403,7 +1511,7 @@ size is just 9.4 MB. However, it is sufficient for testing OpenStack.
 
 (38) ``19-add-ubuntu.sh``
 
-This script downloads the Ubuntu Cloud Image [27]_ and imports it into
+This script downloads the Ubuntu Cloud Image [32]_ and imports it into
 Glance. This is a VM image with a pre-installed version of Ubuntu that
 is customized by Ubuntu engineering to run on Cloud platforms such as
 Openstack, Amazon EC2, and LXC.
@@ -1663,7 +1771,7 @@ This script sets restrictive permissions (640) on the Nova configuration
 file, since it contains sensitive information, such as user credentials.
 Then, the script sets the ownership on the Nova and Libvirt related
 directories to the ``nova`` user and ``nova`` group. The script also
-sets the user and group used by the Quick EMUlator [28]_ (QEMU) service
+sets the user and group used by the Quick EMUlator [33]_ (QEMU) service
 to ``nova``. This is required since a number of directories need to
 accessed by both Nova using the ``nova`` user and ``nova`` group, and
 QEMU.
@@ -1726,7 +1834,7 @@ Nova supports three network configuration modes:
 
        network_manager=nova.network.manager.FlatManager
 
-2. Flat DHCP Mode: Nova runs a Dnsmasq [29]_ server listening to a
+2. Flat DHCP Mode: Nova runs a Dnsmasq [34]_ server listening to a
    created network bridge that assigns public IP addresses to VM
    instances. This is the mode we use in this work. There must be only
    one host running the ``openstack-nova-network`` service. The
@@ -2187,7 +2295,7 @@ Nova Network
 If after a start up, the ``openstack-nova-network`` service hangs with
 the following last message in the log file: ‘Attempting to grab file
 lock “iptables” for method “apply”’, the solution is the
-following [30]_:
+following [35]_:
 
 ::
 
@@ -2288,67 +2396,84 @@ Hat Enterprise Linux 6 Installation Guide,” 2012.
    `http://wiki.openstack.org/Governance/Foundation/Structure <http://wiki.openstack.org/Governance/Foundation/Structure>`_.
 
 .. [13]
-   Libvirt. `http://libvirt.org/ <http://libvirt.org/>`_.
+   Open Cloud Computing Interface.
+   `http://occi-wg.org/ <http://occi-wg.org/>`_.
 
 .. [14]
-   `Http://occi-wg.org/about/ <http://occi-wg.org/about/>`_.
+   Open Grid Forum. `http://www.ogf.org/ <http://www.ogf.org/>`_.
 
 .. [15]
-   DevStack. `http://devstack.org/ <http://devstack.org/>`_.
+   Libvirt. `http://libvirt.org/ <http://libvirt.org/>`_.
 
 .. [16]
+   Eucalyptus.
+   `http://www.eucalyptus.com/ <http://www.eucalyptus.com/>`_.
+
+.. [17]
+   `Http://www.eucalyptus.com/news/amazon-web-services-and-eucalyptus-partner <http://www.eucalyptus.com/news/amazon-web-services-and-eucalyptus-partner>`_.
+
+.. [18]
+   OpenNebula. `http://opennebula.org/ <http://opennebula.org/>`_.
+
+.. [19]
+   CloudStack. `http://cloudstack.org/ <http://cloudstack.org/>`_.
+
+.. [20]
+   DevStack. `http://devstack.org/ <http://devstack.org/>`_.
+
+.. [21]
    Dodai-deploy.
    `https://github.com/nii-cloud/dodai-deploy <https://github.com/nii-cloud/dodai-deploy>`_.
 
-.. [17]
+.. [22]
    Puppet. `http://puppetlabs.com/ <http://puppetlabs.com/>`_.
 
-.. [18]
+.. [23]
    The project repository.
    `https://github.com/beloglazov/openstack-centos-kvm-glusterfs <https://github.com/beloglazov/openstack-centos-kvm-glusterfs>`_.
 
-.. [19]
+.. [24]
    XFS.
    `http://en.wikipedia.org/wiki/XFS <http://en.wikipedia.org/wiki/XFS>`_.
 
-.. [20]
+.. [25]
    Git. `http://git-scm.com/ <http://git-scm.com/>`_.
 
-.. [21]
+.. [26]
    SELinux.
    `http://en.wikipedia.org/wiki/Security-Enhanced\_Linux <http://en.wikipedia.org/wiki/Security-Enhanced_Linux>`_.
 
-.. [22]
+.. [27]
    Libvirt. `http://libvirt.org/ <http://libvirt.org/>`_.
 
-.. [23]
+.. [28]
    The EPEL repository.
    `http://fedoraproject.org/wiki/EPEL <http://fedoraproject.org/wiki/EPEL>`_.
 
-.. [24]
+.. [29]
    The *keystone-init* project.
    `https://github.com/nimbis/keystone-init <https://github.com/nimbis/keystone-init>`_.
 
-.. [25]
+.. [30]
    YAML.
    `http://en.wikipedia.org/wiki/YAML <http://en.wikipedia.org/wiki/YAML>`_.
 
-.. [26]
+.. [31]
    CirrOS.
    `https://launchpad.net/cirros/ <https://launchpad.net/cirros/>`_.
 
-.. [27]
+.. [32]
    Ubuntu Cloud Images.
    `http://uec-images.ubuntu.com/ <http://uec-images.ubuntu.com/>`_.
 
-.. [28]
+.. [33]
    QEMU.
    `http://en.wikipedia.org/wiki/QEMU <http://en.wikipedia.org/wiki/QEMU>`_.
 
-.. [29]
+.. [34]
    Dnsmasq.
    `http://en.wikipedia.org/wiki/Dnsmasq <http://en.wikipedia.org/wiki/Dnsmasq>`_.
 
-.. [30]
+.. [35]
    OpenStack Compute Questions.
    `https://answers.launchpad.net/nova/+question/200985 <https://answers.launchpad.net/nova/+question/200985>`_.

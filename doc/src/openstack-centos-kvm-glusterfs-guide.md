@@ -105,14 +105,16 @@ future directions.
 
 # Overview of the OpenStack Cloud Platform
 
-
 ![A high level view of the OpenStack service interaction [@openstack2012diagram]](openstack-software-diagram.png)
 
 OpenStack is a free open source IaaS Cloud platform originally released by Rackspace and NASA under
 the Apache 2.0 License in July 2010. OpenStack controls and manages compute, storage, and network
 resource aggregated from multiple servers in a data center. The system provides a web interface
 (dashboard) and APIs compatible with Amazon EC2 to the administrators and users that allow flexible
-on-demand provisioning of the resources.
+on-demand provisioning of the resources. OpenStack also supports the Open Cloud Computing Interface
+(OCCI)^[Open Cloud Computing Interface. [http://occi-wg.org/](http://occi-wg.org/)], which is an
+emerging standard defining IaaS APIs, and delivered through the Open Grid Forum
+(OGF)^[Open Grid Forum. [http://www.ogf.org/](http://www.ogf.org/)].
 
 In April 2012, the project lead and management functions have been transferred to a newly formed
 OpenStack Foundation. The goals of the foundation are to support an open development process and
@@ -160,11 +162,99 @@ OpenStack with the other major open source Cloud platforms.
 
 # Comparison of Open Source Cloud Platforms
 
-- OpenStack
-- Eucalyptus
-- CloudStack
-- OpenNebula
-- Discuss the level of implementation of the Open Cloud Computing Interface (OCCI)^[[http://occi-wg.org/about/](http://occi-wg.org/about/)]
+In this section, we briefly discuss and compare OpenStack with three other major open source Cloud
+platforms, namely Eucalyptus, OpenNebula, and CloudStack.
+
+Eucalyptus^[Eucalyptus. [http://www.eucalyptus.com/](http://www.eucalyptus.com/)] is an open source
+IaaS Cloud platform developed by Eucalyptus Systems and released in March 2008 under the GPL v3
+license. Eucalyptus is an acronym for "Elastic Utility Computing Architecture for Linking Your
+Programs To Useful Systems". Prior to version 3.1, Eucalyptus had two editions: open source, and
+enterprise, which included extra features and commercial support. As of version 3.1, both the
+editions have been merged into a single open source project. In March 2012, Eucalyptus and Amazon
+Web Services (AWS) announced a partnership aimed at bringing and maintaining additional API
+compatibility between the Eucalyptus platform and AWS, which will enable simpler workload migration
+and deployment of hybrid Cloud
+environments^[[http://www.eucalyptus.com/news/amazon-web-services-and-eucalyptus-partner](http://www.eucalyptus.com/news/amazon-web-services-and-eucalyptus-partner)].
+The Eucalyptus platform is composed of the following 5 high-level components, each of which is
+implemented as a standalone web service:
+
+- *Cloud Controller*: manages the underlying virtualized resources (servers, network, and storage)
+   and provides a web interface and API compatible with Amazon EC2.
+- *Cluster Controller*: controls VMs running on multiple physical nodes and manages the virtual
+   networking between VMs, and between VMs and external users.
+- *Walrus*: implements object storage accessible through an API compatible with Amazon S3.
+- *Storage Controller*: provides block storage that can be dynamically attached to VMs, which is
+   managed via an API compatible with Amazon Elastic Block Storage (EBS).
+- *Node Controller*: controls the life cycle of VMs within a physical nodes using the functionality
+   provided by the hypervisor.
+
+OpenNebula^[OpenNebula. [http://opennebula.org/](http://opennebula.org/)] is an open source IaaS
+Cloud platform originally established as a research project back in 2005 by Ignacio M. Llorente and
+Rubén S. Montero. The software was first publicly released in March 2008 under the Apache 2.0
+license. In March 2010, the authors of OpenNebula founded C12G Labs, an organization aiming to
+provide commercial support and services for the OpenNebula software. Currently, the OpenNebula
+project is managed by C12G Labs. OpenNebula supports several standard APIs, such as EC2 Query, OGF
+OCCI, and vCLoud. OpenNebula provides the following features and components:
+
+- *Users and Groups*: OpenNebula supports multiple user accounts and groups, various authentication
+   and authorization mechanisms, as well as Access Control Lists (ACL) allowing fine grained
+   permission management.
+- *Virtualization Subsystem*: communicates with the hypervisor installed in a physical host enabling
+   the management and monitoring of the life cycle of VMs.
+- *Network Subsystem*: manages virtual networking provided to interconnect VMs, supports VLANs and
+   Open vSwitch.
+- *Storage Subsystem*: supports several types of data stores for storing VM images.
+- *Clusters*: are pools of hosts that share data stores and virtual networks, they can be used for
+   load balancing, high availability, and high performance computing.
+
+CloudStack^[CloudStack. [http://cloudstack.org/](http://cloudstack.org/)] is an open source IaaS
+Cloud platform originally developed by Cloud.com. In May 2010, most of the software was released
+under the GPL v3 license, while 5% of the code were kept proprietary. In July 2011, Citrix purchased
+Cloud.com and in August 2011 released the remaining code of CloudStack under the GPL v3 license. In
+April 2012, Citrix donated CloudStack to the Apache Software Foundation, while changing the license
+to Apache 2.0. CloudStack implements the Amazon EC2 and S3 APIs, as well as the vCloud API, in
+addition to its own API. CloudStack has a hierarchical structure, which enables management of
+multiple physical hosts from a single interface. The structure includes the following components:
+
+- *Availability Zones*: represent geographical locations, which are used in the allocation of VM
+   instances in data storage. An Availability Zone consists of at least one Pod, and Secondary
+   Storage, which is shared by all Pods in the Zone.
+- *Pods*: are collections of hardware configured to form Clusters. A pod can contain one or more
+   Clusters, and a Layer 2 switch architecture, which is shared by all Clusters in that Pod.
+- *Clusters*: are groups of identical physical hosts running the same hypervisor. A Cluster has a
+   dedicated Primary Storage device, where the VM instances are hosted.
+- *Primary Storage*: is unique to each Cluster and is used to host VM instances.
+- *Secondary Storage*: is used to store VM images and snapshots.
+
+A comparison of the discussed Cloud platforms is summarized in Table 1.
+
+Table: Comparison of OpenStack, Eucalyptus, OpenNebula, and CloudStack
+
++-------------+------------+----------+----------+----------+
+|             |OpenStack   |Eucalyptus|OpenNebula|CloudStack|
++=============+============+==========+==========+==========+
+|Managed By   |OpenStack   |Eucalyptus|C12G Labs |Apache    |
+|             |Foundation  |Systems   |          |Software  |
+|             |            |          |          |Foundation|
++-------------+------------+----------+----------+----------+
+|License      |Apache 2.0  |GPL v3    |Apache 2.0|Apache 2.0|
++-------------+------------+----------+----------+----------+
+|Initial      |October 2010|May 2010  |March 2008|May 2010  |
+|Release      |            |          |          |          |
++-------------+------------+----------+----------+----------+
+|OCCI         |+           |-         |+         |-         |
+|Compatibility|            |          |          |          |
++-------------+------------+----------+----------+----------+
+|AWS          |+           |+         |+         |+         |
+|Compatibility|            |          |          |          |
++-------------+------------+----------+----------+----------+
+|Hypervisors  |Xen, KVM,   |Xen, KVM, |Xen, KVM, |Xen, KVM, |
+|             |VMware      |VMware    |VMware    |VMware,   |
+|             |            |          |          |Oracle VM |
++-------------+------------+----------+----------+----------+
+|Programming  |Python      |Java, C   |C, C++,   |Java      |
+|Language     |            |          |Ruby, Java|          |
++-------------+------------+----------+----------+----------+
 
 
 # Existing OpenStack Installation Tools
@@ -365,7 +455,7 @@ only one network interface.
 #### Hard Drive Partitioning.
 
 The hard drive partitioning scheme is the same for all the compute hosts, but differs for the
-controller. Table 1 shows the partitioning scheme for the compute hosts. `vg_base` is a volume group
+controller. Table 2 shows the partitioning scheme for the compute hosts. `vg_base` is a volume group
 comprising the standard OS partitions: `lv_root`, `lv_home` and `lv_swap`. `vg_gluster` is a special
 volume group containing a single `lv_gluster` partition, which is dedicated to serve as a GlusterFS
 brick. The `lv_gluster` logical volume is formatted using the
@@ -403,7 +493,7 @@ Table: The partitioning scheme for the compute hosts
 +---------------------+----------+--------------------+---------+
 
 
-Table 2 shows the partitioning scheme for the controller. It does not include a `vg_gluster` volume
+Table 3 shows the partitioning scheme for the controller. It does not include a `vg_gluster` volume
 group since the controller is not going to be a part of the GlusterFS volume. However, the scheme
 includes two new important volume groups: `nova-volumes` and `vg_images`. The `nova-volumes` volume
 group is used by OpenStack Nova to allocated volumes for VM instances. This volume group is managed
