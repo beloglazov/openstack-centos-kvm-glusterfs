@@ -1,6 +1,6 @@
 Cloud computing has proven to be a successful distributed computing
 model as demostrated by its wide spread industrial adoption. Apart
-from public Cloud, such as Amazon EC2, private and hybrid Cloud
+from public Clouds, such as Amazon EC2, private and hybrid Cloud
 deployments are important for organizations of all scales. The
 availability of free open source Cloud platforms is essential to
 further drive the proliferation of private and hybrid Cloud computing

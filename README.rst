@@ -9,7 +9,7 @@ This guide is also available in the following formats:
 
 Cloud computing has proven to be a successful distributed computing
 model as demostrated by its wide spread industrial adoption. Apart from
-public Cloud, such as Amazon EC2, private and hybrid Cloud deployments
+public Clouds, such as Amazon EC2, private and hybrid Cloud deployments
 are important for organizations of all scales. The availability of free
 open source Cloud platforms is essential to further drive the
 proliferation of private and hybrid Cloud computing environments.
@@ -27,27 +27,27 @@ publicly available online.
 
 % A Step-by-Step Guide to Installing OpenStack on CentOS Using the KVM
 Hypervisor and GlusterFS Distributed File System % Anton Beloglazov;
-Sareh Fotuhi Piraghaj; Mohammed Alrokayan; Rajkumar Buyya % 23rd of July
-2012
+Sareh Fotuhi Piraghaj; Mohammed Alrokayan; Rajkumar Buyya % 14th of
+August 2012
 
 Introduction
 ============
 
 The Cloud computing model leverages virtualization to deliver computing
 resources to users on-demand on a pay-per-use basis [1], [2]. It
-provides the properties of self-service and elasticity enabling the
-users to dynamically and flexibly adjust their resource consumption
-according to the current workload. These properties of the Cloud
-computing model allow one to avoid high upfront investments in a
-computing infrastructure, thus reducing the time to market and
-facilitating a higher pace of innovation.
+provides the properties of self-service and elasticity enabling users to
+dynamically and flexibly adjust their resource consumption according to
+the current workload. These properties of the Cloud computing model
+allow one to avoid high upfront investments in a computing
+infrastructure, thus reducing the time to market and facilitating a
+higher pace of innovation.
 
-Cloud computing resources are delivered to the users through three major
+Cloud computing resources are delivered to users through three major
 service models:
 
 -  *Infrastructure as a Service (IaaS)*: computing resources are
    delivered in the form of Virtual Machines (VMs). A VM provides to the
-   user a view of a dedicated hardware. The user is capable of managing
+   user a view of a dedicated server. The user is capable of managing
    the system within a VM and deploying the required software. Examples
    of IaaS are Amazon EC2 [1]_ and Google Compute Engine [2]_.
 -  *Platform as a Service (PaaS)*: the access to the resources is
@@ -58,7 +58,7 @@ service models:
    automatically managed by the platform. Examples of PaaS are Google
    App Engine [3]_ and Microsoft Azure [4]_.
 -  *Software as a Service (SaaS)*: application-level software services
-   are provided to the users on a subscription bases over the Internet.
+   are provided to the users on a subscription basis over the Internet.
    Examples of SaaS are Salesforce.com [5]_ and applications from the
    Amazon Web Services Marketplace [6]_.
 
@@ -80,28 +80,28 @@ disallowing their deployment on-premise. In other words, due to
 closed-source software, it is not possible to deploy the same software
 platform used, for example, by Amazon EC2 on a private computing
 infrastructure. Fortunately, there exist several open source Cloud
-platforms striving to address the issue, such as OpenStack, CloudStack,
-Eucalyptus, and OpenNebula. The mentioned projects basically allow
+platforms striving to address the issue, such as OpenStack, Eucalyptus,
+OpenNebula, and CloudStack. The mentioned projects basically allow
 anyone to not only deploy a private Cloud environment free of charge,
 but also contribute back to the development of the platform.
 
 The aim of this work is to facilitate further development and adoption
 of open source Cloud computing software by providing a step-by-step
-guide to installing OpenStack on multiple computing nodes using a set of
-shell scripts. The difference from the existing tools for automated
-installation of OpenStack is that the purpose of this work is not only
-obtaining a fully operational OpenStack Cloud environment, but also
-learning the steps required to perform the installation from the ground
-up and understanding the responsibilities and interaction of the
-OpenStack components. This is achieved by splitting the installation
-process into multiple logical steps, and implementing each step as a
-separate shell script. In this paper, we go through and discuss each of
-the complete sequence of steps required to install OpenStack on top of
-CentOS 6.3 using the Kernel-based Virtual Machine (KVM) as a hypervisor
-and GlusterFS as a distributed replicated file system to enable live
-migration and provide fault tolerance. The source code described in this
-paper is released under the Apache 2.0 License and is publicly available
-online [7]_.
+guide to installing OpenStack on multiple compute nodes of a real-world
+testbed using a set of shell scripts. The difference from the existing
+tools for automated installation of OpenStack is that the purpose of
+this work is not only obtaining a fully operational OpenStack Cloud
+environment, but also learning the steps required to perform the
+installation from the ground up and understanding the responsibilities
+and interaction of the OpenStack components. This is achieved by
+splitting the installation process into multiple logical steps, and
+implementing each step as a separate shell script. In this paper, we go
+through and discuss each of the complete sequence of steps required to
+install OpenStack on top of CentOS 6.3 using the Kernel-based Virtual
+Machine (KVM) as a hypervisor and GlusterFS as a distributed replicated
+file system to enable live migration and provide fault tolerance. The
+source code described in this paper is released under the Apache 2.0
+License and is publicly available online [7]_.
 
 In summary, this paper discusses and guides through the installation
 process of the following software:
@@ -110,7 +110,7 @@ process of the following software:
    from the Red Hat Enterprise Linux (RHEL) distribution.
 -  GlusterFS [9]_: a distributed file system providing shared replicated
    storage across multiple servers over Ethernet or Infiniband. Having a
-   storage shared between the compute nodes is a requirement for
+   storage system shared between the compute nodes is a requirement for
    enabling live migration of VM instances. However, having a
    centralized shared storage service, such as NAS limits the
    scalability and leads to a single point of failure. In contrast, the
@@ -160,9 +160,9 @@ OpenStack controls and manages compute, storage, and network resource
 aggregated from multiple servers in a data center. The system provides a
 web interface (dashboard) and APIs compatible with Amazon EC2 to the
 administrators and users that allow flexible on-demand provisioning of
-the resources. OpenStack also supports the Open Cloud Computing
-Interface (OCCI) [13]_, which is an emerging standard defining IaaS
-APIs, and delivered through the Open Grid Forum (OGF) [14]_.
+resources. OpenStack also supports the Open Cloud Computing Interface
+(OCCI) [13]_, which is an emerging standard defining IaaS APIs, and
+delivered through the Open Grid Forum (OGF) [14]_.
 
 In April 2012, the project lead and management functions have been
 transferred to a newly formed OpenStack Foundation. The goals of the
@@ -251,7 +251,7 @@ components, each of which is implemented as a standalone web service:
    attached to VMs, which is managed via an API compatible with Amazon
    Elastic Block Storage (EBS).
 -  *Node Controller*: controls the life cycle of VMs within a physical
-   nodes using the functionality provided by the hypervisor.
+   node using the functionality provided by the hypervisor.
 
 OpenNebula [18]_ is an open source IaaS Cloud platform originally
 established as a research project back in 2005 by Ignacio M. Llorente
@@ -268,7 +268,7 @@ OpenNebula provides the following features and components:
    as Access Control Lists (ACL) allowing fine grained permission
    management.
 -  *Virtualization Subsystem*: communicates with the hypervisor
-   installed in a physical host enabling the management and monitoring
+   installed on a physical host enabling the management and monitoring
    of the life cycle of VMs.
 -  *Network Subsystem*: manages virtual networking provided to
    interconnect VMs, supports VLANs and Open vSwitch.
@@ -295,7 +295,7 @@ the following components:
    Availability Zone consists of at least one Pod, and Secondary
    Storage, which is shared by all Pods in the Zone.
 -  *Pods*: are collections of hardware configured to form Clusters. A
-   pod can contain one or more Clusters, and a Layer 2 switch
+   Pod can contain one or more Clusters, and a Layer 2 switch
    architecture, which is shared by all Clusters in that Pod.
 -  *Clusters*: are groups of identical physical hosts running the same
    hypervisor. A Cluster has a dedicated Primary Storage device, where
@@ -345,7 +345,7 @@ CentOS, is incomplete or missing. In this work, we aim to close to gap
 by providing a step-by-step guide to installing OpenStack on CentOS.
 Another difference of the current guide from the official documentation
 is that rather then describing a general installation procedure, we
-focus on concrete and tested steps required to obtain an operating
+focus on concrete and tested steps required to obtain an operational
 OpenStack installation for our testbed. In other words, this guide can
 be considered to be an example of how OpenStack can be deployed on a
 real-world multi-node testbed.
@@ -373,7 +373,7 @@ OpenStack using the provided web interface or REST API.
 
 The difference of our approach from both DevStack and dodai-deploy is
 that instead of adding an abstraction layer and minimizing the number of
-steps required to be followed by the user to obtain an operating
+steps required to be followed by the user to obtain an operational
 OpenStack installation, we aim to explicitly describe and perform every
 installation step in the form of a separate shell script. This allows
 the user to proceed slowly and customize individual steps when
@@ -384,8 +384,19 @@ responsibilities and interaction of the OpenStack components. Our
 installation scripts have been developed and tested on CentOS, which is
 a widely used server Linux distribution. Another difference of our
 approach from both DevStack and dodai-deploy is that we also set up
-GlusterFS to provide a distributed shared storage, which enables
-efficient live migration of VMs and fault tolerance.
+GlusterFS to provide a distributed shared storage, which enables fault
+tolerance and efficient live migration of VM instances.
+
+Red Hat, a platinum member of the OpenStack Foundation, has announced
+its commercial offering of OpenStack starting from the Folsom release
+with the availability in 2013 [23]_. From the announcement it appears
+that the product will be delivered through the official repositories for
+Red Hat Enterprise Linux 6.3 or higher, and will contain Red Hat’s
+proprietary code providing integration with other Red Hat products, such
+as Red Hat Enterprise Virtualization for managing virtualized data
+centers and Red Hat Enterprise Linux. This announcement is a solid step
+to the direction of adoption of OpenStack in enterprises requiring
+commercial services and support.
 
 Step-by-Step OpenStack Installation
 ===================================
@@ -398,7 +409,7 @@ section, we explain and discuss every step needed to be followed to
 obtain a fully operational OpenStack installation on our testbed
 consisting of 1 controller and 4 compute nodes. The source code of the
 shell scripts described in this paper is released under the Apache 2.0
-License and is publicly available online [23]_.
+License and is publicly available online [24]_.
 
 Hardware Setup
 --------------
@@ -431,14 +442,14 @@ instances.
 Due to the specifics of our setup, the only one machine connected to the
 public network and the Internet is one of the IBM System x3200 M3
 servers. This server is refereed to as the *gateway*. The gateway is
-connected to the public network via the eth0 network interface.
+connected to the public network via the ``eth0`` network interface.
 
 All the machines form a local network connected via the Netgear FS116
 network switch. The compute hosts are connected to the local network
-through their eth1 network interfaces. The controller is connected to
-the local network through its eth0 interface. To provide the access to
-the public network and the Internet, the gateway performs Network
-Address Translation (NAT) for the hosts from the local network.
+through their ``eth1`` network interfaces. The controller is connected
+to the local network through its ``eth0`` interface. To provide the
+access to the public network and the Internet, the gateway performs
+Network Address Translation (NAT) for the hosts from the local network.
 
 Organization of the Installation Package
 ----------------------------------------
@@ -500,7 +511,7 @@ described below.
     must output ``admin`` for the default configuration.
 
 ``hosts:``
-    This files contains a mapping between the IP addresses of the hosts
+    This file contains a mapping between the IP addresses of the hosts
     in the local network and their host names. We apply the following
     host name convention: the compute hosts are named *computeX*, where
     *X* is replaced by the number of the host. According the described
@@ -513,7 +524,7 @@ described below.
     ``gateway``.
 
 ``ntp.conf:``
-    This files contains a list of Network Time Protocol (NTP) servers to
+    This file contains a list of Network Time Protocol (NTP) servers to
     use by all the hosts. It is important to set accessible servers,
     since time synchronization is important for OpenStack services to
     interact correctly. By default, this file defines servers used
@@ -541,27 +552,28 @@ Network Configuration.
 
 The simplest way to configure network is during the OS installation
 process. As mentioned above, in our setup, the gateway is connected to
-two networks: to the public network through the eth0 interface; and to
-the local network through the eth1 interface. Since in our setup the
-public network configuration can be obtain from a DHCP server, in the
-configuration of the eth0 interface it is only required to enable
-automatic connection by enabling the “Connect Automatically” option. We
-use static configuration for the local network; therefore, eth1 has be
-configured manually. Apart from enabling the “Connect Automatically”
-option, it is necessary to configure IPv4 by adding an IP address and
-netmask. According to the configuration defined in the ``hosts`` file
-described above, we assign 192.168.0.1/24 to the gateway.
+two networks: to the public network through the ``eth0`` interface; and
+to the local network through the ``eth1`` interface. Since in our setup
+the public network configuration can be obtained from a DHCP server, in
+the configuration of the ``eth0`` interface it is only required to
+enable the automatic connection by enabling the “Connect Automatically”
+option. We use static configuration for the local network; therefore,
+``eth1`` has be configured manually. Apart from enabling the “Connect
+Automatically” option, it is necessary to configure IPv4 by adding an IP
+address and netmask. According to the configuration defined in the
+``hosts`` file described above, we assign 192.168.0.1/24 to the gateway.
 
 One of the differences in the network configuration of the other compute
 hosts (``compute2``, ``compute3``, and ``compute4``) from the gateway is
-that eth0 should be kept disabled, as it is unused. The eth1 interface
-should be enabled by turning on the “Connect Automatically” option. The
-IP address and netmask for eth1 should be set to 192.168.0.\ *X*/24,
-where *X* is replaced by the compute host number. The gateway for the
-compute hosts should be set to 192.168.0.1, which the IP address of the
-gateway. The controller is configured similarly to the compute hosts
-with the only difference that the configuration should be done for eth0
-instead of eth1, since the controller has only one network interface.
+that ``eth0`` should be kept disabled, as it is unused. The ``eth1``
+interface should be enabled by turning on the “Connect Automatically”
+option. The IP address and netmask for ``eth1`` should be set to
+192.168.0.\ *X*/24, where *X* is replaced by the compute host number.
+The gateway for the compute hosts should be set to 192.168.0.1, which
+the IP address of the gateway. The controller is configured similarly to
+the compute hosts with the only difference that the configuration should
+be done for ``eth0`` instead of ``eth1``, since the controller has only
+one network interface.
 
 Hard Drive Partitioning.
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -573,7 +585,7 @@ the standard OS partitions: ``lv_root``, ``lv_home`` and ``lv_swap``.
 ``vg_gluster`` is a special volume group containing a single
 ``lv_gluster`` partition, which is dedicated to serve as a GlusterFS
 brick. The ``lv_gluster`` logical volume is formatted using the
-XFS [24]_ file system, as recommended for GlusterFS bricks.
+XFS [25]_ file system, as recommended for GlusterFS bricks.
 
 +------------------------+-------------+-----------------------+------------+
 | Device                 | Size (MB)   | Mount Point / Volume  | Type       |
@@ -662,12 +674,12 @@ Once CentOS is installed on all the machines, the next step is to
 configure NAT on the gateway to enable the Internet access on all the
 hosts. First, it is necessary to check whether the Internet is available
 on the gateway itself. If the Internet is not available, the problem
-might be in the configuration of eth0, the network interface connected
-to the public network in our setup.
+might be in the configuration of ``eth0``, the network interface
+connected to the public network in our setup.
 
 In all the following steps, it is assumed that the user logged in is
 ``root``. If the Internet is available on the gateway, it is necessary
-to install the Git [25]_ version control client to be able to clone the
+to install the Git [26]_ version control client to be able to clone the
 repository containing the installation scripts. This can be done using
 ``yum``, the default package manager in CentOS, as follows:
 
@@ -698,8 +710,8 @@ All the scripts described below can be run by executing
 This script flushes all the default ``iptables`` rules to open all the
 ports. This is acceptable for testing; however, it is not recommended
 for production environments due to security concerns. Then, the script
-sets up NAT using ``iptables`` by forwarding packets from eth1 (the
-local network interface) through eth0. The last stage is saving the
+sets up NAT using ``iptables`` by forwarding packets from ``eth1`` (the
+local network interface) through ``eth0``. The last stage is saving the
 defined ``iptables`` rules and restarting the service.
 
 ::
@@ -809,7 +821,7 @@ recommended to open only the required ports.
 
 (5) ``02-selinux-permissive.sh``
 
-This script switches SELinux [26]_ into the permissive mode. By default,
+This script switches SELinux [27]_ into the permissive mode. By default,
 SELinux blocks certain operations, such as VM migrations. Switching
 SELinux into the permissive mode is not recommended for production
 environments, but is acceptable for testing purposes.
@@ -977,7 +989,7 @@ to comment the ``modprobe kvm-intel`` line and uncomment the
 
 (13) ``03-libvirt-install.sh``
 
-This script installs Libvirt [27]_, its dependencies and the related
+This script installs Libvirt [28]_, its dependencies and the related
 tools. Libvirt provides an abstraction and a common Application
 Programming Interface (API) over various hypervisors. It is used by
 OpenStack to provide support for multiple hypervisors including KVM and
@@ -1041,7 +1053,7 @@ hosts.
 
 (16) ``01-epel-add-repo.sh``
 
-This scripts adds the Extra Packages for Enterprise Linux [28]_ (EPEL)
+This scripts adds the Extra Packages for Enterprise Linux [29]_ (EPEL)
 repository, which contains the OpenStack related packages.
 
 ::
@@ -1316,9 +1328,9 @@ The purpose of this script is to create user accounts, roles and tenants
 in Keystone for the admin user and service accounts for each OpenStack
 service: Keystone, Glance, and Nova. Since the process is complicated
 when done manually (it is necessary to define relations between database
-records), we use the *keystone-init* project [29]_ to automate the
+records), we use the *keystone-init* project [30]_ to automate the
 process. The *keystone-init* project allows one to create a
-configuration file in the “YAML Ain’t Markup Language” [30]_ (YAML) data
+configuration file in the “YAML Ain’t Markup Language” [31]_ (YAML) data
 format defining the required OpenStack user accounts. Then, according
 the defined configuration, the required database records are
 automatically created.
@@ -1488,7 +1500,7 @@ sets the services to automatically start during the system start up.
 
 (37) ``18-add-cirros.sh``
 
-This script downloads the CirrOS VM image [31]_ and imports it into
+This script downloads the CirrOS VM image [32]_ and imports it into
 Glance. This image contains a pre-installed CirrOS, a Tiny OS
 specialized for running in a Cloud. The image is very simplistic: its
 size is just 9.4 MB. However, it is sufficient for testing OpenStack.
@@ -1511,7 +1523,7 @@ size is just 9.4 MB. However, it is sufficient for testing OpenStack.
 
 (38) ``19-add-ubuntu.sh``
 
-This script downloads the Ubuntu Cloud Image [32]_ and imports it into
+This script downloads the Ubuntu Cloud Image [33]_ and imports it into
 Glance. This is a VM image with a pre-installed version of Ubuntu that
 is customized by Ubuntu engineering to run on Cloud platforms such as
 Openstack, Amazon EC2, and LXC.
@@ -1679,9 +1691,9 @@ options:
 -  the Qpid server host name – controller;
 -  the host running the Nova network service – compute1 (i.e. gateway);
 -  the network used for VMs – 10.0.0.0/24;
--  the network interface used to bridge VMs to – eth1;
+-  the network interface used to bridge VMs to – ``eth1``;
 -  the Linux bridge used by VMs – br100;
--  the public network interface – eth1;
+-  the public network interface – ``eth1``;
 -  the Glance service host name – controller;
 -  the VNC server host name – controller;
 -  the IP address of the host running VNC proxies (they must be run on
@@ -1771,7 +1783,7 @@ This script sets restrictive permissions (640) on the Nova configuration
 file, since it contains sensitive information, such as user credentials.
 Then, the script sets the ownership on the Nova and Libvirt related
 directories to the ``nova`` user and ``nova`` group. The script also
-sets the user and group used by the Quick EMUlator [33]_ (QEMU) service
+sets the user and group used by the Quick EMUlator [34]_ (QEMU) service
 to ``nova``. This is required since a number of directories need to
 accessed by both Nova using the ``nova`` user and ``nova`` group, and
 QEMU.
@@ -1834,7 +1846,7 @@ Nova supports three network configuration modes:
 
        network_manager=nova.network.manager.FlatManager
 
-2. Flat DHCP Mode: Nova runs a Dnsmasq [34]_ server listening to a
+2. Flat DHCP Mode: Nova runs a Dnsmasq [35]_ server listening to a
    created network bridge that assigns public IP addresses to VM
    instances. This is the mode we use in this work. There must be only
    one host running the ``openstack-nova-network`` service. The
@@ -2295,7 +2307,7 @@ Nova Network
 If after a start up, the ``openstack-nova-network`` service hangs with
 the following last message in the log file: ‘Attempting to grab file
 lock “iptables” for method “apply”’, the solution is the
-following [35]_:
+following [36]_:
 
 ::
 
@@ -2305,7 +2317,7 @@ Conclusion
 ==========
 
 We have gone through and discussed all the steps required to get from
-bare hardware to a fully operating OpenStack infrastructure. We have
+bare hardware to a fully operational OpenStack infrastructure. We have
 started from notes on installing CentOS on the nodes, continued through
 setting up a network gateway, distributed replicated storage using
 GlusterFS, KVM hypervisor, and all the main OpenStack services. We have
@@ -2323,9 +2335,9 @@ developed by the project community. It is hard to underestimate the role
 of the community support in facilitating the adoption of open source
 software. We believe that the OpenStack project has attracted a large,
 active and growing community of people, who will undoubtedly greatly
-contribute to further advancement of both the software and documentation
-of OpenStack leading to a significant impact on the adoption of free
-open source software and Cloud computing.
+contribute to further advancements of both the software and
+documentation of OpenStack leading to a significant impact on the
+adoption of free open source software and Cloud computing.
 
 References
 ==========
@@ -2429,51 +2441,55 @@ Hat Enterprise Linux 6 Installation Guide,” 2012.
    Puppet. `http://puppetlabs.com/ <http://puppetlabs.com/>`_.
 
 .. [23]
+   Red Hat OpenStack.
+   `http://www.redhat.com/openstack/ <http://www.redhat.com/openstack/>`_.
+
+.. [24]
    The project repository.
    `https://github.com/beloglazov/openstack-centos-kvm-glusterfs <https://github.com/beloglazov/openstack-centos-kvm-glusterfs>`_.
 
-.. [24]
+.. [25]
    XFS.
    `http://en.wikipedia.org/wiki/XFS <http://en.wikipedia.org/wiki/XFS>`_.
 
-.. [25]
+.. [26]
    Git. `http://git-scm.com/ <http://git-scm.com/>`_.
 
-.. [26]
+.. [27]
    SELinux.
    `http://en.wikipedia.org/wiki/Security-Enhanced\_Linux <http://en.wikipedia.org/wiki/Security-Enhanced_Linux>`_.
 
-.. [27]
+.. [28]
    Libvirt. `http://libvirt.org/ <http://libvirt.org/>`_.
 
-.. [28]
+.. [29]
    The EPEL repository.
    `http://fedoraproject.org/wiki/EPEL <http://fedoraproject.org/wiki/EPEL>`_.
 
-.. [29]
+.. [30]
    The *keystone-init* project.
    `https://github.com/nimbis/keystone-init <https://github.com/nimbis/keystone-init>`_.
 
-.. [30]
+.. [31]
    YAML.
    `http://en.wikipedia.org/wiki/YAML <http://en.wikipedia.org/wiki/YAML>`_.
 
-.. [31]
+.. [32]
    CirrOS.
    `https://launchpad.net/cirros/ <https://launchpad.net/cirros/>`_.
 
-.. [32]
+.. [33]
    Ubuntu Cloud Images.
    `http://uec-images.ubuntu.com/ <http://uec-images.ubuntu.com/>`_.
 
-.. [33]
+.. [34]
    QEMU.
    `http://en.wikipedia.org/wiki/QEMU <http://en.wikipedia.org/wiki/QEMU>`_.
 
-.. [34]
+.. [35]
    Dnsmasq.
    `http://en.wikipedia.org/wiki/Dnsmasq <http://en.wikipedia.org/wiki/Dnsmasq>`_.
 
-.. [35]
+.. [36]
    OpenStack Compute Questions.
    `https://answers.launchpad.net/nova/+question/200985 <https://answers.launchpad.net/nova/+question/200985>`_.
