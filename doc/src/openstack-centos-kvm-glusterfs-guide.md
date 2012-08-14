@@ -1,7 +1,7 @@
 % A Step-by-Step Guide to Installing OpenStack on CentOS Using the KVM Hypervisor and GlusterFS
   Distributed File System
 % Anton Beloglazov; Sareh Fotuhi Piraghaj; Mohammed Alrokayan; Rajkumar Buyya
-% 23rd of July 2012
+% 14th of August 2012
 
 
 \newpage
@@ -300,6 +300,15 @@ installation scripts have been developed and tested on CentOS, which is a widely
 distribution. Another difference of our approach from both DevStack and dodai-deploy is that we also
 set up GlusterFS to provide a distributed shared storage, which enables efficient live migration of
 VMs and fault tolerance.
+
+Red Hat, a platinum member of the OpenStack Foundation, has announced its commercial offering of
+OpenStack starting from the Folsom release with the availability in
+2013^[Red Hat OpenStack. [http://www.redhat.com/openstack/](http://www.redhat.com/openstack/)]. From
+the announcement it appears that the product will be delivered through the official repositories for
+Red Hat Enterprise Linux 6.3 or higher, and will contain Red Hat's proprietary code providing
+integration with other Red Hat products, such as Red Hat Enterprise Virtualization for managing
+virtualized data centers and Red Hat Enterprise Linux. This announcement is a solid step to the
+direction of adoption of OpenStack in enterprises requiring commercial services and support.
 
 
 # Step-by-Step OpenStack Installation
