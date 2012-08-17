@@ -1,5 +1,4 @@
-% A Step-by-Step Guide to Installing OpenStack on CentOS Using the KVM Hypervisor and GlusterFS
-  Distributed File System
+% Deploying OpenStack on CentOS Using the KVM Hypervisor and GlusterFS Distributed File System
 % Anton Beloglazov; Sareh Fotuhi Piraghaj; Mohammed Alrokayan; Rajkumar Buyya
 % 14th of August 2012
 
