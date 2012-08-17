@@ -311,7 +311,7 @@ virtualized data centers and Red Hat Enterprise Linux. This announcement is a so
 direction of adoption of OpenStack in enterprises requiring commercial services and support.
 
 
-# Step-by-Step OpenStack Installation
+# Step-by-Step OpenStack Deployment
 
 As mentioned earlier, the aim of this work is to detail the steps required to perform a complete
 installation of OpenStack on multiple nodes. We split the installation process into multiple
