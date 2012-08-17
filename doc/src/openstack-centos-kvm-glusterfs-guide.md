@@ -2140,7 +2140,7 @@ rm /var/lib/nova/tmp/nova-iptables.lock
 ```
 
 
-# Conclusion
+# Conclusions
 
 We have gone through and discussed all the steps required to get from bare hardware to a fully
 operational OpenStack infrastructure. We have started from notes on installing CentOS on the nodes,
