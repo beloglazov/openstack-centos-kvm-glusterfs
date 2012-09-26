@@ -1530,6 +1530,14 @@ chown -R nova:nova /var/lib/libvirt</code></pre>
 <h3 id="nova-network"><a href="#TOC"><span class="header-section-number">5.5.3</span> Nova Network</a></h3>
 <p>If after a start up, the <code>openstack-nova-network</code> service hangs with the following last message in the log file: ‘Attempting to grab file lock “iptables” for method “apply”’, the solution is the following<sup><a href="#fn36" class="footnoteRef" id="fnref36">36</a></sup>:</p>
 <pre class="sourceCode Bash"><code class="sourceCode bash"><span class="kw">rm</span> /var/lib/nova/tmp/nova-iptables.lock</code></pre>
+<p>Another problem is that sometimes a VM instance cannot be deleted and gets stuck in the <code>deleting</code> state with a message in <code>/var/log/nova/compute.log</code> similar to the following:</p>
+<pre><code>nova.rpc.amqp RemoteError: Remote error: ProcessExecutionError \
+   Unexpected error while running command.
+nova.rpc.amqp Command: sudo nova-rootwrap dhcp_release br100 \
+   10.0.0.2 fa:16:3e:6b:f5:72
+nova.rpc.amqp Exit code: 1</code></pre>
+<p>The solution to this problem is to modify <code>/etc/nova/nova.conf</code> and set:</p>
+<pre><code>force_dhcp_release = False</code></pre>
 <h1 id="conclusions"><a href="#TOC"><span class="header-section-number">6</span> Conclusions</a></h1>
 <p>We have gone through and discussed all the steps required to get from bare hardware to a fully operational OpenStack infrastructure. We have started from notes on installing CentOS on the nodes, continued through setting up a network gateway, distributed replicated storage using GlusterFS, KVM hypervisor, and all the main OpenStack services. We have concluded with steps to test the OpenStack installation, suggestions on ways of finding problem sources and resolving them, and a discussion of solutions to a number of problems that may be encountered during the installation process.</p>
 <p>In our opinion, the availability of step-by-step installation and configuration guides, such as this one, is very important to lower the barrier to entry into the real world application of open source Cloud platforms for a wider audience. The task of providing such a guidance lies on both the official documentation and tutorials and materials developed by the project community. It is hard to underestimate the role of the community support in facilitating the adoption of open source software. We believe that the OpenStack project has attracted a large, active and growing community of people, who will undoubtedly greatly contribute to further advancements of both the software and documentation of OpenStack leading to a significant impact on the adoption of free open source software and Cloud computing.</p>

@@ -2312,6 +2312,25 @@ following [36]_:
 
     rm /var/lib/nova/tmp/nova-iptables.lock
 
+Another problem is that sometimes a VM instance cannot be deleted and
+gets stuck in the ``deleting`` state with a message in
+``/var/log/nova/compute.log`` similar to the following:
+
+::
+
+    nova.rpc.amqp RemoteError: Remote error: ProcessExecutionError \
+       Unexpected error while running command.
+    nova.rpc.amqp Command: sudo nova-rootwrap dhcp_release br100 \
+       10.0.0.2 fa:16:3e:6b:f5:72
+    nova.rpc.amqp Exit code: 1
+
+The solution to this problem is to modify ``/etc/nova/nova.conf`` and
+set:
+
+::
+
+    force_dhcp_release = False
+
 Conclusions
 ===========
 
