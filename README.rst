@@ -2285,7 +2285,7 @@ And such as:
        instance-00000015/disk: Permission denied
 
 Both the problems can be resolved by setting the user and group in the
-``/etc/libvirt/libvirtd.conf`` configuration file as follows:
+``/etc/libvirt/qemu.conf`` configuration file as follows:
 
 ::
 

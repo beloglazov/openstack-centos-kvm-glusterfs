@@ -2113,7 +2113,7 @@ qemu-kvm: -drive file=/var/lib/nova/instances/instance-00000015/ \
    instance-00000015/disk: Permission denied
 ```
 
-Both the problems can be resolved by setting the user and group in the `/etc/libvirt/libvirtd.conf`
+Both the problems can be resolved by setting the user and group in the `/etc/libvirt/qemu.conf`
 configuration file as follows:
 
 ```

@@ -1520,7 +1520,7 @@ qemu-kvm: -drive <span class="ot">file=</span>/var/lib/nova/instances/instance-0
    disk,<span class="ot">if=</span>none,id=drive-virtio-disk0,format=qcow2,cache=none: <span class="kw">\</span>
    could not open disk image /var/lib/nova/instances/ <span class="kw">\</span>
    instance-00000015/disk: Permission denied</code></pre>
-<p>Both the problems can be resolved by setting the user and group in the <code>/etc/libvirt/libvirtd.conf</code> configuration file as follows:</p>
+<p>Both the problems can be resolved by setting the user and group in the <code>/etc/libvirt/qemu.conf</code> configuration file as follows:</p>
 <pre><code>user = &quot;nova&quot;
 group = &quot;nova&quot;</code></pre>
 <p>And also changing the ownership as follows:</p>
