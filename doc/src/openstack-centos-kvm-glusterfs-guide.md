@@ -2010,19 +2010,22 @@ nova boot --image ubuntu --flavor m1.small --key_name test ubuntu
 (@) `05-ssh-into-vm.sh`
 
 This script shows how to SSH into a VM instance, which has been injected with the previously
-generated `test` key. The script accepts one argument: the IP address of the VM instance.
+generated `test` key. The script accepts two arguments: the IP address of the VM instance, and the
+user name. To connect to an instance of the Ubuntu Cloud image, the user name should be set to
+`ubuntu`.
 
 ```Bash
 # SSH into a VM instance using the generated test.pem key.
 
-if [ $# -ne 1 ]
+if [ $# -ne 2 ]
 then
-    echo "You must specify one arguments - \
-	   the IP address of the VM instance"
+    echo "You must specify two arguments:"
+    echo "(1) the IP address of the VM instance"
+    echo "(2) the user name"
     exit 1
 fi
 
-ssh -i ../config/test.pem -l test $1
+ssh -i ../config/test.pem -l $2 $1
 ```
 
 

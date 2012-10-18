@@ -1464,17 +1464,18 @@ nova boot --image ubuntu --flavor m1.small --key_name <span class="kw">test</spa
 <ol start="61" style="list-style-type: example">
 <li><code>05-ssh-into-vm.sh</code></li>
 </ol>
-<p>This script shows how to SSH into a VM instance, which has been injected with the previously generated <code>test</code> key. The script accepts one argument: the IP address of the VM instance.</p>
+<p>This script shows how to SSH into a VM instance, which has been injected with the previously generated <code>test</code> key. The script accepts two arguments: the IP address of the VM instance, and the user name. To connect to an instance of the Ubuntu Cloud image, the user name should be set to <code>ubuntu</code>.</p>
 <pre class="sourceCode Bash"><code class="sourceCode bash"><span class="co"># SSH into a VM instance using the generated test.pem key.</span>
 
-<span class="kw">if </span>[ <span class="ot">$#</span> -ne 1 ]
+<span class="kw">if </span>[ <span class="ot">$#</span> -ne 2 ]
 <span class="kw">then</span>
-    <span class="kw">echo</span> <span class="st">&quot;You must specify one arguments - \</span>
-<span class="st">       the IP address of the VM instance&quot;</span>
+    <span class="kw">echo</span> <span class="st">&quot;You must specify two arguments:&quot;</span>
+    <span class="kw">echo</span> <span class="st">&quot;(1) the IP address of the VM instance&quot;</span>
+    <span class="kw">echo</span> <span class="st">&quot;(2) the user name&quot;</span>
     <span class="kw">exit</span> 1
 <span class="kw">fi</span>
 
-<span class="kw">ssh</span> -i ../config/test.pem -l <span class="kw">test</span> <span class="ot">$1</span></code></pre>
+<span class="kw">ssh</span> -i ../config/test.pem -l <span class="ot">$2</span> <span class="ot">$1</span></code></pre>
 <ol start="62" style="list-style-type: example">
 <li><code>06-nova-volume-create.sh</code></li>
 </ol>

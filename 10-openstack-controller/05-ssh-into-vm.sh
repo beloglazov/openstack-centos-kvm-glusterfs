@@ -17,10 +17,13 @@
 
 # SSH into a VM instance using the generated test.pem key.
 
-if [ $# -ne 1 ]
+
+if [ $# -ne 2 ]
 then
-    echo "You must specify one arguments - the IP address of the VM instance"
+    echo "You must specify two arguments:"
+    echo "(1) the IP address of the VM instance"
+    echo "(2) the user name"
     exit 1
 fi
 
-ssh -i ../config/test.pem -l test $1
+ssh -i ../config/test.pem -l $2 $1
