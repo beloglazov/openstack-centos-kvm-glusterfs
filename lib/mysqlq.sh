@@ -24,7 +24,11 @@ then
     exit 1
 fi
 
+set -f
+
 echo "QUERY: "$1
 
 DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 echo $1 | ${DIR}/mysql.sh 
+
+set +f
