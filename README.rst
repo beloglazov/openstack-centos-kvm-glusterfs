@@ -543,8 +543,10 @@ CentOS
 The installation scripts have been tested with CentOS 6.3, which has
 been installed on all the hosts. The CentOS installation mainly follows
 the standard process described in detail in the Red Hat Enterprise Linux
-6 Installation Guide [6]. The steps of the installation process that
-differ from the standard are discussed in this section.
+6 Installation Guide [6]. The minimal configuration option is
+sufficient, since all the required packages can be installed later when
+needed. The steps of the installation process that differ from the
+default are discussed in this section.
 
 Network Configuration.
 ^^^^^^^^^^^^^^^^^^^^^^
