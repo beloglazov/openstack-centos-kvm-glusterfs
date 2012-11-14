@@ -1264,16 +1264,14 @@ chkconfig openstack-nova-compute on</code></pre>
 </ol>
 <p>It is assumed that the gateway host is one of the compute hosts; therefore, the OpenStack compute service has already been configured and is running. This scripts starts 3 additional Nova services that are specific to the gateway host: <code>openstack-nova-network</code>, <code>openstack-nova-novncproxy</code>, and <code>openstack-nova-xvpvncproxy</code>. The <code>openstack-nova-network</code> service is responsible for bridging VM instances into the physical network, and configuring the Dnsmasq service for assigning IP addresses to the VMs. The VNC proxy services enable VNC connections to VM instances from the outside network; therefore, they must be run on a machine that has access to the public network, which is the gateway in our case.</p>
 <pre class="sourceCode Bash"><code class="sourceCode bash"><span class="co"># Start the Libvirt and Nova services</span>
-<span class="co"># (network, compute and VNC proxies)</span>
+<span class="co"># (network, and VNC proxies)</span>
 service libvirtd restart
 service openstack-nova-network restart
-service openstack-nova-compute restart
 service openstack-nova-novncproxy restart
 service openstack-nova-xvpvncproxy restart
 
 <span class="co"># Make the service start on the system start up</span>
 chkconfig openstack-nova-network on
-chkconfig openstack-nova-compute on
 chkconfig openstack-nova-novncproxy on
 chkconfig openstack-nova-xvpvncproxy on</code></pre>
 <ol start="52" style="list-style-type: example">

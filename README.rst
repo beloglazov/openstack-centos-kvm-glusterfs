@@ -1923,16 +1923,14 @@ the gateway in our case.
 ::
 
     # Start the Libvirt and Nova services
-    # (network, compute and VNC proxies)
+    # (network, and VNC proxies)
     service libvirtd restart
     service openstack-nova-network restart
-    service openstack-nova-compute restart
     service openstack-nova-novncproxy restart
     service openstack-nova-xvpvncproxy restart
 
     # Make the service start on the system start up
     chkconfig openstack-nova-network on
-    chkconfig openstack-nova-compute on
     chkconfig openstack-nova-novncproxy on
     chkconfig openstack-nova-xvpvncproxy on
 
