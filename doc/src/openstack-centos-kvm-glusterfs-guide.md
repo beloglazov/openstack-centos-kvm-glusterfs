@@ -1972,7 +1972,7 @@ user `cirros` with the `cubswin:)` password. The following command can be used t
 instance once it is booted:
 
 ```Bash
-ssh curros@<ip address>
+ssh cirros@<ip address>
 ```
 
 Where `<ip address>` is replaced with the actual IP address of the VM instance. The following
