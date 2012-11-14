@@ -1110,6 +1110,8 @@ openstack-config --set /etc/nova/nova.conf <span class="kw">\</span>
    DEFAULT flat_network_bridge br100
 openstack-config --set /etc/nova/nova.conf <span class="kw">\</span>
    DEFAULT public_interface eth1
+openstack-config --set /etc/nova/nova.conf <span class="kw">\</span>
+   DEFAULT force_dhcp_release False
 
 <span class="co"># Set the Glance host name</span>
 openstack-config --set /etc/nova/nova.conf <span class="kw">\</span>

@@ -1,13 +1,13 @@
 #!/bin/sh
 
 # Copyright 2012 Anton Beloglazov
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,6 +41,7 @@ openstack-config --set /etc/nova/nova.conf DEFAULT fixed_range 10.0.0.0/24
 openstack-config --set /etc/nova/nova.conf DEFAULT flat_interface eth1
 openstack-config --set /etc/nova/nova.conf DEFAULT flat_network_bridge br100
 openstack-config --set /etc/nova/nova.conf DEFAULT public_interface eth1
+openstack-config --set /etc/nova/nova.conf DEFAULT force_dhcp_release False
 
 # Set the Glance host name
 openstack-config --set /etc/nova/nova.conf DEFAULT glance_host controller
