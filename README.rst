@@ -1208,59 +1208,24 @@ like creating users, tenants, etc:
           --os_auth_url=http://controller:5000/v2.0 user-list
 
 Services, such as Glance and Nova, can also authenticate in Keystone
-using one of two ways. One way is to share the admin token among the
-services and authenticate using the token. However, it is also possible
-to use special users created in Keystone for each service. By default,
-these users are nova, glance, etc. The service users are assigned to the
-service tenant and admin role in that tenant.
+using either of the two methods. One way is to share the admin token
+among the services and authenticate using the token. However, it is also
+possible to use special users created in Keystone for each service. By
+default, these users are nova, glance, etc. The service users are
+assigned to the service tenant and admin role in that tenant.
 
-Here is an example of the password-based authenication for nova:
-
-::
-
-        nova \
-           --os_username=nova \
-           --os_password=<password> \
-           --os_tenant_name=service \
-           --os_auth_url=http://controller:5000/v2.0 list
-
-One of two sets of authentication parameters is required to be specified
-in ``/etc/nova/api-paste.ini``. The first option is to set up the
-token-based authentication, like the following:
-
-::
-
-    auth_host = controller
-    auth_protocol = http
-    admin_token = <admin token>
-
-The second option is to set up the password-based authentication, as
-follows:
-
-::
-
-    auth_host = controller
-    auth_protocol = http
-    admin_tenant_name = service
-    admin_user = nova
-    admin_password = <password>
-
-The password-based authentication might be preferable, since it uses
-Keystone’s database backend to store user credentials. Therefore, it is
+In this work, we use password-based authentication. It uses Keystone’s
+database backend to store user credentials; and therefore, it is
 possible to update user credentials, for example, using Keystone’s
 command line tools without the necessity to re-generate the admin token
-and update the configuration files.
-
-Even though, the user name and password are specified in the config
-file, it is still necessary to provide these data when using the command
-line tools. One way to do this is to directly provide the credentials in
-the form of command line arguments, as shown above. Another approach,
-which we apply in this work, is to set corresponding environmental
-variables that will be automatically used by the command line tools.
+and update the configuration files. However, since both methods can
+coexist, the installation scripts set up the token-based authentication
+as well.
 
 The ``06-keystone-generate-admin-token.sh`` script generates a random
 token used to authorize the Keystone admin account. The generated token
-is stored in the ``./keystone-admin-token`` file.
+is stored in the ``./keystone-admin-token`` file, which is later used to
+configure Keystone.
 
 ::
 
@@ -1613,7 +1578,49 @@ provided in the ``lib`` directory.
     # defined in ../lib/nova-config.sh
     ../lib/nova-config.sh
 
-The content of the ``nova-config.sh`` script is given below:
+Among other configuration options, the ``nova-config.sh`` script sets up
+password-based authentication of Nova in Keystone and other OpenStack
+services. One of two sets of authentication parameters is required to be
+specified in ``/etc/nova/api-paste.ini`` according to the selected
+authentication method, whether it is token-based or password-based
+authentication. The first option is to set up the token-based
+authentication, like the following:
+
+::
+
+    auth_host = controller
+    auth_protocol = http
+    admin_token = <admin token>
+
+The second option is to set up password-based authentication, as
+follows:
+
+::
+
+    auth_uri = http://controller:5000/v2.0/
+    admin_tenant_name = service
+    admin_user = nova
+    admin_password = <password>
+
+In this work, we use password-based authentication. Even though, the
+user name and password are specified in the config file, it is still
+necessary to provide these data when using the command line tools. One
+way to do this is to directly provide the credentials in the form of
+command line arguments, as following:
+
+::
+
+        nova \
+           --os_username=nova \
+           --os_password=<password> \
+           --os_tenant_name=service \
+           --os_auth_url=http://controller:5000/v2.0 list
+
+Another approach, which we apply in this work, is to set corresponding
+environmental variables that will be automatically used by the command
+line tools. In this case, all the ``--os-*`` options can be omitted. The
+required configuration is done by the ``nova-config.sh`` script shown
+below:
 
 ::
 
