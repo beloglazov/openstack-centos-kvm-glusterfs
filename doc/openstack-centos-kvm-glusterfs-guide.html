@@ -1508,24 +1508,30 @@ nova volume-attach <span class="ot">$1</span> <span class="ot">$2</span> /dev/vd
 service openstack-glance-api restart</code></pre>
 <h3 id="nova-compute"><a href="#TOC"><span class="header-section-number">5.5.2</span> Nova Compute</a></h3>
 <p>The <code>libvirtd</code> service may fail with errors, such the following:</p>
-<pre class="sourceCode Bash"><code class="sourceCode bash">15391: error <span class="kw">:</span> qemuProcessReadLogOutput:1005 <span class="kw">:</span> <span class="kw">\</span>
-   internal error Process exited <span class="kw">while</span> reading console <span class="kw">\</span>
-   log output: chardev: opening backend <span class="st">&quot;file&quot;</span> failed</code></pre>
+<pre><code>15391: error : qemuProcessReadLogOutput:1005 : \
+   internal error Process exited while reading console \
+   log output: chardev: opening backend &quot;file&quot; failed</code></pre>
 <p>And such as:</p>
-<pre class="sourceCode Bash"><code class="sourceCode bash">error <span class="kw">:</span> qemuProcessReadLogOutput:1005 <span class="kw">:</span> internal error <span class="kw">\</span>
-   Process exited <span class="kw">while</span> reading console log output: <span class="kw">\</span>
+<pre><code>error : qemuProcessReadLogOutput:1005 : internal error \
+   Process exited while reading console log output: \
    char device redirected to /dev/pts/3
-qemu-kvm: -drive <span class="ot">file=</span>/var/lib/nova/instances/instance-00000015/ <span class="kw">\</span>
-   disk,<span class="ot">if=</span>none,id=drive-virtio-disk0,format=qcow2,cache=none: <span class="kw">\</span>
-   could not open disk image /var/lib/nova/instances/ <span class="kw">\</span>
+qemu-kvm: -drive file=/var/lib/nova/instances/instance-00000015/ \
+   disk,if=none,id=drive-virtio-disk0,format=qcow2,cache=none: \
+   could not open disk image /var/lib/nova/instances/ \
    instance-00000015/disk: Permission denied</code></pre>
 <p>Both the problems can be resolved by setting the user and group in the <code>/etc/libvirt/qemu.conf</code> configuration file as follows:</p>
-<pre><code>user = &quot;nova&quot;
-group = &quot;nova&quot;</code></pre>
+<pre class="sourceCode Bash"><code class="sourceCode bash">user = <span class="st">&quot;nova&quot;</span>
+group = <span class="st">&quot;nova&quot;</span></code></pre>
 <p>And also changing the ownership as follows:</p>
-<pre><code>chown -R nova:nova /var/cache/libvirt
-chown -R nova:nova /var/run/libvirt
-chown -R nova:nova /var/lib/libvirt</code></pre>
+<pre class="sourceCode Bash"><code class="sourceCode bash"><span class="kw">chown</span> -R nova:nova /var/cache/libvirt
+<span class="kw">chown</span> -R nova:nova /var/run/libvirt
+<span class="kw">chown</span> -R nova:nova /var/lib/libvirt</code></pre>
+<p>Another potential problem is hitting the limit on the maximum number of VM instances, which results in the following error:</p>
+<pre><code>ERROR: Quota exceeded: code=InstanceLimitExceeded (HTTP 413)</code></pre>
+<p>The solution is to increase the quota by executing the following command:</p>
+<pre class="sourceCode Bash"><code class="sourceCode bash">nova-manage project quota --project=<span class="kw">&lt;</span>project ID<span class="kw">&gt;</span> <span class="kw">\</span>
+   --key=instances --value=<span class="kw">&lt;</span>number of instances<span class="kw">&gt;</span></code></pre>
+<p>Where <code>&lt;project ID&gt;</code> is the ID of the project to increase the quota for; and <code>&lt;number of instances&gt;</code> is the new limit that you want to set on the maximum allowed number of VM instances.</p>
 <h3 id="nova-network"><a href="#TOC"><span class="header-section-number">5.5.3</span> Nova Network</a></h3>
 <p>If after a start up, the <code>openstack-nova-network</code> service hangs with the following last message in the log file: ‘Attempting to grab file lock “iptables” for method “apply”’, the solution is the following<sup><a href="#fn36" class="footnoteRef" id="fnref36">36</a></sup>:</p>
 <pre class="sourceCode Bash"><code class="sourceCode bash"><span class="kw">rm</span> /var/lib/nova/tmp/nova-iptables.lock</code></pre>
@@ -1536,7 +1542,7 @@ nova.rpc.amqp Command: sudo nova-rootwrap dhcp_release br100 \
    10.0.0.2 fa:16:3e:6b:f5:72
 nova.rpc.amqp Exit code: 1</code></pre>
 <p>The solution to this problem is to modify <code>/etc/nova/nova.conf</code> and set:</p>
-<pre><code>force_dhcp_release = False</code></pre>
+<pre class="sourceCode Bash"><code class="sourceCode bash">force_dhcp_release = False</code></pre>
 <h1 id="conclusions"><a href="#TOC"><span class="header-section-number">6</span> Conclusions</a></h1>
 <p>We have gone through and discussed all the steps required to get from bare hardware to a fully operational OpenStack infrastructure. We have started from notes on installing CentOS on the nodes, continued through setting up a network gateway, distributed replicated storage using GlusterFS, KVM hypervisor, and all the main OpenStack services. We have concluded with steps to test the OpenStack installation, suggestions on ways of finding problem sources and resolving them, and a discussion of solutions to a number of problems that may be encountered during the installation process.</p>
 <p>In our opinion, the availability of step-by-step installation and configuration guides, such as this one, is very important to lower the barrier to entry into the real world application of open source Cloud platforms for a wider audience. The task of providing such a guidance lies on both the official documentation and tutorials and materials developed by the project community. It is hard to underestimate the role of the community support in facilitating the adoption of open source software. We believe that the OpenStack project has attracted a large, active and growing community of people, who will undoubtedly greatly contribute to further advancements of both the software and documentation of OpenStack leading to a significant impact on the adoption of free open source software and Cloud computing.</p>

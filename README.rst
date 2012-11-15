@@ -2312,6 +2312,25 @@ And also changing the ownership as follows:
     chown -R nova:nova /var/run/libvirt
     chown -R nova:nova /var/lib/libvirt
 
+Another potential problem is hitting the limit on the maximum number of
+VM instances, which results in the following error:
+
+::
+
+    ERROR: Quota exceeded: code=InstanceLimitExceeded (HTTP 413)
+
+The solution is to increase the quota by executing the following
+command:
+
+::
+
+    nova-manage project quota --project=<project ID> \
+       --key=instances --value=<number of instances>
+
+Where ``<project ID>`` is the ID of the project to increase the quota
+for; and ``<number of instances>`` is the new limit that you want to set
+on the maximum allowed number of VM instances.
+
 Nova Network
 ~~~~~~~~~~~~
 

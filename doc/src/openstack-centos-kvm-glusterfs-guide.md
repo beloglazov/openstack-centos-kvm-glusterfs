@@ -2101,7 +2101,7 @@ service openstack-glance-api restart
 The `libvirtd` service may fail with errors, such the following:
 
 
-```Bash
+```
 15391: error : qemuProcessReadLogOutput:1005 : \
    internal error Process exited while reading console \
    log output: chardev: opening backend "file" failed
@@ -2109,7 +2109,7 @@ The `libvirtd` service may fail with errors, such the following:
 
 And such as:
 
-```Bash
+```
 error : qemuProcessReadLogOutput:1005 : internal error \
    Process exited while reading console log output: \
    char device redirected to /dev/pts/3
@@ -2122,18 +2122,36 @@ qemu-kvm: -drive file=/var/lib/nova/instances/instance-00000015/ \
 Both the problems can be resolved by setting the user and group in the `/etc/libvirt/qemu.conf`
 configuration file as follows:
 
-```
+```Bash
 user = "nova"
 group = "nova"
 ```
 
 And also changing the ownership as follows:
 
-```
+```Bash
 chown -R nova:nova /var/cache/libvirt
 chown -R nova:nova /var/run/libvirt
 chown -R nova:nova /var/lib/libvirt
 ```
+
+Another potential problem is hitting the limit on the maximum number of VM instances, which results
+in the following error:
+
+```
+ERROR: Quota exceeded: code=InstanceLimitExceeded (HTTP 413)
+```
+
+The solution is to increase the quota by executing the following command:
+
+```Bash
+nova-manage project quota --project=<project ID> \
+   --key=instances --value=<number of instances>
+```
+
+Where `<project ID>` is the ID of the project to increase the quota for; and `<number of instances>`
+is the new limit that you want to set on the maximum allowed number of VM instances.
+
 
 ### Nova Network
 
@@ -2158,7 +2176,7 @@ nova.rpc.amqp Exit code: 1
 
 The solution to this problem is to modify `/etc/nova/nova.conf` and set:
 
-```
+```Bash
 force_dhcp_release = False
 ```
 
