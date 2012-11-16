@@ -1055,8 +1055,8 @@ to the `keystone` database.
 
 (@) `06-keystone-generate-admin-token.sh`
 
-Keystone allows two types of authentication for administrative action like creating users, tenants,
-etc:
+Keystone allows two types of authentication in its command line interface for administrative actions
+like creating users, tenants, etc:
 
 1. Using an admin token and `admin_port` (35357), e.g.:
 
@@ -1070,17 +1070,23 @@ etc:
 
     ```Bash
     keystone \
-	   --os_username=admin \
-	   --os_tenant_name=admin \
+	   --os_username=<username> \
+	   --os_tenant_name=<tenant> \
 	   --os_password=<password> \
 	   --os_auth_url=http://controller:5000/v2.0 user-list
     ```
 
-Services, such as Glance and Nova, can also authenticate in Keystone using either of the two
-methods. One way is to share the admin token among the services and authenticate using the token.
-However, it is also possible to use special users created in Keystone for each service. By default,
-these users are nova, glance, etc. The service users are assigned to the service tenant and admin
-role in that tenant.
+Where `<admin token>` should be replaced by an actual value of the admin token described next, and
+`<username>`, `<tenant>`, and `<password>` should be replaced by the corresponding values of an
+administrative user account created in Keystone. The process of setting up a user account is
+discussed in the following steps.
+
+Apart from authenticating in Keystone as a user, OpenStack services, such as Glance and Nova, can
+also authenticate in Keystone using either of the two mentioned authentication methods. One way is
+to share the admin token among the services and authenticate using the token. The other way is to
+use special users created in Keystone for each service. By default, these users are `nova`,
+`glance`, etc. The service users are assigned to the `service` tenant and `admin` role in that
+tenant.
 
 In this work, we use password-based authentication. It uses Keystone's database backend to store
 user credentials; and therefore, it is possible to update user credentials, for example, using

@@ -801,7 +801,7 @@ yum <span class="kw">install</span> -y openstack-utils openstack-keystone</code>
 <ol start="25" style="list-style-type: example">
 <li><code>06-keystone-generate-admin-token.sh</code></li>
 </ol>
-<p>Keystone allows two types of authentication for administrative action like creating users, tenants, etc:</p>
+<p>Keystone allows two types of authentication in its command line interface for administrative actions like creating users, tenants, etc:</p>
 <ol style="list-style-type: decimal">
 <li><p>Using an admin token and <code>admin_port</code> (35357), e.g.:</p>
 <pre class="sourceCode Bash"><code class="sourceCode bash">keystone <span class="kw">\</span>
@@ -809,12 +809,13 @@ yum <span class="kw">install</span> -y openstack-utils openstack-keystone</code>
    --endpoint=http://controller:35357/v2.0 user-list</code></pre></li>
 <li><p>Using an admin user and <code>public_port</code> (5000), e.g.:</p>
 <pre class="sourceCode Bash"><code class="sourceCode bash">keystone <span class="kw">\</span>
-   --os_username=admin <span class="kw">\</span>
-   --os_tenant_name=admin <span class="kw">\</span>
+   --os_username=<span class="kw">&lt;</span>username<span class="kw">&gt;</span> <span class="kw">\</span>
+   --os_tenant_name=<span class="kw">&lt;</span>tenant<span class="kw">&gt;</span> <span class="kw">\</span>
    --os_password=<span class="kw">&lt;</span>password<span class="kw">&gt;</span> <span class="kw">\</span>
    --os_auth_url=http://controller:5000/v2.0 user-list</code></pre></li>
 </ol>
-<p>Services, such as Glance and Nova, can also authenticate in Keystone using either of the two methods. One way is to share the admin token among the services and authenticate using the token. However, it is also possible to use special users created in Keystone for each service. By default, these users are nova, glance, etc. The service users are assigned to the service tenant and admin role in that tenant.</p>
+<p>Where <code>&lt;admin token&gt;</code> should be replaced by an actual value of the admin token described next, and <code>&lt;username&gt;</code>, <code>&lt;tenant&gt;</code>, and <code>&lt;password&gt;</code> should be replaced by the corresponding values of an administrative user account created in Keystone. The process of setting up a user account is discussed in the following steps.</p>
+<p>Apart from authenticating in Keystone as a user, OpenStack services, such as Glance and Nova, can also authenticate in Keystone using either of the two mentioned authentication methods. One way is to share the admin token among the services and authenticate using the token. The other way is to use special users created in Keystone for each service. By default, these users are <code>nova</code>, <code>glance</code>, etc. The service users are assigned to the <code>service</code> tenant and <code>admin</code> role in that tenant.</p>
 <p>In this work, we use password-based authentication. It uses Keystone’s database backend to store user credentials; and therefore, it is possible to update user credentials, for example, using Keystone’s command line tools without the necessity to re-generate the admin token and update the configuration files. However, since both methods can coexist, the installation scripts set up the token-based authentication as well.</p>
 <p>The <code>06-keystone-generate-admin-token.sh</code> script generates a random token used to authorize the Keystone admin account. The generated token is stored in the <code>./keystone-admin-token</code> file, which is later used to configure Keystone.</p>
 <pre class="sourceCode Bash"><code class="sourceCode bash"><span class="co"># Generate an admin token for Keystone and save it into</span>
