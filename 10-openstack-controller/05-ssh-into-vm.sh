@@ -32,9 +32,9 @@ else
 	# show VMs
 	nova list
     echo ''
-    read -p 'From the above VMs, what is the IP address of the VM? ' master_node
+    read -p 'From the above VMs, what is the IP address of the VM? ' VM_IP
     
     read -p 'Username: ' VM_username
     
-    ssh -i ../config/test.pem -l $VM_username $master_node
+    ssh -i ../config/test.pem -l $VM_username $VM_IP
 fi

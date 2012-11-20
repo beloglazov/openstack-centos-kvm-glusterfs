@@ -14,15 +14,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Change Log:
+# - Change: Replaced "exit 1" with user input.
+#	By: Mohammed Alrokayan
+#	Data: 20/11/2012
+
 
 # Attach the created volume to a VM instance as /dev/vdc.
 
-if [ $# -ne 2 ]
+if [ $# -eq 2 ]
 then
-    echo "You must specify two arguments:"
+	nova volume-attach $1 $2 /dev/vdc
+else
+	echo "You must specify two arguments:"
     echo "(1) the name of the VM instance"
     echo "(2) the ID of the volume to attach"
-    exit 1
+
+	# show VMs
+	nova list
+    echo ''
+    read -p 'From the above VMs, what is the name of the VM instance? ' VM_name
+    
+    # show volumes
+    nova volume-list
+    read -p 'From the above Volumes, what is the ID of the volume to attach? ' Volume_ID
+
+    nova volume-attach $VM_name $Volume_ID /dev/vdc
 fi
 
-nova volume-attach $1 $2 /dev/vdc
