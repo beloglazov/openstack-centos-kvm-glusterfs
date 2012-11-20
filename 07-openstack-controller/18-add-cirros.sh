@@ -15,6 +15,17 @@
 # limitations under the License.
 
 
+# Change Log:
+# - Change: Return to user location after adding the image.
+#	By: Mohammed Alrokayan
+#	Data: 20/11/2012
+
+#Same current location
+current_location=`pwd`
+
+# Install wget
+yum install wget -y
+
 # Download the Cirros VM image
 mkdir /tmp/images
 cd /tmp/images
@@ -25,3 +36,6 @@ glance add name="cirros-0.3.0-x86_64" is_public=true disk_format=qcow2 container
 
 # Remove the temporary directory
 rm -rf /tmp/images
+
+#Go back
+cd $current_location
