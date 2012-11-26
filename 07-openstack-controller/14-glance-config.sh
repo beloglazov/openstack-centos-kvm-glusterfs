@@ -38,7 +38,7 @@ openstack-config --set /etc/glance/glance-registry.conf paste_deploy flavor keys
 
 # Set the connection to the MySQL server
 openstack-config --set /etc/glance/glance-registry.conf DEFAULT sql_connection mysql://glance:$GLANCE_MYSQL_PASSWORD@controller/glance
-# In Folsom, the sql_connection option has been mobed from glance-registry.conf to glance-api.conf
+# In Folsom, the sql_connection option has been moved from glance-registry.conf to glance-api.conf
 openstack-config --set /etc/glance/glance-api.conf DEFAULT sql_connection mysql://glance:$GLANCE_MYSQL_PASSWORD@controller/glance
 
 # Set Glance Registry user credentials
