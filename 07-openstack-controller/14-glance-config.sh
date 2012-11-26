@@ -41,6 +41,9 @@ openstack-config --set /etc/glance/glance-registry.conf DEFAULT sql_connection m
 #New in Folsom
 openstack-config --set /etc/glance/glance-api.conf DEFAULT sql_connection mysql://glance:$GLANCE_MYSQL_PASSWORD@controller/glance
 
+#New in Folsom
+openstack-config --set /etc/glance/glance-api.conf DEFAULT sql_connection mysql://glance:$GLANCE_MYSQL_PASSWORD@controller/glance
+
 # Set Glance Registry user credentials
 openstack-config --set /etc/glance/glance-registry-paste.ini filter:authtoken admin_tenant_name $GLANCE_SERVICE_TENANT
 openstack-config --set /etc/glance/glance-registry-paste.ini filter:authtoken admin_user $GLANCE_SERVICE_USERNAME

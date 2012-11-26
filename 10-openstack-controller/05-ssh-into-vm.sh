@@ -14,16 +14,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Change Log:
+# - Change: Replaced "exit 1" with user input.
+#	By: Mohammed Alrokayan
+#	Data: 20/11/2012
+
 
 # SSH into a VM instance using the generated test.pem key.
 
-
-if [ $# -ne 2 ]
+if [ $# -eq 2 ]
 then
-    echo "You must specify two arguments:"
-    echo "(1) the IP address of the VM instance"
-    echo "(2) the user name"
-    exit 1
-fi
+	ssh -i ../config/test.pem -l $2 $1
+else
+	# Export the variables defined in ~/hadoop-openstack-centos/config/configrc
+	. ../config/configrc
 
-ssh -i ../config/test.pem -l $2 $1
+	# show VMs
+	nova list
+    echo ''
+    read -p 'From the above VMs, what is the IP address of the VM? ' VM_IP
+    
+    read -p 'Username: ' VM_username
+    
+    ssh -i ../config/test.pem -l $VM_username $VM_IP
+fi

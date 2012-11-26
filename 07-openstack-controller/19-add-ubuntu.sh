@@ -15,6 +15,15 @@
 # limitations under the License.
 
 
+# Change Log:
+# - Change: Return to user location after adding the image.
+#	By: Mohammed Alrokayan
+#	Data: 20/11/2012
+
+
+#Same current location
+current_location=`pwd`
+
 # Download an Ubuntu Cloud image
 mkdir /tmp/images
 cd /tmp/images
@@ -25,3 +34,6 @@ glance add name="ubuntu" is_public=true disk_format=qcow2 container_format=bare 
 
 # Remove the temporary directory
 rm -rf /tmp/images
+
+#Go back
+cd $current_location
