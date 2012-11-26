@@ -1423,6 +1423,12 @@ service used by Glance.
        DEFAULT sql_connection \
           mysql://glance:$GLANCE_MYSQL_PASSWORD@controller/glance
 
+    # In Folsom, the sql_connection option has been moved
+    # from glance-registry.conf to glance-api.conf
+    openstack-config --set /etc/glance/glance-api.conf \
+        DEFAULT sql_connection \
+            mysql://glance:$GLANCE_MYSQL_PASSWORD@controller/glance
+
     # Set Glance Registry user credentials
     openstack-config --set /etc/glance/glance-registry-paste.ini \
        filter:authtoken admin_tenant_name $GLANCE_SERVICE_TENANT
@@ -2339,37 +2345,30 @@ Where ``<project ID>`` is the ID of the project to increase the quota
 for; and ``<number of instances>`` is the new limit that you want to set
 on the maximum allowed number of VM instances.
 
-During the installation you may get this error message when you are trying to run any ``nova`` command (for example: ``nova list``)
+Another potential problem is getting the following error message when
+running any command of the ``nova`` client, such as ``nova list``:
 
 ::
 
-	ERROR: ConnectionRefused: '[Errno 111] Connection refused'
+    ERROR: ConnectionRefused: '[Errno 111] Connection refused'
 
-That because openstack-nova-api is not running, try to run it:
-
-::
-	
-	service openstack-nova-api stop
-	service openstack-nova-api start
-	service openstack-nova-api restart
-	service openstack-nova-api status
-
-If you get this output:
+This may happen because the ``openstack-nova-api`` service is not
+running. The following command can be used to check the status of the
+service:
 
 ::
 
-	openstack-nova-api dead but pid file exists
+    service openstack-nova-api status
 
-That means you need to remove openstack-nova-api and reinstall it again as follows:
+Getting an error message like “openstack-nova-api dead but pid file
+exists” means the service failed. A quick solution could be just
+re-installing the service as follows:
 
 ::
 
-	yum remove -y openstack-nova-api
-	yum install -y openstack-nova-api
-	service openstack-nova-api stop
-	service openstack-nova-api start
-	service openstack-nova-api restart
-	service openstack-nova-api status
+    yum remove -y openstack-nova-api
+    yum install -y openstack-nova-api
+    service openstack-nova-api start
 
 Nova Network
 ~~~~~~~~~~~~
