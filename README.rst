@@ -2339,6 +2339,38 @@ Where ``<project ID>`` is the ID of the project to increase the quota
 for; and ``<number of instances>`` is the new limit that you want to set
 on the maximum allowed number of VM instances.
 
+During the installation you may get this error message when you are trying to run any ``nova`` command (for example: ``nova list``)
+
+::
+
+	ERROR: ConnectionRefused: '[Errno 111] Connection refused'
+
+That because openstack-nova-api is not running, try to run it:
+
+::
+	
+	service openstack-nova-api stop
+	service openstack-nova-api start
+	service openstack-nova-api restart
+	service openstack-nova-api status
+
+If you get this output:
+
+::
+
+	openstack-nova-api dead but pid file exists
+
+That means you need to remove openstack-nova-api and reinstall it again as follows:
+
+::
+
+	yum remove -y openstack-nova-api
+	yum install -y openstack-nova-api
+	service openstack-nova-api stop
+	service openstack-nova-api start
+	service openstack-nova-api restart
+	service openstack-nova-api status
+
 Nova Network
 ~~~~~~~~~~~~
 
