@@ -2353,8 +2353,8 @@ running any command of the ``nova`` client, such as ``nova list``:
     ERROR: ConnectionRefused: '[Errno 111] Connection refused'
 
 This may happen because the ``openstack-nova-api`` service is not
-running. The following command can be used to check the status of the
-service:
+running on the controller. The following command can be used to check
+the status of the service on the controller host:
 
 ::
 

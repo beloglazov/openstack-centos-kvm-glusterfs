@@ -1541,7 +1541,7 @@ group = <span class="st">&quot;nova&quot;</span></code></pre>
 <p>Where <code>&lt;project ID&gt;</code> is the ID of the project to increase the quota for; and <code>&lt;number of instances&gt;</code> is the new limit that you want to set on the maximum allowed number of VM instances.</p>
 <p>Another potential problem is getting the following error message when running any command of the <code>nova</code> client, such as <code>nova list</code>:</p>
 <pre><code>ERROR: ConnectionRefused: '[Errno 111] Connection refused'</code></pre>
-<p>This may happen because the <code>openstack-nova-api</code> service is not running. The following command can be used to check the status of the service:</p>
+<p>This may happen because the <code>openstack-nova-api</code> service is not running on the controller. The following command can be used to check the status of the service on the controller host:</p>
 <pre class="sourceCode Bash"><code class="sourceCode bash">service openstack-nova-api status</code></pre>
 <p>Getting an error message like “openstack-nova-api dead but pid file exists” means the service failed. A quick solution could be just re-installing the service as follows:</p>
 <pre class="sourceCode Bash"><code class="sourceCode bash">yum remove -y openstack-nova-api

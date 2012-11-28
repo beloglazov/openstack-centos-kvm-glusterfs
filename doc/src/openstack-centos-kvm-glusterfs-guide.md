@@ -2171,8 +2171,8 @@ Another potential problem is getting the following error message when running an
 ERROR: ConnectionRefused: '[Errno 111] Connection refused'
 ```
 
-This may happen because the `openstack-nova-api` service is not running. The following command can
-be used to check the status of the service:
+This may happen because the `openstack-nova-api` service is not running on the controller. The
+following command can be used to check the status of the service on the controller host:
 
 ```Bash
 service openstack-nova-api status
