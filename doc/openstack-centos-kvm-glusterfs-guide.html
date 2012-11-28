@@ -1536,9 +1536,8 @@ group = <span class="st">&quot;nova&quot;</span></code></pre>
 <p>Another potential problem is hitting the limit on the maximum number of VM instances, which results in the following error:</p>
 <pre><code>ERROR: Quota exceeded: code=InstanceLimitExceeded (HTTP 413)</code></pre>
 <p>The solution is to increase the quota by executing the following command:</p>
-<pre class="sourceCode Bash"><code class="sourceCode bash">nova-manage project quota --project=<span class="kw">&lt;</span>project ID<span class="kw">&gt;</span> <span class="kw">\</span>
-   --key=instances --value=<span class="kw">&lt;</span>number of instances<span class="kw">&gt;</span></code></pre>
-<p>Where <code>&lt;project ID&gt;</code> is the ID of the project to increase the quota for; and <code>&lt;number of instances&gt;</code> is the new limit that you want to set on the maximum allowed number of VM instances.</p>
+<pre class="sourceCode Bash"><code class="sourceCode bash">nova quota-update --instances <span class="kw">&lt;</span>number of instances<span class="kw">&gt;</span> <span class="kw">&lt;</span>project ID<span class="kw">&gt;</span></code></pre>
+<p>Where <code>&lt;project ID&gt;</code> is the UUID of the project to increase the quota for; and <code>&lt;number of instances&gt;</code> is the new limit that you want to set on the maximum allowed number of VM instances.</p>
 <p>Another potential problem is getting the following error message when running any command of the <code>nova</code> client, such as <code>nova list</code>:</p>
 <pre><code>ERROR: ConnectionRefused: '[Errno 111] Connection refused'</code></pre>
 <p>This may happen because the <code>openstack-nova-api</code> service is not running on the controller. The following command can be used to check the status of the service on the controller host:</p>

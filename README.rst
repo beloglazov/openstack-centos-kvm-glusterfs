@@ -2338,10 +2338,9 @@ command:
 
 ::
 
-    nova-manage project quota --project=<project ID> \
-       --key=instances --value=<number of instances>
+    nova quota-update --instances <number of instances> <project ID>
 
-Where ``<project ID>`` is the ID of the project to increase the quota
+Where ``<project ID>`` is the UUID of the project to increase the quota
 for; and ``<number of instances>`` is the new limit that you want to set
 on the maximum allowed number of VM instances.
 
