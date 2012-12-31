@@ -2178,7 +2178,14 @@ service openstack-nova-api status
 ```
 
 Getting an error message like "openstack-nova-api dead but pid file exists" means the service
-failed. A quick solution could be just re-installing the service as follows:
+failed. A quick solution could be just removing the pid and lock file:
+
+```Bash
+rm -f /var/lock/subsys/openstack-nova-api
+rm -f /var/run/nova/nova-api.pid
+```
+
+Another solution is re-installing the service as follows:
 
 ```Bash
 yum remove -y openstack-nova-api
