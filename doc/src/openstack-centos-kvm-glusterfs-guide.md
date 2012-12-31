@@ -2177,8 +2177,9 @@ following command can be used to check the status of the service on the controll
 service openstack-nova-api status
 ```
 
-Getting an error message like "openstack-nova-api dead but pid file exists" means the service
-failed. A quick solution could be just removing the pid and lock file:
+Getting an error message like "openstack-nova-api dead but pid file exists" or "openstack-nova-api
+dead but subsys locked" means the service failed. A quick solution could be just removing the pid
+and lock file:
 
 ```Bash
 rm -f /var/lock/subsys/openstack-nova-api
