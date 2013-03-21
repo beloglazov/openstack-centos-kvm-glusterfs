@@ -15,5 +15,6 @@
 # limitations under the License.
 
 
-# Install NTP, and crontabs in case not allready installed
-yum install -y ntp crontabs
+# Start the Keystone service
+service openstack-keystone restart
+chkconfig openstack-keystone on

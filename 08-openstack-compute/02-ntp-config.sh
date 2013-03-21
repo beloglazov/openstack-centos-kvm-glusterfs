@@ -14,6 +14,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-# Install NTP, and crontabs in case not allready installed
-yum install -y ntp crontabs
+cp ../config/ntpdate /etc/cron.hourly/ntpdate
+chmod +x /etc/cron.hourly/ntpdate

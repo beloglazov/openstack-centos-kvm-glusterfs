@@ -15,5 +15,5 @@
 # limitations under the License.
 
 
-# Install NTP, and crontabs in case not allready installed
-yum install -y ntp crontabs
+# Initialize the database for Glance
+glance-manage db_sync

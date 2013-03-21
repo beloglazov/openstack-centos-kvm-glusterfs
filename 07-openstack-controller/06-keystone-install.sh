@@ -15,5 +15,5 @@
 # limitations under the License.
 
 
-# Install NTP, and crontabs in case not allready installed
-yum install -y ntp crontabs
+# Install OpenStack utils and Keystone -- the identity management service
+yum install -y openstack-utils openstack-keystone

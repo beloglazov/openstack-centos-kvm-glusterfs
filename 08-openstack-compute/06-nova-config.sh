@@ -15,5 +15,5 @@
 # limitations under the License.
 
 
-# Install NTP, and crontabs in case not allready installed
-yum install -y ntp crontabs
+# Run the Nova configuration script defined in ../lib/nova-config.sh
+../lib/nova-config.sh
