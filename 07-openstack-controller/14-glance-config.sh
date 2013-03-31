@@ -37,9 +37,9 @@ openstack-config --set /etc/glance/glance-cache.conf DEFAULT admin_password $GLA
 openstack-config --set /etc/glance/glance-registry.conf paste_deploy flavor keystone
 
 # Set the connection to the MySQL server
-openstack-config --set /etc/glance/glance-registry.conf DEFAULT sql_connection mysql://glance:$GLANCE_MYSQL_PASSWORD@controller/glance
+openstack-config --set /etc/glance/glance-registry.conf DEFAULT sql_connection mysql://glance:$GLANCE_MYSQL_PASSWORD@localhost/glance
 # In Folsom, the sql_connection option has been moved from glance-registry.conf to glance-api.conf
-openstack-config --set /etc/glance/glance-api.conf DEFAULT sql_connection mysql://glance:$GLANCE_MYSQL_PASSWORD@controller/glance
+openstack-config --set /etc/glance/glance-api.conf DEFAULT sql_connection mysql://glance:$GLANCE_MYSQL_PASSWORD@localhost/glance
 
 # Set Glance Registry user credentials
 openstack-config --set /etc/glance/glance-registry-paste.ini filter:authtoken admin_tenant_name $GLANCE_SERVICE_TENANT
