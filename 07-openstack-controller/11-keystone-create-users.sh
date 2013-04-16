@@ -23,7 +23,7 @@ git clone https://github.com/nimbis/keystone-init.git
 
 # Replace the default configuration with the values defined be the
 # environmental variables in configrc
-sed -i "s/192.168.206.130/localhost/g" keystone-init/config.yaml
+sed -i "s/192.168.206.130/controller/g" keystone-init/config.yaml
 sed -i "s/012345SECRET99TOKEN012345/`cat keystone-admin-token`/g" keystone-init/config.yaml
 sed -i "s/name:        openstackDemo/name:        $OS_TENANT_NAME/g" keystone-init/config.yaml
 sed -i "s/name:     adminUser/name:     $OS_USERNAME/g" keystone-init/config.yaml
