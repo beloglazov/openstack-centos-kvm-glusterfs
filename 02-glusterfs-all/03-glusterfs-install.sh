@@ -16,4 +16,5 @@
 
 
 # Install GlusterFS and its dependencies
-yum -y install openssh-server wget fuse fuse-libs openib libibverbs http://download.gluster.org/pub/gluster/glusterfs/LATEST/CentOS/glusterfs-3.3.0-1.el6.x86_64.rpm http://download.gluster.org/pub/gluster/glusterfs/LATEST/CentOS/glusterfs-fuse-3.3.0-1.el6.x86_64.rpm http://download.gluster.org/pub/gluster/glusterfs/LATEST/CentOS/glusterfs-server-3.3.0-1.el6.x86_64.rpm
+yum -y install openssh-server wget fuse fuse-libs openib libibverbs http://download.gluster.org/pub/gluster/glusterfs/3.3/3.3.1/CentOS/epel-6Server/x86_64/glusterfs-3.3.1-1.el6.x86_64.rpm http://download.gluster.org/pub/gluster/glusterfs/3.3/3.3.1/CentOS/epel-6Server/x86_64/glusterfs-fuse-3.3.1-1.el6.x86_64.rpm http://download.gluster.org/pub/gluster/glusterfs/3.3/3.3.1/CentOS/epel-6Server/x86_64/glusterfs-server-3.3.1-1.el6.x86_64.rpm
+
