@@ -21,7 +21,7 @@ cd /tmp/images
 wget http://uec-images.ubuntu.com/precise/current/precise-server-cloudimg-amd64-disk1.img
 
 # Add the downloaded image to Glance
-glance add name="ubuntu" is_public=true disk_format=qcow2 container_format=bare < precise-server-cloudimg-amd64-disk1.img
+glance --verbose image-create --name ubuntu --is-public True --disk-format qcow2 --container-format bare < precise-server-cloudimg-amd64-disk1.img
 
 # Remove the temporary directory
 rm -rf /tmp/images
