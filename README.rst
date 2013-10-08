@@ -305,31 +305,31 @@ the following components:
 
 A comparison of the discussed Cloud platforms is summarized in Table 1.
 
-+----------------+--------------+-------------+-------------+-------------+
-|                | OpenStack    | Eucalyptus  | OpenNebula  | CloudStack  |
-+================+==============+=============+=============+=============+
-| Managed By     | OpenStack    | Eucalyptus  | C12G Labs   | Apache      |
-|                | Foundation   | Systems     |             | Software    |
-|                |              |             |             | Foundation  |
-+----------------+--------------+-------------+-------------+-------------+
-| License        | Apache 2.0   | GPL v3      | Apache 2.0  | Apache 2.0  |
-+----------------+--------------+-------------+-------------+-------------+
-| Initial        | October 2010 | May 2010    | March 2008  | May 2010    |
-| Release        |              |             |             |             |
-+----------------+--------------+-------------+-------------+-------------+
-| OCCI           | Yes          | No          | Yes         | No          |
-| Compatibility  |              |             |             |             |
-+----------------+--------------+-------------+-------------+-------------+
-| AWS            | Yes          | Yes         | Yes         | Yes         |
-| Compatibility  |              |             |             |             |
-+----------------+--------------+-------------+-------------+-------------+
-| Hypervisors    | Xen, KVM,    | Xen, KVM,   | Xen, KVM,   | Xen, KVM,   |
-|                | VMware       | VMware      | VMware      | VMware,     |
-|                |              |             |             | Oracle VM   |
-+----------------+--------------+-------------+-------------+-------------+
-| Programming    | Python       | Java, C     | C, C++,     | Java        |
-| Language       |              |             | Ruby, Java  |             |
-+----------------+--------------+-------------+-------------+-------------+
++---------------+--------------+------------+------------+------------+
+|               | OpenStack    | Eucalyptus | OpenNebula | CloudStack |
++===============+==============+============+============+============+
+| Managed By    | OpenStack    | Eucalyptus | C12G Labs  | Apache     |
+|               | Foundation   | Systems    |            | Software   |
+|               |              |            |            | Foundation |
++---------------+--------------+------------+------------+------------+
+| License       | Apache 2.0   | GPL v3     | Apache 2.0 | Apache 2.0 |
++---------------+--------------+------------+------------+------------+
+| Initial       | October 2010 | May 2010   | March 2008 | May 2010   |
+| Release       |              |            |            |            |
++---------------+--------------+------------+------------+------------+
+| OCCI          | Yes          | No         | Yes        | No         |
+| Compatibility |              |            |            |            |
++---------------+--------------+------------+------------+------------+
+| AWS           | Yes          | Yes        | Yes        | Yes        |
+| Compatibility |              |            |            |            |
++---------------+--------------+------------+------------+------------+
+| Hypervisors   | Xen, KVM,    | Xen, KVM,  | Xen, KVM,  | Xen, KVM,  |
+|               | VMware       | VMware     | VMware     | VMware,    |
+|               |              |            |            | Oracle VM  |
++---------------+--------------+------------+------------+------------+
+| Programming   | Python       | Java, C    | C, C++,    | Java       |
+| Language      |              |            | Ruby, Java |            |
++---------------+--------------+------------+------------+------------+
 
 Table: Comparison of OpenStack, Eucalyptus, OpenNebula, and CloudStack
 
@@ -529,6 +529,13 @@ described below.
     interact correctly. By default, this file defines servers used
     within the University of Melbourne. It is advised to replace the
     default configuration with a list of preferred servers.
+    
+``ntpdate:``
+    This file contains a cronjob for synchronizing the time of the compute
+    nodes with the controller. The cronjob can be executed every hour, for
+    a smoother sync, because some services may have some problems with a 
+    quick shift of the time. Thus this script will be placed in 
+    ``/etc/cron.hourly/``.  
 
 It is important to replaced the default configuration defined in the
 described configuration files, since the default configuration is
@@ -588,33 +595,33 @@ the standard OS partitions: ``lv_root``, ``lv_home`` and ``lv_swap``.
 brick. The ``lv_gluster`` logical volume is formatted using the
 XFS [25]_ file system, as recommended for GlusterFS bricks.
 
-+------------------------+-------------+-----------------------+------------+
-| Device                 | Size (MB)   | Mount Point / Volume  | Type       |
-+========================+=============+=======================+============+
-| *LVM Volume Groups*    |             |                       |            |
-+------------------------+-------------+-----------------------+------------+
-|   vg\_base             | 20996       |                       |            |
-+------------------------+-------------+-----------------------+------------+
-|     lv\_root           | 10000       | /                     | ext4       |
-+------------------------+-------------+-----------------------+------------+
-|     lv\_swap           | 6000        |                       | swap       |
-+------------------------+-------------+-----------------------+------------+
-|     lv\_home           | 4996        | /home                 | ext4       |
-+------------------------+-------------+-----------------------+------------+
-|   vg\_gluster          | 216972      |                       |            |
-+------------------------+-------------+-----------------------+------------+
-|     lv\_gluster        | 216972      | /export/gluster       | xfs        |
-+------------------------+-------------+-----------------------+------------+
-| *Hard Drives*          |             |                       |            |
-+------------------------+-------------+-----------------------+------------+
-|   sda                  |             |                       |            |
-+------------------------+-------------+-----------------------+------------+
-|     sda1               | 500         | /boot                 | ext4       |
-+------------------------+-------------+-----------------------+------------+
-|     sda2               | 21000       | vg\_base              | PV (LVM)   |
-+------------------------+-------------+-----------------------+------------+
-|     sda3               | 216974      | vg\_gluster           | PV (LVM)   |
-+------------------------+-------------+-----------------------+------------+
++---------------------+-----------+----------------------+----------+
+| Device              | Size (MB) | Mount Point / Volume | Type     |
++=====================+===========+======================+==========+
+| *LVM Volume Groups* |           |                      |          |
++---------------------+-----------+----------------------+----------+
+|   vg\_base          | 20996     |                      |          |
++---------------------+-----------+----------------------+----------+
+|     lv\_root        | 10000     | /                    | ext4     |
++---------------------+-----------+----------------------+----------+
+|     lv\_swap        | 6000      |                      | swap     |
++---------------------+-----------+----------------------+----------+
+|     lv\_home        | 4996      | /home                | ext4     |
++---------------------+-----------+----------------------+----------+
+|   vg\_gluster       | 216972    |                      |          |
++---------------------+-----------+----------------------+----------+
+|     lv\_gluster     | 216972    | /export/gluster      | xfs      |
++---------------------+-----------+----------------------+----------+
+| *Hard Drives*       |           |                      |          |
++---------------------+-----------+----------------------+----------+
+|   sda               |           |                      |          |
++---------------------+-----------+----------------------+----------+
+|     sda1            | 500       | /boot                | ext4     |
++---------------------+-----------+----------------------+----------+
+|     sda2            | 21000     | vg\_base             | PV (LVM) |
++---------------------+-----------+----------------------+----------+
+|     sda3            | 216974    | vg\_gluster          | PV (LVM) |
++---------------------+-----------+----------------------+----------+
 
 Table: The partitioning scheme for the compute hosts
 
@@ -630,41 +637,41 @@ devoted for storing VM images by OpenStack Glance. The mount point for
 ``lv_images`` is ``/var/lib/glance/images``, which is the default
 directory used by Glance to store VM image files.
 
-+----------------------+-------------+------------------------+------------+
-| Device               | Size (MB)   | Mount Point / Volume   | Type       |
-+======================+=============+========================+============+
-| *LVM Volume Groups*  |             |                        |            |
-+----------------------+-------------+------------------------+------------+
-|   nova-volumes       | 29996       |                        |            |
-+----------------------+-------------+------------------------+------------+
-|     Free             | 29996       |                        |            |
-+----------------------+-------------+------------------------+------------+
-|   vg\_base           | 16996       |                        |            |
-+----------------------+-------------+------------------------+------------+
-|     lv\_root         | 10000       | /                      | ext4       |
-+----------------------+-------------+------------------------+------------+
-|     lv\_swap         | 2000        |                        | swap       |
-+----------------------+-------------+------------------------+------------+
-|     lv\_home         | 4996        | /home                  | ext4       |
-+----------------------+-------------+------------------------+------------+
-|   vg\_images         | 28788       |                        |            |
-+----------------------+-------------+------------------------+------------+
-|     lv\_images       | 28788       | /var/lib/glance/images | ext4       |
-+----------------------+-------------+------------------------+------------+
-| *Hard Drives*        |             |                        |            |
-+----------------------+-------------+------------------------+------------+
-|   sda                |             |                        |            |
-+----------------------+-------------+------------------------+------------+
-|     sda1             | 500         | /boot                  | ext4       |
-+----------------------+-------------+------------------------+------------+
-|     sda2             | 17000       | vg\_base               | PV (LVM)   |
-+----------------------+-------------+------------------------+------------+
-|     sda3             | 30000       | nova-volumes           | PV (LVM)   |
-+----------------------+-------------+------------------------+------------+
-|     sda4             | 28792       |                        | Extended   |
-+----------------------+-------------+------------------------+------------+
-|       sda5           | 28788       | vg\_images             | PV (LVM)   |
-+----------------------+-------------+------------------------+------------+
++---------------------+-----------+------------------------+----------+
+| Device              | Size (MB) | Mount Point / Volume   | Type     |
++=====================+===========+========================+==========+
+| *LVM Volume Groups* |           |                        |          |
++---------------------+-----------+------------------------+----------+
+|   nova-volumes      | 29996     |                        |          |
++---------------------+-----------+------------------------+----------+
+|     Free            | 29996     |                        |          |
++---------------------+-----------+------------------------+----------+
+|   vg\_base          | 16996     |                        |          |
++---------------------+-----------+------------------------+----------+
+|     lv\_root        | 10000     | /                      | ext4     |
++---------------------+-----------+------------------------+----------+
+|     lv\_swap        | 2000      |                        | swap     |
++---------------------+-----------+------------------------+----------+
+|     lv\_home        | 4996      | /home                  | ext4     |
++---------------------+-----------+------------------------+----------+
+|   vg\_images        | 28788     |                        |          |
++---------------------+-----------+------------------------+----------+
+|     lv\_images      | 28788     | /var/lib/glance/images | ext4     |
++---------------------+-----------+------------------------+----------+
+| *Hard Drives*       |           |                        |          |
++---------------------+-----------+------------------------+----------+
+|   sda               |           |                        |          |
++---------------------+-----------+------------------------+----------+
+|     sda1            | 500       | /boot                  | ext4     |
++---------------------+-----------+------------------------+----------+
+|     sda2            | 17000     | vg\_base               | PV (LVM) |
++---------------------+-----------+------------------------+----------+
+|     sda3            | 30000     | nova-volumes           | PV (LVM) |
++---------------------+-----------+------------------------+----------+
+|     sda4            | 28792     |                        | Extended |
++---------------------+-----------+------------------------+----------+
+|       sda5          | 28788     | vg\_images             | PV (LVM) |
++---------------------+-----------+------------------------+----------+
 
 Table: The partitioning scheme for the controller
 
@@ -1065,15 +1072,41 @@ repository, which contains the OpenStack related packages.
 
 (17) ``02-ntp-install.sh``
 
-This script install the NTP service, which is required to automatically
-synchronize the time with external NTP servers.
+This script install the NTP and the cron services. The NTP service is required 
+to automatically synchronize the time with external NTP servers.The cron service 
+is required to schedule some jobs to syncronize the time of the compute nodes with
+the controller. Crontabs is usually allready installed on CentOS, but in minimal 
+distribution is missing.
 
 ::
 
-    # Install NTP
-    yum install -y ntp
+    # Install NTP, and crontabs in case not allready installed
+    yum install -y ntp crontabs
 
-(18) ``03-ntp-config.sh``
+07-openstack-controller (controller).
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The scripts described in this section need to be run only on the
+controller host.
+
+(18) ``01-source-configrc.sh``
+
+This scripts is mainly used to remind of the necessity to “source” the
+``configrc`` file prior to continuing, since some scripts in this
+directory use the environmental variable defined in ``configrc``. To
+source the file, it is necessary to run the following command:
+``. 01-source-configrc.sh``.
+
+::
+
+    echo "To make the environmental variables available \
+       in the current session, run: "
+    echo ". 01-source-configrc.sh"
+
+    # Export the variables defined in ../config/configrc
+    . ../config/configrc
+    
+(19) ``02-ntp-config.sh``
 
 This script replaces the default servers specified in the
 ``/etc/ntp.conf`` configuration file with the servers specified in the
@@ -1092,43 +1125,26 @@ is satisfactory, then the execution of this script is not required.
     sed -i "s/server 1.*pool.ntp.org/$SERVER2/g" /etc/ntp.conf
     sed -i "s/server 2.*pool.ntp.org/$SERVER3/g" /etc/ntp.conf
 
-(19) ``04-ntp-start.sh``
+(20) ``03-ntp-start.sh``
 
-This script starts the ``ntpdate`` service and sets it to start during
-the system start up. Upon the start, the ``ntpdate`` service
+This script starts the ``crond``, ``ntpd`` and ``ntpdate`` services and sets 
+them to start during the system start up. Upon the start, the ``ntpd`` service
 synchronizes the time with the servers specified in the
 ``/etc/ntp.conf`` configuration file.
 
 ::
 
-    # Start the NTP service
-    service ntpdate restart
-    chkconfig ntpdate on
+   #Start services automatically at initial boot time
+   chkconfig crond on
+   chkconfig ntpd on
+   chkconfig ntpdate on
 
-07-openstack-controller (controller).
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   #Restart services crond, ntpd, and ntpdate
+   service crond restart
+   service ntpd restart
+   service ntpdate restart
 
-The scripts described in this section need to be run only on the
-controller host.
-
-(20) ``01-source-configrc.sh``
-
-This scripts is mainly used to remind of the necessity to “source” the
-``configrc`` file prior to continuing, since some scripts in this
-directory use the environmental variable defined in ``configrc``. To
-source the file, it is necessary to run the following command:
-``. 01-source-configrc.sh``.
-
-::
-
-    echo "To make the environmental variables available \
-       in the current session, run: "
-    echo ". 01-source-configrc.sh"
-
-    # Export the variables defined in ../config/configrc
-    . ../config/configrc
-
-(21) ``02-mysql-install.sh``
+(21) ``04-mysql-install.sh``
 
 This script installs the MySQL server, which is required to host the
 databases used by the OpenStack services.
@@ -1138,7 +1154,7 @@ databases used by the OpenStack services.
     # Install the MySQL server
     yum install -y mysql mysql-server
 
-(22) ``03-mysql-start.sh``
+(22) ``05-mysql-start.sh``
 
 This script start the MySQL service and initializes the password of the
 ``root`` MySQL user using a variable from the ``configrc`` file called
@@ -1157,7 +1173,7 @@ This script start the MySQL service and initializes the password of the
     echo "The MySQL root password has been set \
        to the value of $MYSQL_ROOT_PASSWORD: \"$MYSQL_ROOT_PASSWORD\""
 
-(23) ``04-keystone-install.sh``
+(23) ``06-keystone-install.sh``
 
 This script installs Keystone - the OpenStack identity management
 service, and other OpenStack command line utilities.
@@ -1167,7 +1183,7 @@ service, and other OpenStack command line utilities.
     # Install OpenStack utils and Keystone, the identity management service
     yum install -y openstack-utils openstack-keystone
 
-(24) ``05-keystone-create-db.sh``
+(24) ``07-keystone-create-db.sh``
 
 This script creates a MySQL database for Keystone called ``keystone``,
 which is used to store various identity data. The script also creates a
@@ -1184,7 +1200,7 @@ which is used to store various identity data. The script also creates a
     ../lib/mysqlq.sh "GRANT ALL ON keystone.* TO 'keystone'@'controller' \
        IDENTIFIED BY '$KEYSTONE_MYSQL_PASSWORD';"
 
-(25) ``06-keystone-generate-admin-token.sh``
+(25) ``08-keystone-generate-admin-token.sh``
 
 Keystone allows two types of authentication in its command line
 interface for administrative actions like creating users, tenants, etc:
@@ -1230,7 +1246,7 @@ and update the configuration files. However, since both methods can
 coexist, the installation scripts set up the token-based authentication
 as well.
 
-The ``06-keystone-generate-admin-token.sh`` script generates a random
+The ``08-keystone-generate-admin-token.sh`` script generates a random
 token used to authorize the Keystone admin account. The generated token
 is stored in the ``./keystone-admin-token`` file, which is later used to
 configure Keystone.
@@ -1241,7 +1257,7 @@ configure Keystone.
     # ./keystone-admin-token
     openssl rand -hex 10 > keystone-admin-token
 
-(26) ``07-keystone-config.sh``
+(26) ``09-keystone-config.sh``
 
 This script modifies the configuration file of Keystone,
 ``/etc/keystone/keystone.conf``. It sets the generated admin token and
@@ -1258,7 +1274,7 @@ the MySQL connection configuration using the variables defined in
     openstack-config --set /etc/keystone/keystone.conf sql connection \
        mysql://keystone:$KEYSTONE_MYSQL_PASSWORD@controller/keystone
 
-(27) ``08-keystone-init-db.sh``
+(27) ``10-keystone-init-db.sh``
 
 This script initializes the ``keystone`` database using the
 ``keystone-manage`` command line tool. The executed command creates
@@ -1269,7 +1285,7 @@ tables in the database.
     # Initialize the database for Keystone
     keystone-manage db_sync
 
-(28) ``09-keystone-permissions.sh``
+(28) ``11-keystone-permissions.sh``
 
 This script sets restrictive permissions (640) on the Keystone
 configuration file, since it contains the MySQL account credentials and
@@ -1285,7 +1301,7 @@ related directories to the ``keystone`` user and ``keystone`` group.
     chown -R keystone:keystone /var/log/keystone
     chown -R keystone:keystone /var/lib/keystone
 
-(29) ``10-keystone-start.sh``
+(29) ``12-keystone-start.sh``
 
 This script starts the Keystone service and sets it to automatically
 start during the system start up.
@@ -1296,7 +1312,7 @@ start during the system start up.
     service openstack-keystone restart
     chkconfig openstack-keystone on
 
-(30) ``11-keystone-create-users.sh``
+(30) ``13-keystone-create-users.sh``
 
 The purpose of this script is to create user accounts, roles and tenants
 in Keystone for the admin user and service accounts for each OpenStack
@@ -1358,7 +1374,7 @@ anymore, it can be removed by executing ``rm -rf keystone-init``.
     echo "You may do 'rm -rf keystone-init' to remove \
        the no more needed keystone-init directory"
 
-(31) ``12-glance-install.sh``
+(31) ``14-glance-install.sh``
 
 This script install Glance – the OpenStack VM image management service.
 
@@ -1367,7 +1383,7 @@ This script install Glance – the OpenStack VM image management service.
     # Install OpenStack Glance, an image management service
     yum install -y openstack-glance
 
-(32) ``13-glance-create-db.sh``
+(32) ``15-glance-create-db.sh``
 
 This script creates a MySQL database for Glance called ``glance``, which
 is used to store VM image metadata. The script also creates a ``glance``
@@ -1384,7 +1400,7 @@ user.
     ../lib/mysqlq.sh "GRANT ALL ON glance.* TO 'glance'@'controller' \
        IDENTIFIED BY '$GLANCE_MYSQL_PASSWORD';"
 
-(33) ``14-glance-config.sh``
+(33) ``16-glance-config.sh``
 
 This scripts modifies the configuration files of the Glance services,
 which include the API and Registry services. Apart from various
@@ -1437,7 +1453,7 @@ service used by Glance.
     openstack-config --set /etc/glance/glance-registry-paste.ini \
        filter:authtoken admin_password $GLANCE_SERVICE_PASSWORD
 
-(34) ``15-glance-init-db.sh``
+(34) ``17-glance-init-db.sh``
 
 This scripts initializes the ``glance`` database using the
 ``glance-manage`` command line tool.
@@ -1447,7 +1463,7 @@ This scripts initializes the ``glance`` database using the
     # Initialize the database for Glance
     glance-manage db_sync
 
-(35) ``16-glance-permissions.sh``
+(35) ``18-glance-permissions.sh``
 
 This scripts sets restrictive permissions (640) on the Glance
 configuration files, since they contain sensitive information. The
@@ -1464,7 +1480,7 @@ script also set the ownership of the Glance related directories to the
     chown -R glance:glance /var/log/glance
     chown -R glance:glance /var/lib/glance
 
-(36) ``17-glance-start.sh``
+(36) ``19-glance-start.sh``
 
 This script starts the Glance services: API and Registry. The script
 sets the services to automatically start during the system start up.
@@ -1478,7 +1494,7 @@ sets the services to automatically start during the system start up.
     chkconfig openstack-glance-registry on
     chkconfig openstack-glance-api on
 
-(37) ``18-add-cirros.sh``
+(37) ``20-add-cirros.sh``
 
 This script downloads the CirrOS VM image [32]_ and imports it into
 Glance. This image contains a pre-installed CirrOS, a Tiny OS
@@ -1501,7 +1517,7 @@ size is just 9.4 MB. However, it is sufficient for testing OpenStack.
     # Remove the temporary directory
     rm -rf /tmp/images
 
-(38) ``19-add-ubuntu.sh``
+(38) ``21-add-ubuntu.sh``
 
 This script downloads the Ubuntu Cloud Image [33]_ and imports it into
 Glance. This is a VM image with a pre-installed version of Ubuntu that
@@ -1523,7 +1539,7 @@ Openstack, Amazon EC2, and LXC.
     # Remove the temporary directory
     rm -rf /tmp/images
 
-(39) ``20-nova-install.sh``
+(39) ``22-nova-install.sh``
 
 This script installs Nova – the OpenStack compute service, as well as
 the Qpid AMQP message broker. The message broker is required by the
@@ -1535,7 +1551,7 @@ OpenStack services to communicate with each other.
     # and the Qpid AMQP message broker
     yum install -y openstack-nova* qpid-cpp-server
 
-(40) ``21-nova-create-db.sh``
+(40) ``23-nova-create-db.sh``
 
 This script creates a MySQL database for Nova called ``nova``, which is
 used to store VM instance metadata. The script also creates a ``nova``
@@ -1558,7 +1574,7 @@ controller.
     ../lib/mysqlq.sh "GRANT ALL ON nova.* TO 'nova'@'%' \
        IDENTIFIED BY '$NOVA_MYSQL_PASSWORD';"
 
-(41) ``22-nova-permissions.sh``
+(41) ``24-nova-permissions.sh``
 
 This script sets restrictive permissions on the Nova configuration file,
 since it contains sensitive information, such as user credentials. The
@@ -1574,7 +1590,7 @@ script also sets the ownership of the Nova related directories to the
     chown -R root:nova /etc/nova
     chown -R nova:nova /var/lib/nova
 
-(42) ``23-nova-config.sh``
+(42) ``25-nova-config.sh``
 
 The ``/etc/nova/nova.conf`` configuration file should be present on all
 the compute hosts running Nova Compute, as well as on the controller,
@@ -1583,7 +1599,7 @@ configuration file should be the same on the controller and compute
 hosts. Therefore, a script that modifies the Nova configuration is
 placed in the ``lib`` directory and is shared by the corresponding
 installation scripts of the controller and compute hosts. The
-``23-nova-config.sh`` script invokes the Nova configuration script
+``25-nova-config.sh`` script invokes the Nova configuration script
 provided in the ``lib`` directory.
 
 ::
@@ -1725,7 +1741,7 @@ options:
    gateway) – ``$PUBLIC_IP_ADDRESS``;
 -  the Nova metadata service host name – controller.
 
-(43) ``24-nova-init-db.sh``
+(43) ``26-nova-init-db.sh``
 
 This scripts initializes the ``nova`` database using the ``nova-manage``
 command line tool.
@@ -1735,7 +1751,7 @@ command line tool.
     # Initialize the database for Nova
     nova-manage db sync
 
-(44) ``25-nova-start.sh``
+(44) ``27-nova-start.sh``
 
 This script starts various Nova services, as well as their dependencies:
 the Qpid AMQP message broker, and iSCSI target daemon used by the
@@ -1791,8 +1807,43 @@ source the file, it is necessary to run the following command:
 
     # Export the variables defined in ../config/configrc
     . ../config/configrc
+    
+(46) ``02-ntp-config.sh``
 
-(46) ``02-install-nova.sh``
+This script copies the file config/ntpdate file to the /etc/cron.hourly/
+directory which holds the scripts run every hour by the cron service. Then 
+it makes it executable. The ``ntpdate`` script makes an ntpdate request on
+the controller and synchronizes its clock.
+
+::
+    #!/bin/bash
+    /usr/sbin/ntpdate controller 2>&1 >> /var/log/cron
+    /sbin/hwclock -w
+
+::
+
+    cp ../config/ntpdate /etc/cron.hourly/ntpdate
+    chmod +x /etc/cron.hourly/ntpdate
+
+
+(47) ``03-ntp-start.sh``
+
+This script starts the ``crond``, ``ntpd`` and ``ntpdate`` services and sets 
+them to start during the system start up. Upon the start, the ``ntpd`` service
+synchronizes the time with the servers specified in the
+``/etc/ntp.conf`` configuration file.
+
+::
+
+    #Start services automatically at initial boot time
+    chkconfig crond on
+    chkconfig ntpdate on
+
+    #Restart services crond and ntpdate
+    service crond restart
+    service ntpdate restart
+
+(48) ``04-install-nova.sh``
 
 This script installs OpenStack Nova and OpenStack utilities.
 
@@ -1801,7 +1852,7 @@ This script installs OpenStack Nova and OpenStack utilities.
     # Install OpenStack Nova and utils
     yum install -y openstack-nova* openstack-utils
 
-(47) ``03-nova-permissions.sh``
+(49) ``05-nova-permissions.sh``
 
 This script sets restrictive permissions (640) on the Nova configuration
 file, since it contains sensitive information, such as user credentials.
@@ -1828,7 +1879,7 @@ QEMU.
     sed -i 's/#user = "root"/user = "nova"/g' /etc/libvirt/qemu.conf
     sed -i 's/#group = "root"/group = "nova"/g' /etc/libvirt/qemu.conf
 
-(48) ``04-nova-config.sh``
+(50) ``06-nova-config.sh``
 
 This scripts invokes the Nova configuration script provided in the
 ``lib`` directory, which has been detailed above.
@@ -1839,7 +1890,7 @@ This scripts invokes the Nova configuration script provided in the
     # defined in ../lib/nova-config.sh
     ../lib/nova-config.sh
 
-(49) ``05-nova-compute-start.sh``
+(51) ``07-nova-compute-start.sh``
 
 First, this script restarts the Libvirt service since its configuration
 has been modified. Then, the script starts Nova compute service and sets
@@ -1903,7 +1954,7 @@ the ``openstack-nova-network`` service and 8775). If the
 are running on different hosts, the ``metadata_host`` option should
 point to the IP address of ``openstack-nova-metadata-api``.
 
-(50) ``01-source-configrc.sh``
+(52) ``01-source-configrc.sh``
 
 This scripts is mainly used to remind of the necessity to “source” the
 ``configrc`` file prior to continuing, since some scripts in this
@@ -1920,7 +1971,7 @@ source the file, it is necessary to run the following command:
     # Export the variables defined in ../config/configrc
     . ../config/configrc
 
-(51) ``02-nova-start.sh``
+(53) ``02-nova-start.sh``
 
 It is assumed that the gateway host is one of the compute hosts;
 therefore, the OpenStack compute service has already been configured and
@@ -1948,7 +1999,7 @@ the gateway in our case.
     chkconfig openstack-nova-novncproxy on
     chkconfig openstack-nova-xvpvncproxy on
 
-(52) ``03-nova-network-create.sh``
+(54) ``03-nova-network-create.sh``
 
 This service creates a Nova network 10.0.0.0/24, which is used to
 allocate IP addresses from by Dnsmasq to VM instances. The created
@@ -1962,7 +2013,7 @@ instances to the physical network.
        --fixed_range_v4=10.0.0.0/24 --num_networks=1 \
        --network_size=256 --bridge=br100
 
-(53) ``04-nova-secgroup-add.sh``
+(55) ``04-nova-secgroup-add.sh``
 
 This script adds two rules to the default OpenStack security group. The
 first rule enables the Internet Control Message Protocol (ICMP) for VM
@@ -1977,7 +2028,7 @@ via the 22 port, which is used by SSH.
     # Enable SSH for VMs
     nova secgroup-add-rule default tcp 22 22 0.0.0.0/0
 
-(54) ``05-dashboard-install.sh``
+(56) ``05-dashboard-install.sh``
 
 This script installs the OpenStack dashboard. The OpenStack dashboard
 provides a web-interface to managing an OpenStack environment. Since the
@@ -1990,7 +2041,7 @@ gateway in our setup.
     # Install OpenStack Dashboard
     yum install -y openstack-dashboard
 
-(55) ``06-dashboard-config.sh``
+(57) ``06-dashboard-config.sh``
 
 This script configures the OpenStack dashboard. Particularly, the script
 sets the ``OPENSTACK_HOST`` configuration option denoting the host name
@@ -2010,7 +2061,7 @@ environmental variable.
        OPENSTACK_KEYSTONE_DEFAULT_ROLE = \"$OS_TENANT_NAME\"/g" \
        /etc/openstack-dashboard/local_settings
 
-(56) ``07-dashboard-start.sh``
+(58) ``07-dashboard-start.sh``
 
 This script starts the ``httpd`` service, which is a web server
 configured to serve the OpenStack dashboard. The script also sets the
@@ -2070,27 +2121,27 @@ using the following command:
 
 The command should output approximately the following table:
 
-+------------------+-------------+-------+---------+-------+-----------+
-| Binary           | Host        | Zone  | Status  | State | Updated   |
-+==================+=============+=======+=========+=======+===========+
-| nova-consoleauth | controller  | nova  | enabled | :-)   | <date>    |
-+------------------+-------------+-------+---------+-------+-----------+
-| nova-cert        | controller  | nova  | enabled | :-)   | <date>    |
-+------------------+-------------+-------+---------+-------+-----------+
-| nova-scheduler   | controller  | nova  | enabled | :-)   | <date>    |
-+------------------+-------------+-------+---------+-------+-----------+
-| nova-volume      | controller  | nova  | enabled | :-)   | <date>    |
-+------------------+-------------+-------+---------+-------+-----------+
-| nova-compute     | compute1    | nova  | enabled | :-)   | <date>    |
-+------------------+-------------+-------+---------+-------+-----------+
-| nova-compute     | compute2    | nova  | enabled | :-)   | <date>    |
-+------------------+-------------+-------+---------+-------+-----------+
-| nova-compute     | compute3    | nova  | enabled | :-)   | <date>    |
-+------------------+-------------+-------+---------+-------+-----------+
-| nova-compute     | compute4    | nova  | enabled | :-)   | <date>    |
-+------------------+-------------+-------+---------+-------+-----------+
-| nova-network     | controller  | nova  | enabled | :-)   | <date>    |
-+------------------+-------------+-------+---------+-------+-----------+
++------------------+------------+------+---------+-------+---------+
+| Binary           | Host       | Zone | Status  | State | Updated |
++==================+============+======+=========+=======+=========+
+| nova-consoleauth | controller | nova | enabled | :-)   | <date>  |
++------------------+------------+------+---------+-------+---------+
+| nova-cert        | controller | nova | enabled | :-)   | <date>  |
++------------------+------------+------+---------+-------+---------+
+| nova-scheduler   | controller | nova | enabled | :-)   | <date>  |
++------------------+------------+------+---------+-------+---------+
+| nova-volume      | controller | nova | enabled | :-)   | <date>  |
++------------------+------------+------+---------+-------+---------+
+| nova-compute     | compute1   | nova | enabled | :-)   | <date>  |
++------------------+------------+------+---------+-------+---------+
+| nova-compute     | compute2   | nova | enabled | :-)   | <date>  |
++------------------+------------+------+---------+-------+---------+
+| nova-compute     | compute3   | nova | enabled | :-)   | <date>  |
++------------------+------------+------+---------+-------+---------+
+| nova-compute     | compute4   | nova | enabled | :-)   | <date>  |
++------------------+------------+------+---------+-------+---------+
+| nova-network     | controller | nova | enabled | :-)   | <date>  |
++------------------+------------+------+---------+-------+---------+
 
 Table: The expected output of the ``nova-manage service list`` command
 
@@ -2114,7 +2165,7 @@ test the actual instantiation of VMs using the OpenStack command line
 tools, as shown by the scripts from the ``10-openstack-controller``
 directory.
 
-(57) ``01-source-configrc.sh``
+(59) ``01-source-configrc.sh``
 
 This scripts is mainly used to remind of the necessity to “source” the
 ``configrc`` file prior to continuing, since some scripts in this
@@ -2131,7 +2182,7 @@ source the file, it is necessary to run the following command:
     # Export the variables defined in ../config/configrc
     . ../config/configrc
 
-(58) ``02-boot-cirros.sh``
+(60) ``02-boot-cirros.sh``
 
 This script creates a VM instance using the CirrOS image added to Glance
 previously.
@@ -2169,7 +2220,7 @@ instance. The following command can be used to delete the VM instance:
 
     nova delete cirros
 
-(59) ``03-keypair-add.sh``
+(61) ``03-keypair-add.sh``
 
 Nova supports injection of SSH keys into VM instances for password-less
 authentication. This script creates a key pair, which can be used by
@@ -2183,7 +2234,7 @@ by Nova, whereas, the private key is saved into the specified
     nova keypair-add test > ../config/test.pem
     chmod 600 ../config/test.pem
 
-(60) ``04-boot-ubuntu.sh``
+(62) ``04-boot-ubuntu.sh``
 
 This script creates a VM instance using the Ubuntu Cloud image added to
 Glance previously. The executed command instructs OpenStack to inject
@@ -2195,7 +2246,7 @@ password-less SSH connections.
     # Create a VM instance from the Ubuntu Cloud image
     nova boot --image ubuntu --flavor m1.small --key_name test ubuntu
 
-(61) ``05-ssh-into-vm.sh``
+(63) ``05-ssh-into-vm.sh``
 
 This script shows how to SSH into a VM instance, which has been injected
 with the previously generated ``test`` key. The script accepts two
@@ -2217,7 +2268,7 @@ be set to ``ubuntu``.
 
     ssh -i ../config/test.pem -l $2 $1
 
-(62) ``06-nova-volume-create.sh``
+(64) ``06-nova-volume-create.sh``
 
 This script shows how to create a 2 GB Nova volume called ``myvolume``.
 Once created, the volume can be dynamically attached to a VM instance,
@@ -2229,7 +2280,7 @@ instance at a time.
     # Create a 2GB volume called myvolume
     nova volume-create --display_name myvolume 2
 
-(63) ``07-nova-volume-attach.sh``
+(65) ``07-nova-volume-attach.sh``
 
 This script shows how to attached a volume to a VM instance. The script
 accepts two arguments: (1) the name of the VM instance to attach the

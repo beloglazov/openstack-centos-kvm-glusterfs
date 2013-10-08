@@ -15,5 +15,5 @@
 # limitations under the License.
 
 
-# Install NTP, and crontabs in case not allready installed
-yum install -y ntp crontabs
+# Install OpenStack Nova and utils
+yum install -y openstack-nova* openstack-utils

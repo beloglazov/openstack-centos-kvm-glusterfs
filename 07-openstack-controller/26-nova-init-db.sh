@@ -15,5 +15,5 @@
 # limitations under the License.
 
 
-# Install NTP, and crontabs in case not allready installed
-yum install -y ntp crontabs
+# Initialize the database for Nova
+nova-manage db sync

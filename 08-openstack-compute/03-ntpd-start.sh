@@ -14,6 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+#Start services automatically at initial boot time
+chkconfig crond on
+chkconfig ntpdate on
 
-# Install NTP, and crontabs in case not allready installed
-yum install -y ntp crontabs
+#Restart services crond and ntpdate
+service crond restart
+service ntpdate restart

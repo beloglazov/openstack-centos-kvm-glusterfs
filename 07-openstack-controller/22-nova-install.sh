@@ -15,5 +15,5 @@
 # limitations under the License.
 
 
-# Install NTP, and crontabs in case not allready installed
-yum install -y ntp crontabs
+# Install OpenStack Nova (compute service) and the Qpid AMQP message broker
+yum install -y openstack-nova* qpid-cpp-server

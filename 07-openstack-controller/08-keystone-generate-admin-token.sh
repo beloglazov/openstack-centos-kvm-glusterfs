@@ -15,5 +15,6 @@
 # limitations under the License.
 
 
-# Install NTP, and crontabs in case not allready installed
-yum install -y ntp crontabs
+# Generate an admin token for Keystone and save it into
+# ./keystone-admin-token
+openssl rand -hex 10 > keystone-admin-token

@@ -1,0 +1,3 @@
+#!/bin/bash
+/usr/sbin/ntpdate controller 2>&1 >> /var/log/cron
+/sbin/hwclock -w
